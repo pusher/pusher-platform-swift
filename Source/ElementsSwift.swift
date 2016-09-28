@@ -1,7 +1,7 @@
 //
-//  PusherSwift.swift
+//  ElementsSwift.swift
 //
-//  Created by Hamilton Chapman on 19/02/2015.
+//  Created by Hamilton Chapman on 21/09/2016.
 //
 //
 
