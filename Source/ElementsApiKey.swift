@@ -27,12 +27,21 @@ import JWT
         let grants = grants ?? self.grants ?? nil
         let userId = userId ?? self.userId ?? nil
 
-        // TODO: check this is how it works
-        let jwt = JWT.encode(Algorithm.hs256(self.secret.data(using: .utf8)!)) { builder in
+        let algorithm = Algorithm.hs256(self.secret.data(using: .utf8)!)
+
+        let jwt = JWT.encode(algorithm) { builder in
             builder.audience = self.appId
             builder.issuer = self.key
-            builder["sub"] = self.userId
-            builder["grants"] = self.grants
+            // TODO: can't use this at the moment as issuedAt here is not an Int, which is currently required by the bridge
+            // builder.issuedAt = Date()
+
+            if self.userId != nil {
+                builder["sub"] = self.userId!
+            }
+
+            if self.grants != nil {
+                builder["grants"] = self.grants!
+            }
         }
 
         return Token(

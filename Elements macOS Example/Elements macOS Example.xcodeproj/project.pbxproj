@@ -13,6 +13,18 @@
 		332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */; };
 		332B5A881D9AD02200E69AC8 /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */; };
 		332B5A891D9AD02200E69AC8 /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		334E02ED1DAD3EA6005B395F /* PMKFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02E91DAD3EA6005B395F /* PMKFoundation.framework */; };
+		334E02EE1DAD3EA6005B395F /* PMKFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02E91DAD3EA6005B395F /* PMKFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		334E02EF1DAD3EA6005B395F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EA1DAD3EA6005B395F /* PromiseKit.framework */; };
+		334E02F01DAD3EA6005B395F /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EA1DAD3EA6005B395F /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		334E02F11DAD3EA6005B395F /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EB1DAD3EA6005B395F /* JWT.framework */; };
+		334E02F21DAD3EA6005B395F /* JWT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EB1DAD3EA6005B395F /* JWT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		334E02F31DAD3EA6005B395F /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */; };
+		334E02F41DAD3EA6005B395F /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		334E02FA1DAD3ED8005B395F /* PMKFoundation.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F61DAD3ED8005B395F /* PMKFoundation.framework.dSYM */; };
+		334E02FB1DAD3ED8005B395F /* PromiseKit.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F71DAD3ED8005B395F /* PromiseKit.framework.dSYM */; };
+		334E02FC1DAD3ED8005B395F /* JWT.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F81DAD3ED8005B395F /* JWT.framework.dSYM */; };
+		334E02FD1DAD3ED8005B395F /* CryptoSwift.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F91DAD3ED8005B395F /* CryptoSwift.framework.dSYM */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -22,9 +34,26 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				334E02F01DAD3EA6005B395F /* PromiseKit.framework in Embed Frameworks */,
+				334E02EE1DAD3EA6005B395F /* PMKFoundation.framework in Embed Frameworks */,
+				334E02F21DAD3EA6005B395F /* JWT.framework in Embed Frameworks */,
+				334E02F41DAD3EA6005B395F /* CryptoSwift.framework in Embed Frameworks */,
 				332B5A891D9AD02200E69AC8 /* ElementsSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		334E02F51DAD3EBA005B395F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				334E02FA1DAD3ED8005B395F /* PMKFoundation.framework.dSYM in CopyFiles */,
+				334E02FB1DAD3ED8005B395F /* PromiseKit.framework.dSYM in CopyFiles */,
+				334E02FC1DAD3ED8005B395F /* JWT.framework.dSYM in CopyFiles */,
+				334E02FD1DAD3ED8005B395F /* CryptoSwift.framework.dSYM in CopyFiles */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -37,6 +66,14 @@
 		332B5A7F1D9ACA6A00E69AC8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		332B5A811D9ACA6A00E69AC8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		334E02E91DAD3EA6005B395F /* PMKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PMKFoundation.framework; sourceTree = "<group>"; };
+		334E02EA1DAD3EA6005B395F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = "<group>"; };
+		334E02EB1DAD3EA6005B395F /* JWT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JWT.framework; sourceTree = "<group>"; };
+		334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = "<group>"; };
+		334E02F61DAD3ED8005B395F /* PMKFoundation.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = PMKFoundation.framework.dSYM; sourceTree = "<group>"; };
+		334E02F71DAD3ED8005B395F /* PromiseKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = PromiseKit.framework.dSYM; sourceTree = "<group>"; };
+		334E02F81DAD3ED8005B395F /* JWT.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = JWT.framework.dSYM; sourceTree = "<group>"; };
+		334E02F91DAD3ED8005B395F /* CryptoSwift.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = CryptoSwift.framework.dSYM; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +81,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				334E02EF1DAD3EA6005B395F /* PromiseKit.framework in Frameworks */,
+				334E02ED1DAD3EA6005B395F /* PMKFoundation.framework in Frameworks */,
+				334E02F11DAD3EA6005B395F /* JWT.framework in Frameworks */,
+				334E02F31DAD3EA6005B395F /* CryptoSwift.framework in Frameworks */,
 				332B5A881D9AD02200E69AC8 /* ElementsSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -54,9 +95,9 @@
 		332B5A6C1D9ACA6A00E69AC8 = {
 			isa = PBXGroup;
 			children = (
+				334E02FE1DAD3EE2005B395F /* Frameworks */,
 				332B5A771D9ACA6A00E69AC8 /* Elements macOS Example */,
 				332B5A761D9ACA6A00E69AC8 /* Products */,
-				332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */,
 			);
 			sourceTree = "<group>";
 		};
@@ -80,6 +121,22 @@
 			path = "Elements macOS Example";
 			sourceTree = "<group>";
 		};
+		334E02FE1DAD3EE2005B395F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */,
+				334E02F61DAD3ED8005B395F /* PMKFoundation.framework.dSYM */,
+				334E02F71DAD3ED8005B395F /* PromiseKit.framework.dSYM */,
+				334E02F81DAD3ED8005B395F /* JWT.framework.dSYM */,
+				334E02F91DAD3ED8005B395F /* CryptoSwift.framework.dSYM */,
+				334E02E91DAD3EA6005B395F /* PMKFoundation.framework */,
+				334E02EA1DAD3EA6005B395F /* PromiseKit.framework */,
+				334E02EB1DAD3EA6005B395F /* JWT.framework */,
+				334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -91,6 +148,7 @@
 				332B5A721D9ACA6A00E69AC8 /* Frameworks */,
 				332B5A731D9ACA6A00E69AC8 /* Resources */,
 				332B5A8A1D9AD02200E69AC8 /* Embed Frameworks */,
+				334E02F51DAD3EBA005B395F /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -268,6 +326,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = H7FL434D9W;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "Elements macOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-macOS-Example";
@@ -282,6 +344,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = H7FL434D9W;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "Elements macOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-macOS-Example";
@@ -309,6 +375,7 @@
 				332B5A861D9ACA6A00E69AC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

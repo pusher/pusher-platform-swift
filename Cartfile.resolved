@@ -1,3 +1,4 @@
 github "hamchapman/CryptoSwift" "e51c5b5ca4e3bf0df57009fe7c176cde57058832"
 github "mxcl/PromiseKit" "4.0.3"
+github "PromiseKit/Foundation" "1.0.0"
 github "hamchapman/JSONWebToken.swift" "7de7432cb1c478e6c54237fd077c53168f464f55"

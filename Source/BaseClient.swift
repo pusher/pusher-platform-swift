@@ -6,16 +6,18 @@
 //
 //
 
+import PromiseKit
+
 let VERSION = "0.1.0"
 let CLIENT_NAME = "elements-client-swift"
 let REALLY_LONG_TIME: Double = 252_460_800
 
 
-// TODO: don't think we want this anymore
-public class ConnectionManager {
-    public init() {
+// TODO: not sure if this is the best abstaction - do we even want a separate "manager" object?
+@objc public class ConnectionManager: NSObject {
+    public var subscriptions: [Subscription] = []
 
-    }
+    // public init() {}
 }
 
 public enum BaseClientError: Error {
@@ -67,70 +69,64 @@ public enum BaseClientError: Error {
         super.init()
     }
 
-    public func request(method: HttpMethod, path: String, data: Data? = nil) {
-        request(method: method.rawValue, path: path, data: data)
+    public func request(method: HttpMethod, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> URLDataPromise {
+        return request(method: method.rawValue, path: path, jwt: jwt, headers: headers, body: body)
     }
 
-    public func request(method: String, path: String, data: Data? = nil) {
+    public func request(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> URLDataPromise {
         let url = self.baseUrl.appendingPathComponent(path)
 
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.timeoutInterval = REALLY_LONG_TIME
-        if self.jwt != nil {
-            request.addValue("JWT \(self.jwt!)", forHTTPHeaderField: "Authorization")
+
+        if jwt != nil {
+            request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
         }
 
-        if data != nil {
-            request.httpBody = data
+        if headers != nil {
+            for (header, value) in headers! {
+                request.addValue(value, forHTTPHeaderField: header)
+            }
         }
 
-        var task: URLSessionDataTask
-
-        if method == "SUB" {
-            task = self.subscribeUrlSession.dataTask(with: request)
-        } else {
-            task = self.generalUrlSession.dataTask(with: request)
+        if body != nil {
+            request.httpBody = body
         }
-        
-        task.resume()
+
+        return self.generalUrlSession.dataTask(with: request)
     }
 
-    // TODO: probs remove this
-    // public func get(path: String) {
-    //     self.request(method: HttpMethod.GET, path: path)
-    // }
+    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) -> Subscription {
+        let url = self.baseUrl.appendingPathComponent(path)
 
-    // public func subscribe(path: String) {
-    //     self.request(method: HttpMethod.SUB, path: path)
-    // }
+        var request = URLRequest(url: url)
+        request.httpMethod = "SUB"
+        request.timeoutInterval = REALLY_LONG_TIME
 
-    // public func post(path: String, data: Data? = nil) {
-    //     self.request(method: HttpMethod.POST, path: path, data: data)
-    // }
+        if jwt != nil {
+            request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
+        }
 
-    // public func put(path: String, data: Data? = nil) {
-    //     self.request(method: HttpMethod.PUT, path: path, data: data)
-    // }
+        if headers != nil {
+            for (header, value) in headers! {
+                request.addValue(value, forHTTPHeaderField: header)
+            }
+        }
 
-    // public func patch(path: String, data: Data? = nil) {
-    //     self.request(method: HttpMethod.PATCH, path: path, data: data)
-    // }
+        let task: URLSessionDataTask = self.subscribeUrlSession.dataTask(with: request)
+        task.resume()
+        let subscription = Subscription(path: path, taskIdentifier: task.taskIdentifier)
+        self.connectionManager.subscriptions.append(subscription)
 
-    // public func delete(path: String) {
-    //     self.request(method: HttpMethod.DELETE, path: path)
-    // }
-
-    // public func head(path: String) {
-    //     self.request(method: HttpMethod.HEAD, path: path)
-    // }
-    
-    // public func options(path: String) {
-    //     self.request(method: HttpMethod.OPTIONS, path: path)
-    // }
+        return subscription
+    }
 }
 
 public class GeneralSessionDelegate: SessionDelegate, URLSessionDelegate, URLSessionDataDelegate {
+
+    // TODO: I think we can remove the general session delegate entirely
+    // which means in fact that we can go back to a single delegate - YAY
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         print("Task \(dataTask.taskIdentifier) received a response: \(response)")
@@ -145,8 +141,8 @@ public class GeneralSessionDelegate: SessionDelegate, URLSessionDelegate, URLSes
 public class SubscribeSessionDelegate: SessionDelegate, URLSessionDelegate, URLSessionDataDelegate {
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        let dataString = String(data: data, encoding: .utf8)
-        print("Received this: \(dataString!)")
+        // TODO: make this use the correct subscription object to call any onEvent closure
+        self.connectionManager.subscriptions.first?.onEvent?(data)
     }
 
 }
@@ -173,7 +169,6 @@ public class SubscribeSessionDelegate: SessionDelegate, URLSessionDelegate, URLS
 }
 
 public enum HttpMethod: String {
-    case SUB
     case POST
     case GET
     case PUT
