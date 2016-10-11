@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33831C881A9CF61600B124F1"
-               BuildableName = "PusherSwift.framework"
+               BuildableName = "ElementsSwift.framework"
                BlueprintName = "ElementsSwift"
                ReferencedContainer = "container:ElementsSwift.xcodeproj">
             </BuildableReference>
@@ -29,7 +29,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33831C931A9CF61600B124F1"
-               BuildableName = "PusherSwiftTests.xctest"
+               BuildableName = "ElementsSwiftTests.xctest"
                BlueprintName = "ElementsSwiftTests"
                ReferencedContainer = "container:ElementsSwift.xcodeproj">
             </BuildableReference>
@@ -58,7 +58,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33831C881A9CF61600B124F1"
-            BuildableName = "PusherSwift.framework"
+            BuildableName = "ElementsSwift.framework"
             BlueprintName = "ElementsSwift"
             ReferencedContainer = "container:ElementsSwift.xcodeproj">
          </BuildableReference>
@@ -80,7 +80,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33831C881A9CF61600B124F1"
-            BuildableName = "PusherSwift.framework"
+            BuildableName = "ElementsSwift.framework"
             BlueprintName = "ElementsSwift"
             ReferencedContainer = "container:ElementsSwift.xcodeproj">
          </BuildableReference>
@@ -98,7 +98,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33831C881A9CF61600B124F1"
-            BuildableName = "PusherSwift.framework"
+            BuildableName = "ElementsSwift.framework"
             BlueprintName = "ElementsSwift"
             ReferencedContainer = "container:ElementsSwift.xcodeproj">
          </BuildableReference>

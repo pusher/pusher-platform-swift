@@ -10,13 +10,13 @@ import Cocoa
 import ElementsSwift
 
 class ViewController: NSViewController {
-    var elements: ElementsClient!
+    var elements: ElementsApp!
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let elementsConfig = ElementsClientConfig(token: "some.random.token.", host: "localhost", namespace: .appId("123"), port: 10443)
-        elements = ElementsClient(config: elementsConfig)
+        //let elementsConfig = ElementsClientConfig(token: "some.random.token.", host: "localhost", namespace: .appId("123"), port: 10443)
+        elements = ElementsApp()  //(config: elementsConfig)
 
         elements.subscribe(path: "/list/testlist")
     }

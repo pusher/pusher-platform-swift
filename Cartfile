@@ -1,0 +1,2 @@
+github "hamchapman/JSONWebToken.swift" "update-cryptoswift-dependency"
+github "mxcl/PromiseKit" ~> 4.0
