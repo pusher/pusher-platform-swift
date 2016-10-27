@@ -8,24 +8,25 @@
 
 import Foundation
 
-
 // TODO: Check why this isn't working using the Carthage version
+
+
 public enum Encoding {
     /// Decode as JSON
     case json(JSONSerialization.ReadingOptions)
 }
 
 /**
- A promise capable of decoding common Internet data types.
+    A promise capable of decoding common Internet data types.
 
- Used by:
+    Used by:
 
- - PromiseKit/Foundation
- - PromiseKit/Social
- - PromiseKit/OMGHTTPURLRQ
+        - PromiseKit/Foundation
+        - PromiseKit/Social
+        - PromiseKit/OMGHTTPURLRQ
 
- But probably of general use to any promises that receive HTTP `Data`.
- */
+    But probably of general use to any promises that receive HTTP `Data`.
+*/
 public class URLDataPromise: Promise<Data> {
     /// Convert the promise to a tuple of `(Data, URLResponse)`
     public func asDataAndResponse() -> Promise<(Data, Foundation.URLResponse)> {
@@ -36,7 +37,7 @@ public class URLDataPromise: Promise<Data> {
     public func asString() -> Promise<String> {
         return then(on: waldo) { data -> String in
             guard let str = String(bytes: data, encoding: self.URLResponse.stringEncoding ?? .utf8) else {
-                throw URLError.stringEncoding(self.URLRequest, data, self.URLResponse)
+                throw PMKURLError.stringEncoding(self.URLRequest, data, self.URLResponse)
             }
             return str
         }
@@ -87,7 +88,7 @@ public class URLDataPromise: Promise<Data> {
             } else if let data = data, !(rsp is HTTPURLResponse) {
                 fulfill(data)
             } else {
-                reject(URLError.badResponse(request, data, rsp))
+                reject(PMKURLError.badResponse(request, data, rsp))
             }
         }
 
@@ -103,7 +104,7 @@ public class URLDataPromise: Promise<Data> {
         public func asImage() -> Promise<UIImage> {
             return then(on: waldo) { data -> UIImage in
                 guard let img = UIImage(data: data), let cgimg = img.cgImage else {
-                    throw URLError.invalidImageData(self.URLRequest, data)
+                    throw PMKURLError.invalidImageData(self.URLRequest, data)
                 }
                 // this way of decoding the image limits main thread impact when displaying the image
                 return UIImage(cgImage: cgimg, scale: img.scale, orientation: img.imageOrientation)
@@ -128,46 +129,49 @@ extension Data {
 }
 
 
-import Foundation
 #if !COCOAPODS
-    import PromiseKit
+import PromiseKit
 #endif
 
 /**
- To import the `NSURLSession` category:
- use_frameworks!
- pod "PromiseKit/Foundation"
- Or `NSURLSession` is one of the categories imported by the umbrella pod:
- use_frameworks!
- pod "PromiseKit"
- And then in your sources:
- import PromiseKit
- */
+    To import the `NSURLSession` category:
+
+        use_frameworks!
+        pod "PromiseKit/Foundation"
+
+    Or `NSURLSession` is one of the categories imported by the umbrella pod:
+    
+        use_frameworks!
+        pod "PromiseKit"
+    
+    And then in your sources:
+        
+        import PromiseKit
+*/
 extension URLSession {
     /**
-     Makes an HTTP request using the parameters specified by the provided URL
-     request.
-     We recommend the use of [OMGHTTPURLRQ] which allows you to construct correct REST requests.
-     let rq = OMGHTTPURLRQ.POST(url, json: parameters)
-     NSURLSession.shared.dataTask(with: rq).asDictionary().then { json in
-     //…
-     }
+        Makes an HTTP request using the parameters specified by the provided URL
+        request.
+        We recommend the use of [OMGHTTPURLRQ] which allows you to construct correct REST requests.
+        let rq = OMGHTTPURLRQ.POST(url, json: parameters)
+        NSURLSession.shared.dataTask(with: rq).asDictionary().then { json in
+        //…
+        }
 
-     [We provide OMG extensions](https://github.com/PromiseKit/OMGHTTPURLRQ)
-     that allow eg:
+        [We provide OMG extensions](https://github.com/PromiseKit/OMGHTTPURLRQ)
+        that allow eg:
 
-     URLSession.shared.POST(url, json: ["a": "b"])
-     - Parameter request: The URL request.
-     - Returns: A promise that represents the URL request.
-     - SeeAlso: `URLDataPromise`
-     - SeeAlso: [OMGHTTPURLRQ]
+        URLSession.shared.POST(url, json: ["a": "b"])
+        - Parameter request: The URL request.
+        - Returns: A promise that represents the URL request.
+        - SeeAlso: `URLDataPromise`
+        - SeeAlso: [OMGHTTPURLRQ]
 
-     [OMGHTTPURLRQ]: https://github.com/mxcl/OMGHTTPURLRQ
-     */
+        [OMGHTTPURLRQ]: https://github.com/mxcl/OMGHTTPURLRQ
+    */
     public func dataTask(with request: URLRequest) -> URLDataPromise {
         return URLDataPromise.go(request) { completionHandler in
             dataTask(with: request, completionHandler: completionHandler).resume()
         }
     }
 }
-

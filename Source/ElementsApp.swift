@@ -7,53 +7,45 @@
 //
 
 import PromiseKit
-
-@objc public class Subscription: NSObject {
-    public var path: String
-    public var taskIdentifier: Int
-    public var onOpen: (() -> Void)? = nil
-    public var onEnd: ((Int, String) -> Void)? = nil
-    public var onEvent: ((Data) -> Void)? = nil
-
-    public init(path: String, taskIdentifier: Int) {
-        self.path = path
-        self.taskIdentifier = taskIdentifier
-    }
-}
+import PMKFoundation
 
 @objc public class ElementsApp: NSObject {
     public var appId: String
-    public var jwt: String?
     public var cluster: String?
     public var authorizer: Authorizer?
     public var client: BaseClient
 
-    public init(appId: String, jwt: String? = nil, cluster: String? = nil, authorizer: Authorizer? = nil, client: BaseClient? = nil) throws {
+    public init(appId: String, cluster: String? = nil, authorizer: Authorizer? = nil, client: BaseClient? = nil) throws {
         self.appId = appId
-        self.jwt = jwt
         self.cluster = cluster
         self.authorizer = authorizer
         try self.client = client ?? BaseClient(cluster: cluster)
     }
 
-    public func request(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> URLDataPromise {
+    public func request(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
         let sanitisedPath = sanitisePath(path: path)
         let namespacedPath = "/apps/\(self.appId)\(sanitisedPath)"
 
-        // TODO: Chain promises here for authorizer in case of HTTP request
-        let jwtToUse = jwt ?? self.jwt ?? self.authorizer?.authorize().jwt ?? nil
-
-        return self.client.request(method: method, path: namespacedPath, jwt: jwtToUse, headers: headers, body: body)
+        if jwt == nil && self.authorizer != nil {
+            return self.authorizer!.authorize().then { jwtFromAuthorizer in
+                return self.client.request(method: method, path: path, jwt: jwtFromAuthorizer, headers: headers, body: body)
+            }
+        } else {
+            return self.client.request(method: method, path: namespacedPath, jwt: jwt, headers: headers, body: body)
+        }
     }
 
-    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) -> Subscription {
+    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) throws -> Promise<Subscription> {
         let sanitisedPath = sanitisePath(path: path)
         let namespacedPath = "/apps/\(self.appId)\(sanitisedPath)"
 
-        // TODO: Chain promises here for authorizer in case of HTTP request
-        let jwtToUse = jwt ?? self.jwt ?? self.authorizer?.authorize().jwt ?? nil
-
-        return self.client.subscribe(path: namespacedPath, jwt: jwtToUse, headers: headers)
+        if jwt == nil && self.authorizer != nil {
+            return self.authorizer!.authorize().then { jwtFromAuthorizer in
+                return self.client.subscribe(path: namespacedPath, jwt: jwtFromAuthorizer, headers: headers)
+            }
+        } else {
+            return self.client.subscribe(path: namespacedPath, jwt: jwt, headers: headers)
+        }
     }
 
     // TODO: put this somewhere sensible
@@ -92,36 +84,5 @@ import PromiseKit
     public init(code: Int, reason: String) {
         self.code = code
         self.reason = reason
-    }
-}
-
-
-
-// TODO: I think we can remove these
-@objc public class RequestOptions: NSObject {
-    public var method: String
-    public var path: String
-    public var jwt: String?
-    public var headers: [String: String]?
-    public var body: Data?
-
-    public init(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) {
-        self.method = method
-        self.path = path
-        self.jwt = jwt
-        self.headers = headers
-        self.body = body
-    }
-}
-
-@objc public class SubscribeOptions: NSObject {
-    public var path: String
-    public var jwt: String?
-    public var headers: [String: String]?
-
-    public init(path: String, jwt: String? = nil, headers: [String: String]? = nil) {
-        self.path = path
-        self.jwt = jwt
-        self.headers = headers
     }
 }

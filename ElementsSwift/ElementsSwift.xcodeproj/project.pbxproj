@@ -7,10 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */; };
+		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
+		3329F40D1DC0B530007B29FF /* BaseClientConnectionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40C1DC0B530007B29FF /* BaseClientConnectionManager.swift */; };
 		335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
-		33935EAA1DA539AD00C5C064 /* ElementsApiKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA91DA539AD00C5C064 /* ElementsApiKey.swift */; };
-		33935EAC1DA539BD00C5C064 /* ElementsHttpAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* ElementsHttpAuthorizer.swift */; };
+		33935EAA1DA539AD00C5C064 /* SecretAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */; };
+		33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */; };
 		33935EAE1DA53A8300C5C064 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAD1DA53A8300C5C064 /* Token.swift */; };
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33935EB41DA5523C00C5C064 /* LiveListsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* LiveListsHelper.swift */; };
@@ -32,14 +35,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTokenAuthorizer.swift; sourceTree = "<group>"; };
+		3329F40A1DC0B4C0007B29FF /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		3329F40C1DC0B530007B29FF /* BaseClientConnectionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClientConnectionManager.swift; sourceTree = "<group>"; };
 		337C9EE01C38B708006CC757 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		33831C891A9CF61600B124F1 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831C8D1A9CF61600B124F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33831C941A9CF61600B124F1 /* ElementsSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElementsSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831CD61A9CFFF200B124F1 /* ElementsSwift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElementsSwift.h; path = ../Source/ElementsSwift.h; sourceTree = SOURCE_ROOT; };
 		33935EA71DA5399A00C5C064 /* Authorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorizer.swift; sourceTree = "<group>"; };
-		33935EA91DA539AD00C5C064 /* ElementsApiKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementsApiKey.swift; sourceTree = "<group>"; };
-		33935EAB1DA539BD00C5C064 /* ElementsHttpAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementsHttpAuthorizer.swift; sourceTree = "<group>"; };
+		33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretAuthorizer.swift; sourceTree = "<group>"; };
+		33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAD1DA53A8300C5C064 /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
 		33935EB31DA5523C00C5C064 /* LiveListsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveListsHelper.swift; sourceTree = "<group>"; };
@@ -96,9 +102,11 @@
 				33935EB11DA54F8700C5C064 /* Service Helpers */,
 				33BA96381DA513DF00BE93A3 /* ElementsApp.swift */,
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
+				3329F40C1DC0B530007B29FF /* BaseClientConnectionManager.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
 				33935EAD1DA53A8300C5C064 /* Token.swift */,
 				33935EB51DA5526F00C5C064 /* ServiceHelper.swift */,
+				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
 				33935EB71DA6A9E600C5C064 /* Logfmt.swift */,
 				33D90EC31DAD371500746D3F /* MorePromises.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
@@ -127,8 +135,9 @@
 		33935EB21DA54F9400C5C064 /* Authorizers */ = {
 			isa = PBXGroup;
 			children = (
-				33935EA91DA539AD00C5C064 /* ElementsApiKey.swift */,
-				33935EAB1DA539BD00C5C064 /* ElementsHttpAuthorizer.swift */,
+				33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */,
+				33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */,
+				3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */,
 			);
 			name = Authorizers;
 			sourceTree = "<group>";
@@ -285,11 +294,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */,
-				33935EAA1DA539AD00C5C064 /* ElementsApiKey.swift in Sources */,
+				3329F40D1DC0B530007B29FF /* BaseClientConnectionManager.swift in Sources */,
+				33935EAA1DA539AD00C5C064 /* SecretAuthorizer.swift in Sources */,
+				3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
 				33BA96391DA513DF00BE93A3 /* ElementsApp.swift in Sources */,
 				33935EB41DA5523C00C5C064 /* LiveListsHelper.swift in Sources */,
-				33935EAC1DA539BD00C5C064 /* ElementsHttpAuthorizer.swift in Sources */,
+				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
+				33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */,
 				33D90EC41DAD371500746D3F /* MorePromises.swift in Sources */,
 				33935EB81DA6A9E600C5C064 /* Logfmt.swift in Sources */,
 				33935EAE1DA53A8300C5C064 /* Token.swift in Sources */,

@@ -6,6 +6,8 @@
 //
 //
 
-@objc public protocol Authorizer: class {
-    func authorize() -> Token
+import PromiseKit
+
+public protocol Authorizer {
+    func authorize() -> Promise<String>
 }

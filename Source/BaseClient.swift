@@ -13,13 +13,6 @@ let CLIENT_NAME = "elements-client-swift"
 let REALLY_LONG_TIME: Double = 252_460_800
 
 
-// TODO: not sure if this is the best abstaction - do we even want a separate "manager" object?
-@objc public class ConnectionManager: NSObject {
-    public var subscriptions: [Subscription] = []
-
-    // public init() {}
-}
-
 public enum BaseClientError: Error {
     case invalidBaseUrl
 }
@@ -34,10 +27,11 @@ public enum BaseClientError: Error {
 
     public let connectionManager: ConnectionManager
 
-
+    // TODO: Should this be able to throw? 
     public init(jwt: String? = nil, cluster: String? = nil, port: Int? = nil) throws {
         self.jwt = jwt
 
+        // TODO: Put in a sensible default
         let cluster = cluster ?? "sensible.default"
 
         var urlComponents = URLComponents()
@@ -69,15 +63,17 @@ public enum BaseClientError: Error {
         super.init()
     }
 
-    public func request(method: HttpMethod, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> URLDataPromise {
+    public func request(method: HttpMethod, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
         return request(method: method.rawValue, path: path, jwt: jwt, headers: headers, body: body)
     }
 
-    public func request(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> URLDataPromise {
+    public func request(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
         let url = self.baseUrl.appendingPathComponent(path)
 
         var request = URLRequest(url: url)
         request.httpMethod = method
+
+        // TODO: Not sure we ant this timeout to be so long in general
         request.timeoutInterval = REALLY_LONG_TIME
 
         if jwt != nil {
@@ -94,10 +90,43 @@ public enum BaseClientError: Error {
             request.httpBody = body
         }
 
-        return self.generalUrlSession.dataTask(with: request)
+        // TODO: don't need to use general url session here I don't think
+        // can probably just use a shared one (with appropriate timeouts and background behaviours etc set)
+
+        return Promise<Data> { fulfill, reject in
+            self.generalUrlSession.dataTask(with: request, completionHandler: { data, response, sessionError in
+                if let error = sessionError {
+                    reject(error)
+                    return
+                }
+
+                guard let data = data else {
+                    reject(RequestError.noDataPresent)
+                    return
+                }
+
+                let dataString = String(data: data, encoding: String.Encoding.utf8)
+
+                guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+                    // TODO: Print dataString somewhere sensible
+                    print(dataString)
+                    reject(RequestError.invalidHttpResponse)
+                    return
+                }
+
+                guard 200..<300 ~= httpResponse.statusCode else {
+                    // TODO: Print dataString somewhere sensible
+                    print(dataString)
+                    reject(RequestError.badResponseStatusCode)
+                    return
+                }
+                
+                fulfill(data)
+            })
+        }
     }
 
-    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) -> Subscription {
+    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) -> Promise<Subscription> {
         let url = self.baseUrl.appendingPathComponent(path)
 
         var request = URLRequest(url: url)
@@ -114,12 +143,25 @@ public enum BaseClientError: Error {
             }
         }
 
-        let task: URLSessionDataTask = self.subscribeUrlSession.dataTask(with: request)
-        task.resume()
-        let subscription = Subscription(path: path, taskIdentifier: task.taskIdentifier)
-        self.connectionManager.subscriptions.append(subscription)
+        // TODO: try using completion handler as well as delegate...maybe; don't think it works though
 
-        return subscription
+        // TODO: Check that the ordering of things makes sense here - e.g. do we want to resume before or after
+        // creating the subscription in the connection manager? when do we create the promise?
+
+        let task: URLSessionDataTask = self.subscribeUrlSession.dataTask(with: request)
+
+        let taskIdentifier = task.taskIdentifier
+        let subscription = Subscription(path: path, taskIdentifier: taskIdentifier)
+
+        // TODO: Check that there doesn't exist any subscription with same taskIdentifier
+        self.connectionManager.subscriptions[taskIdentifier] = subscription
+
+        task.resume()
+
+        // TODO: does this make sense?
+        return Promise<Subscription> { fulfill, reject in
+            fulfill(subscription)
+        }
     }
 }
 
@@ -142,7 +184,8 @@ public class SubscribeSessionDelegate: SessionDelegate, URLSessionDelegate, URLS
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         // TODO: make this use the correct subscription object to call any onEvent closure
-        self.connectionManager.subscriptions.first?.onEvent?(data)
+        // TODO: probably need to make things clearer if no subscription is found that matches the taskIdentifier of the dataTask
+        self.connectionManager.subscriptions[dataTask.taskIdentifier]?.onEvent?(data)
     }
 
 }
@@ -166,6 +209,12 @@ public class SubscribeSessionDelegate: SessionDelegate, URLSessionDelegate, URLS
         let allowAllCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
         completionHandler(.useCredential, allowAllCredential)
     }
+}
+
+public enum RequestError: Error {
+    case badResponseStatusCode
+    case invalidHttpResponse
+    case noDataPresent
 }
 
 public enum HttpMethod: String {

@@ -15,14 +15,18 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let authorizer = ApiKey(appId: "2", key: "f47927a9-cffe-458e-b34b-ff6847444bda", secret: "66eUk3XGJmJDduzSMv58JA", grants: nil)
-        elements = try! ElementsApp(appId: "2", jwt: nil, cluster: "https.beta.buildelements.com", authorizer: authorizer)
+        let authorizer = SecretAuthorizer(appId: "2", secret: "f47927a9-cffe-458e-b34b-ff6847444bda:66eUk3XGJmJDduzSMv58JA", grants: nil)
+        elements = try! ElementsApp(appId: "2", cluster: "beta.buildelements.com", authorizer: authorizer)
 
-        let sub = elements.subscribe(path: "/lists/testlist")
+        let subPromise = try! elements.subscribe(path: "/lists/testlist")
 
-        sub.onEvent = { data in
-            let dataString = String(data: data, encoding: .utf8)
-            print("Received this: \(dataString!)")
+        subPromise.then { sub in
+            sub.onEvent = { data in
+                let dataString = String(data: data, encoding: .utf8)
+                print("Received this: \(dataString!)")
+            }
+        }.catch { error in
+            print(error)
         }
 
         sleep(2)
