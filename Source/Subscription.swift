@@ -9,8 +9,9 @@
 import Foundation
 
 @objc public class Subscription: NSObject {
-    public var path: String
-    public var taskIdentifier: Int
+    public let path: String
+    public let taskIdentifier: Int
+
     public var onOpen: (() -> Void)? = nil
     public var onEnd: ((Int, String) -> Void)? = nil
     public var onEvent: ((Data) -> Void)? = nil

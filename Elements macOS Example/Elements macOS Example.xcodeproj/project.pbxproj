@@ -7,75 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		330263381DC21BC3007D7317 /* Carthage.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 330263371DC21BC3007D7317 /* Carthage.xcconfig */; };
-		330263391DC23BE8007D7317 /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EA1DAD3EA6005B395F /* PromiseKit.framework */; };
-		3302633A1DC23BE8007D7317 /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EA1DAD3EA6005B395F /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33251E3C1DC21A5300E2A9B3 /* PMKFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02E91DAD3EA6005B395F /* PMKFoundation.framework */; };
-		33251E3D1DC21A5300E2A9B3 /* PMKFoundation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02E91DAD3EA6005B395F /* PMKFoundation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33251E401DC21A5300E2A9B3 /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EB1DAD3EA6005B395F /* JWT.framework */; };
-		33251E411DC21A5300E2A9B3 /* JWT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EB1DAD3EA6005B395F /* JWT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33251E421DC21A5300E2A9B3 /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */; };
-		33251E431DC21A5300E2A9B3 /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		332B5A791D9ACA6A00E69AC8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332B5A781D9ACA6A00E69AC8 /* AppDelegate.swift */; };
 		332B5A7B1D9ACA6A00E69AC8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */; };
 		332B5A7D1D9ACA6A00E69AC8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */; };
 		332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */; };
-		332B5A881D9AD02200E69AC8 /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */; };
-		332B5A891D9AD02200E69AC8 /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		334E02FA1DAD3ED8005B395F /* PMKFoundation.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F61DAD3ED8005B395F /* PMKFoundation.framework.dSYM */; };
-		334E02FB1DAD3ED8005B395F /* PromiseKit.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F71DAD3ED8005B395F /* PromiseKit.framework.dSYM */; };
-		334E02FC1DAD3ED8005B395F /* JWT.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F81DAD3ED8005B395F /* JWT.framework.dSYM */; };
-		334E02FD1DAD3ED8005B395F /* CryptoSwift.framework.dSYM in CopyFiles */ = {isa = PBXBuildFile; fileRef = 334E02F91DAD3ED8005B395F /* CryptoSwift.framework.dSYM */; };
+		33F1F96C1DC368840021056F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9691DC368840021056F /* PromiseKit.framework */; };
+		33F1F96D1DC368840021056F /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9691DC368840021056F /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		33F1F96E1DC368840021056F /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96A1DC368840021056F /* JWT.framework */; };
+		33F1F96F1DC368840021056F /* JWT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96A1DC368840021056F /* JWT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		33F1F9701DC368840021056F /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96B1DC368840021056F /* CryptoSwift.framework */; };
+		33F1F9711DC368840021056F /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96B1DC368840021056F /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		33F1F9731DC368900021056F /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; };
+		33F1F9741DC368900021056F /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		332B5A8A1D9AD02200E69AC8 /* Embed Frameworks */ = {
+		33F1F9621DC358AE0021056F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				33251E3D1DC21A5300E2A9B3 /* PMKFoundation.framework in Embed Frameworks */,
-				33251E411DC21A5300E2A9B3 /* JWT.framework in Embed Frameworks */,
-				3302633A1DC23BE8007D7317 /* PromiseKit.framework in Embed Frameworks */,
-				33251E431DC21A5300E2A9B3 /* CryptoSwift.framework in Embed Frameworks */,
-				332B5A891D9AD02200E69AC8 /* ElementsSwift.framework in Embed Frameworks */,
+				33F1F9711DC368840021056F /* CryptoSwift.framework in Embed Frameworks */,
+				33F1F9741DC368900021056F /* ElementsSwift.framework in Embed Frameworks */,
+				33F1F96F1DC368840021056F /* JWT.framework in Embed Frameworks */,
+				33F1F96D1DC368840021056F /* PromiseKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		334E02F51DAD3EBA005B395F /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				334E02FA1DAD3ED8005B395F /* PMKFoundation.framework.dSYM in CopyFiles */,
-				334E02FB1DAD3ED8005B395F /* PromiseKit.framework.dSYM in CopyFiles */,
-				334E02FC1DAD3ED8005B395F /* JWT.framework.dSYM in CopyFiles */,
-				334E02FD1DAD3ED8005B395F /* CryptoSwift.framework.dSYM in CopyFiles */,
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		330263371DC21BC3007D7317 /* Carthage.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Carthage.xcconfig; sourceTree = "<group>"; };
 		332B5A751D9ACA6A00E69AC8 /* Elements macOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements macOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		332B5A781D9ACA6A00E69AC8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		332B5A7F1D9ACA6A00E69AC8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		332B5A811D9ACA6A00E69AC8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		334E02E91DAD3EA6005B395F /* PMKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PMKFoundation.framework; sourceTree = "<group>"; };
-		334E02EA1DAD3EA6005B395F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = "<group>"; };
-		334E02EB1DAD3EA6005B395F /* JWT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JWT.framework; sourceTree = "<group>"; };
-		334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = "<group>"; };
-		334E02F61DAD3ED8005B395F /* PMKFoundation.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = PMKFoundation.framework.dSYM; sourceTree = "<group>"; };
-		334E02F71DAD3ED8005B395F /* PromiseKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = PromiseKit.framework.dSYM; sourceTree = "<group>"; };
-		334E02F81DAD3ED8005B395F /* JWT.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = JWT.framework.dSYM; sourceTree = "<group>"; };
-		334E02F91DAD3ED8005B395F /* CryptoSwift.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = CryptoSwift.framework.dSYM; sourceTree = "<group>"; };
+		33F1F9691DC368840021056F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = "<group>"; };
+		33F1F96A1DC368840021056F /* JWT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JWT.framework; sourceTree = "<group>"; };
+		33F1F96B1DC368840021056F /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = "<group>"; };
+		33F1F9721DC368900021056F /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,22 +56,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33251E3C1DC21A5300E2A9B3 /* PMKFoundation.framework in Frameworks */,
-				33251E401DC21A5300E2A9B3 /* JWT.framework in Frameworks */,
-				330263391DC23BE8007D7317 /* PromiseKit.framework in Frameworks */,
-				33251E421DC21A5300E2A9B3 /* CryptoSwift.framework in Frameworks */,
-				332B5A881D9AD02200E69AC8 /* ElementsSwift.framework in Frameworks */,
+				33F1F9701DC368840021056F /* CryptoSwift.framework in Frameworks */,
+				33F1F9731DC368900021056F /* ElementsSwift.framework in Frameworks */,
+				33F1F96E1DC368840021056F /* JWT.framework in Frameworks */,
+				33F1F96C1DC368840021056F /* PromiseKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		330263FA1DC25EB3007D7317 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				33F1F9691DC368840021056F /* PromiseKit.framework */,
+				33F1F96A1DC368840021056F /* JWT.framework */,
+				33F1F96B1DC368840021056F /* CryptoSwift.framework */,
+				33F1F9721DC368900021056F /* ElementsSwift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		332B5A6C1D9ACA6A00E69AC8 = {
 			isa = PBXGroup;
 			children = (
-				330263371DC21BC3007D7317 /* Carthage.xcconfig */,
-				334E02FE1DAD3EE2005B395F /* Frameworks */,
+				330263FA1DC25EB3007D7317 /* Frameworks */,
 				332B5A771D9ACA6A00E69AC8 /* Elements macOS Example */,
 				332B5A761D9ACA6A00E69AC8 /* Products */,
 			);
@@ -124,22 +106,6 @@
 			path = "Elements macOS Example";
 			sourceTree = "<group>";
 		};
-		334E02FE1DAD3EE2005B395F /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				332B5A871D9AD02200E69AC8 /* ElementsSwift.framework */,
-				334E02F61DAD3ED8005B395F /* PMKFoundation.framework.dSYM */,
-				334E02F71DAD3ED8005B395F /* PromiseKit.framework.dSYM */,
-				334E02F81DAD3ED8005B395F /* JWT.framework.dSYM */,
-				334E02F91DAD3ED8005B395F /* CryptoSwift.framework.dSYM */,
-				334E02E91DAD3EA6005B395F /* PMKFoundation.framework */,
-				334E02EA1DAD3EA6005B395F /* PromiseKit.framework */,
-				334E02EB1DAD3EA6005B395F /* JWT.framework */,
-				334E02EC1DAD3EA6005B395F /* CryptoSwift.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -150,8 +116,7 @@
 				332B5A711D9ACA6A00E69AC8 /* Sources */,
 				332B5A721D9ACA6A00E69AC8 /* Frameworks */,
 				332B5A731D9ACA6A00E69AC8 /* Resources */,
-				332B5A8A1D9AD02200E69AC8 /* Embed Frameworks */,
-				334E02F51DAD3EBA005B395F /* CopyFiles */,
+				33F1F9621DC358AE0021056F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -169,7 +134,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0800;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0810;
 				ORGANIZATIONNAME = Pusher;
 				TargetAttributes = {
 					332B5A741D9ACA6A00E69AC8 = {
@@ -202,7 +167,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				330263381DC21BC3007D7317 /* Carthage.xcconfig in Resources */,
 				332B5A7D1D9ACA6A00E69AC8 /* Assets.xcassets in Resources */,
 				332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */,
 			);
@@ -236,7 +200,6 @@
 /* Begin XCBuildConfiguration section */
 		332B5A821D9ACA6A00E69AC8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 330263371DC21BC3007D7317 /* Carthage.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -253,6 +216,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -302,6 +266,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_SUSPICIOUS_MOVES = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;

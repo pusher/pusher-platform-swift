@@ -26,8 +26,11 @@ import PromiseKit
         let grantsForJwt = grants ?? self.grants ?? nil
         let userIdForJwt = userId ?? self.userId ?? nil
 
-        let algorithm = Algorithm.hs256(self.secret.data(using: .utf8)!)
+        // TODO: Make this work with format secret:$KEY:$SECRET
         let key = secret.components(separatedBy: ":").first
+        let secretOfSecret = secret.components(separatedBy: ":").last
+
+        let algorithm = Algorithm.hs256(secretOfSecret!.data(using: .utf8)!)
 
         let jwt = JWT.encode(algorithm) { builder in
             builder.audience = self.appId
@@ -47,6 +50,8 @@ import PromiseKit
                 builder["grants"] = self.grants!
             }
         }
+
+        print(jwt)
 
         return jwt
     }

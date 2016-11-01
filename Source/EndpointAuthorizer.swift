@@ -40,16 +40,16 @@ public class EndpointAuthorizer: Authorizer {
 
                 let dataString = String(data: data, encoding: String.Encoding.utf8)
 
-                guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+                guard let httpResponse = response as? HTTPURLResponse else {
                     // TODO: Print dataString somewhere sensible
-                    print(dataString)
+                    print("Invalid response object, data: \(dataString)")
                     reject(EndpointAuthorizerError.invalidHttpResponse)
                     return
                 }
 
                 guard 200..<300 ~= httpResponse.statusCode else {
                     // TODO: Print dataString somewhere sensible
-                    print(dataString)
+                    print("Bad status code, data: \(dataString)")
                     reject(EndpointAuthorizerError.badResponseStatusCode)
                     return
                 }
