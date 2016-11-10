@@ -34,32 +34,18 @@ import PromiseKit
         }
     }
 
-    // TODO: Remove when we're using SUBSCRIBE everywhere as HTTP method for subs
     public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) throws -> Promise<Subscription> {
         let sanitisedPath = sanitisePath(path: path)
         let namespacedPath = "/apps/\(self.appId)\(sanitisedPath)"
 
         if jwt == nil && self.authorizer != nil {
             return self.authorizer!.authorize().then { jwtFromAuthorizer in
-                return self.client.sub(path: namespacedPath, jwt: jwtFromAuthorizer, headers: headers)
+                return self.client.subscribe(path: namespacedPath, jwt: jwtFromAuthorizer, headers: headers)
             }
         } else {
-            return self.client.sub(path: namespacedPath, jwt: jwt, headers: headers)
+            return self.client.subscribe(path: namespacedPath, jwt: jwt, headers: headers)
         }
     }
-
-//    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) throws -> Promise<Subscription> {
-//        let sanitisedPath = sanitisePath(path: path)
-//        let namespacedPath = "/apps/\(self.appId)\(sanitisedPath)"
-//
-//        if jwt == nil && self.authorizer != nil {
-//            return self.authorizer!.authorize().then { jwtFromAuthorizer in
-//                return self.client.subscribe(path: namespacedPath, jwt: jwtFromAuthorizer, headers: headers)
-//            }
-//        } else {
-//            return self.client.subscribe(path: namespacedPath, jwt: jwt, headers: headers)
-//        }
-//    }
 
     // TODO: put this somewhere sensible
     internal func sanitisePath(path: String) -> String {

@@ -21,6 +21,8 @@ public class EndpointAuthorizer: Authorizer {
         return Promise { fulfill, reject in
             var request = URLRequest(url: URL(string: url)!)
             request.httpMethod = "POST"
+
+            // TODO: Why is this an empty string?
             request.httpBody = "".data(using: String.Encoding.utf8)
 
             if requestMutator != nil {

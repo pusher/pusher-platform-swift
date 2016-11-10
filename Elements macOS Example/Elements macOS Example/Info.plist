@@ -30,9 +30,8 @@
 	<string>NSApplication</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-	  <!--Include to allow all connections (DANGER)-->
-	  <key>NSAllowsArbitraryLoads</key>
-      <true/>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 	</dict>
 </dict>
 </plist>
