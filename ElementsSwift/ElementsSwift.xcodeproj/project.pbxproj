@@ -18,7 +18,6 @@
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33935EB41DA5523C00C5C064 /* LiveListsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* LiveListsHelper.swift */; };
 		33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB51DA5526F00C5C064 /* ServiceHelper.swift */; };
-		33935EB81DA6A9E600C5C064 /* Logfmt.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB71DA6A9E600C5C064 /* Logfmt.swift */; };
 		33BA96391DA513DF00BE93A3 /* ElementsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BA96381DA513DF00BE93A3 /* ElementsApp.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
@@ -53,7 +52,6 @@
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
 		33935EB31DA5523C00C5C064 /* LiveListsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveListsHelper.swift; sourceTree = "<group>"; };
 		33935EB51DA5526F00C5C064 /* ServiceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceHelper.swift; sourceTree = "<group>"; };
-		33935EB71DA6A9E600C5C064 /* Logfmt.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logfmt.swift; sourceTree = "<group>"; };
 		33BA96381DA513DF00BE93A3 /* ElementsApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementsApp.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Carthage.xcconfig; sourceTree = "<group>"; };
@@ -109,7 +107,6 @@
 				33935EAD1DA53A8300C5C064 /* Token.swift */,
 				33935EB51DA5526F00C5C064 /* ServiceHelper.swift */,
 				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
-				33935EB71DA6A9E600C5C064 /* Logfmt.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* ElementsSwift.h */,
 			);
@@ -290,7 +287,6 @@
 				33935EB41DA5523C00C5C064 /* LiveListsHelper.swift in Sources */,
 				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */,
-				33935EB81DA6A9E600C5C064 /* Logfmt.swift in Sources */,
 				33935EAE1DA53A8300C5C064 /* Token.swift in Sources */,
 				33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */,
 			);
