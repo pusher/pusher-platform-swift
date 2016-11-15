@@ -52,7 +52,7 @@ $ pod install
 If you find that you're not having the most recent version installed when you run `pod install` then try running:
 
 ```bash
-$ pod cache clean
+$ pod cache clean --all
 $ pod repo update ElementsSwift
 $ pod install
 ```
