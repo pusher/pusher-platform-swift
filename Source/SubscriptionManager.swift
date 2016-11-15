@@ -9,7 +9,6 @@
 import Foundation
 import PromiseKit
 
-// TODO: Think about all of this - it feels a bit mad
 @objc public class SubscriptionManager: NSObject {
     public var subscriptions: [Int: (subscription: Subscription, resolvers: Resolvers)] = [:]
 
@@ -32,7 +31,7 @@ import PromiseKit
         if 200..<300 ~= httpResponse.statusCode {
             subTuple.resolvers.promiseFulfiller(subTuple.subscription)
         } else {
-            subTuple.resolvers.promiseRejector(RequestError.invalidHttpResponse)
+            subTuple.resolvers.promiseRejector(RequestError.invalidHttpResponse(data: nil))
         }
     }
 }

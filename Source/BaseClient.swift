@@ -20,7 +20,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public let subscriptionUrlSession: Foundation.URLSession
     public let subscriptionManager: SubscriptionManager
 
-    // TODO: Should this be able to throw?
     public init(jwt: String? = nil, cluster: String? = nil, port: Int? = nil) throws {
         self.jwt = jwt
 
@@ -36,8 +35,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         guard let url = urlComponents.url else {
-            // TODO: sort out proper error logging / handling (reason: "Invalid Url constructed from comonents: \(cluster), \(port)")
-            throw BaseClientError.invalidBaseUrl
+            throw BaseClientError.invalidBaseUrl(components: urlComponents)
         }
 
         self.baseUrl = url
@@ -106,18 +104,17 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
                 let dataString = String(data: data, encoding: String.Encoding.utf8)
 
-                // TODO: Why are we checking for status code stuff here as well?
-                guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+                guard let httpResponse = response as? HTTPURLResponse else {
                     // TODO: Print dataString somewhere sensible
                     print(dataString!)
-                    reject(RequestError.invalidHttpResponse)
+                    reject(RequestError.invalidHttpResponse(data: data))
                     return
                 }
 
                 guard 200..<300 ~= httpResponse.statusCode else {
                     // TODO: Print dataString somewhere sensible
                     print(dataString!)
-                    reject(RequestError.badResponseStatusCode)
+                    reject(RequestError.badResponseStatusCode(response: httpResponse, data: data))
                     return
                 }
 
@@ -143,16 +140,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
             }
         }
 
-        // TODO: Check that the ordering of things makes sense here - e.g. do we want to resume before or after
-        // creating the subscription in the connection manager? when do we create the promise?
-
         let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
         let taskIdentifier = task.taskIdentifier
-        let subscription = Subscription(path: path, taskIdentifier: taskIdentifier)
 
         return Promise<Subscription> { fulfill, reject in
-            // TODO: Check that there doesn't exist any subscription with same taskIdentifier
+            guard self.subscriptionManager.subscriptions[taskIdentifier] == nil else {
+                reject(BaseClientError.preExistingTaskIdentifierForSubscription)
+                return
+            }
 
+            let subscription = Subscription(path: path, taskIdentifier: taskIdentifier)
             self.subscriptionManager.subscriptions[taskIdentifier] = (subscription, Resolvers(promiseFulfiller: fulfill, promiseRejector: reject))
             task.resume()
         }
@@ -190,8 +187,7 @@ public class SubscriptionSessionDelegate: SessionDelegate, URLSessionDataDelegat
 @objc public class SessionDelegate: NSObject, URLSessionDelegate {
 
     // TODO: Remove this when all TLS stuff is sorted out properly
-    // TODO: Check what's going on with the @objc thing here
-    @objc(URLSession:didReceiveChallenge:completionHandler:) public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         guard challenge.previousFailureCount == 0 else {
             challenge.sender?.cancel(challenge)
             completionHandler(.cancelAuthenticationChallenge, nil)
@@ -204,12 +200,13 @@ public class SubscriptionSessionDelegate: SessionDelegate, URLSessionDataDelegat
 }
 
 public enum BaseClientError: Error {
-    case invalidBaseUrl
+    case invalidBaseUrl(components: URLComponents)
+    case preExistingTaskIdentifierForSubscription
 }
 
 public enum RequestError: Error {
-    case badResponseStatusCode
-    case invalidHttpResponse
+    case badResponseStatusCode(response: HTTPURLResponse, data: Data)
+    case invalidHttpResponse(data: Data?)
     case noDataPresent
 }
 

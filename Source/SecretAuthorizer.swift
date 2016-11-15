@@ -22,7 +22,7 @@ import PromiseKit
         let secretPrefix = secretComponents.first
 
         guard secretComponents.count == 3, secretPrefix != nil, secretPrefix! == "secret" else {
-            throw SecretAuthorizerError.invalidSecret
+            throw SecretAuthorizerError.invalidSecret(secret)
         }
 
         self.secret = secretComponents.last!
@@ -57,9 +57,6 @@ import PromiseKit
             }
         }
 
-        // TODO: remove this
-        print(jwt)
-
         return jwt
     }
 
@@ -71,5 +68,5 @@ import PromiseKit
 }
 
 public enum SecretAuthorizerError: Error {
-    case invalidSecret
+    case invalidSecret(String)
 }

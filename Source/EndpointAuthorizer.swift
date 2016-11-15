@@ -45,14 +45,14 @@ public class EndpointAuthorizer: Authorizer {
                 guard let httpResponse = response as? HTTPURLResponse else {
                     // TODO: Print dataString somewhere sensible
                     print("Invalid response object, data: \(dataString)")
-                    reject(EndpointAuthorizerError.invalidHttpResponse)
+                    reject(EndpointAuthorizerError.invalidHttpResponse(data: data))
                     return
                 }
 
                 guard 200..<300 ~= httpResponse.statusCode else {
                     // TODO: Print dataString somewhere sensible
                     print("Bad status code, data: \(dataString)")
-                    reject(EndpointAuthorizerError.badResponseStatusCode)
+                    reject(EndpointAuthorizerError.badResponseStatusCode(response: httpResponse, data: data))
                     return
                 }
 
@@ -75,8 +75,8 @@ public class EndpointAuthorizer: Authorizer {
 
 public enum EndpointAuthorizerError: Error {
     case unableToDeserializeJsonResponse
-    case badResponseStatusCode
-    case invalidHttpResponse
+    case badResponseStatusCode(response: HTTPURLResponse, data: Data)
+    case invalidHttpResponse(data: Data)
     case noDataPresent
     case jwtKeyNotPresentInResponse
 }
