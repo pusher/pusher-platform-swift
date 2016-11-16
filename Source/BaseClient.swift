@@ -178,18 +178,13 @@ public class SubscriptionSessionDelegate: SessionDelegate, URLSessionDataDelegat
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        // TODO: probably need to make things clearer if no subscription is found that matches the taskIdentifier of the dataTask
-        let message : Message = try! parseMessage(data: data);
-        print("Received message: \(message)");
-        let sub : Subscription? = self.subscriptionManager.subscriptions[dataTask.taskIdentifier]?.subscription;
-        switch message {
-        case Message.keepAlive(let junk):
-            // Should we do anything here?
-            break;
-        case Message.event(let eventId, let headers, let body):
-            sub?.onEvent?(eventId, headers, body);
-        case Message.eos(let statusCode, let headers, let info):
-            sub?.onEnd?(statusCode, headers, info);
+        do {
+            let message = try MessageParser.parse(data: data)
+            self.subscriptionManager.handle(message: message, taskIdentifier: dataTask.taskIdentifier)
+        } catch let error as MessageParseError {
+            print(error.localizedDescription)
+        } catch {
+            print("Unable to parse message received over subscription")
         }
     }
 
@@ -229,87 +224,4 @@ public enum HttpMethod: String {
     case OPTIONS
     case PATCH
     case HEAD
-}
-
-
-enum Message {
-    case keepAlive(junk : String);
-    case event(eventId : String, headers : [String : String], body : Any);
-    case eos(statusCode : Int, headers : [String : String], info : Any);
-}
-
-enum MessageParseError : Error {
-    case emptyJsonArray;
-    case jsonArrayWrongLengthForMessageType(MessageType, Int);
-    case unknownMessageTypeCode(Int);
-    case unknownError;
-}
-
-enum MessageType {
-    case KEEP_ALIVE;
-    case EVENT;
-    case EOS;
-}
-
-func parseMessageTypeCode(messageTypeCode : Int) throws -> MessageType {
-    switch messageTypeCode {
-    case 0: return MessageType.KEEP_ALIVE;
-    case 1: return MessageType.EVENT;
-    case 255: return MessageType.EOS;
-    default: throw MessageParseError.unknownMessageTypeCode(messageTypeCode);
-    }
-}
-
-// Parse errors are truly unexpected here - we trust the server to give us good data
-func parseMessage(data: Data) throws -> Message {
-    let jsonVal : Any = try! JSONSerialization.jsonObject(with: data);
-    let jsonArray : NSArray = jsonVal as! NSArray;
-
-    if jsonArray.count == 0 {
-        throw MessageParseError.emptyJsonArray;
-    }
-
-    let messageTypeVal : Any = jsonArray[0];
-    let messageTypeCodeNSNumber : NSNumber = messageTypeVal as! NSNumber;
-    let messageTypeCode : Int = messageTypeCodeNSNumber as Int;
-    let messageType = try! parseMessageTypeCode(messageTypeCode: messageTypeCode);
-
-    if jsonArray.count != [MessageType.KEEP_ALIVE: 2, MessageType.EVENT: 4, MessageType.EOS: 4][messageType] {
-        throw MessageParseError.jsonArrayWrongLengthForMessageType(messageType, jsonArray.count);
-    }
-
-    switch messageType {
-    case MessageType.KEEP_ALIVE:
-        let junkVal : Any = jsonArray[1];
-        let junkNSString : NSString = junkVal as! NSString;
-        let junk : String = junkNSString as String;
-        return Message.keepAlive(junk: junk);
-
-    case MessageType.EVENT:
-        let eventIdVal = jsonArray[1];
-        let eventIdNSString : NSString = eventIdVal as! NSString;
-        let eventId : String = eventIdNSString as String;
-
-        let headersVal = jsonArray[2];
-        let headersNSDictionary : NSDictionary = headersVal as! NSDictionary;
-        let headers : [String: String] = headersNSDictionary as! [String : String];
-
-        let body = jsonArray[3];
-
-        return Message.event(eventId: eventId, headers: headers, body: body);
-
-
-    case MessageType.EOS:
-        let statusCodeVal = jsonArray[1];
-        let statusCodeNSNumber : NSNumber = statusCodeVal as! NSNumber;
-        let statusCode : Int = statusCodeNSNumber as Int;
-
-        let headersVal = jsonArray[2];
-        let headersNSDictionary : NSDictionary = headersVal as! NSDictionary;
-        let headers : [String: String] = headersNSDictionary as! [String : String];
-
-        let info = jsonArray[3];
-
-        return Message.eos(statusCode: statusCode, headers: headers, info: info);
-    }
 }

@@ -13,8 +13,8 @@ import Foundation
     public let taskIdentifier: Int
 
     public var onOpen: (() -> Void)? = nil
-    public var onEnd: ((Int, [String : String], Any) -> Void)? = nil
-    public var onEvent: ((String, [String : String], Any) -> Void)? = nil
+    public var onEnd: ((Int, [String: String], Any) -> Void)? = nil
+    public var onEvent: ((String, [String: String], Any) -> Void)? = nil
 
     public init(path: String, taskIdentifier: Int) {
         self.path = path

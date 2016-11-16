@@ -10,6 +10,8 @@
 		3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */; };
 		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
 		3329F40D1DC0B530007B29FF /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */; };
+		332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* MessageParser.swift */; };
+		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
 		335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
 		33935EAA1DA539AD00C5C064 /* SecretAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */; };
@@ -40,6 +42,8 @@
 		3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTokenAuthorizer.swift; sourceTree = "<group>"; };
 		3329F40A1DC0B4C0007B29FF /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
+		332E05E51DDCA3DB007A55FB /* MessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
+		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		337C9EE01C38B708006CC757 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		33831C891A9CF61600B124F1 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831C8D1A9CF61600B124F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -103,10 +107,12 @@
 				33BA96381DA513DF00BE93A3 /* ElementsApp.swift */,
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
 				3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */,
+				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
+				332E05E51DDCA3DB007A55FB /* MessageParser.swift */,
+				332E05E71DDCA919007A55FB /* Message.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
 				33935EAD1DA53A8300C5C064 /* Token.swift */,
 				33935EB51DA5526F00C5C064 /* ServiceHelper.swift */,
-				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* ElementsSwift.h */,
 			);
@@ -286,6 +292,8 @@
 				33BA96391DA513DF00BE93A3 /* ElementsApp.swift in Sources */,
 				33935EB41DA5523C00C5C064 /* LiveListsHelper.swift in Sources */,
 				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
+				332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */,
+				332E05E81DDCA919007A55FB /* Message.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */,
 				33935EAE1DA53A8300C5C064 /* Token.swift in Sources */,
 				33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */,
