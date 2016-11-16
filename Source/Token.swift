@@ -6,6 +6,7 @@
 //
 //
 
+// TODO: Don't think we need this as we always work with JWTs as Strings
 @objc public class Token: NSObject {
     public var appId: String
     public var key: String
