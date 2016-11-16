@@ -18,7 +18,7 @@
 		33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */; };
 		33935EAE1DA53A8300C5C064 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAD1DA53A8300C5C064 /* Token.swift */; };
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
-		33935EB41DA5523C00C5C064 /* LiveListsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* LiveListsHelper.swift */; };
+		33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* FeedsHelper.swift */; };
 		33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB51DA5526F00C5C064 /* ServiceHelper.swift */; };
 		33BA96391DA513DF00BE93A3 /* ElementsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33BA96381DA513DF00BE93A3 /* ElementsApp.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -54,7 +54,7 @@
 		33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAD1DA53A8300C5C064 /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
-		33935EB31DA5523C00C5C064 /* LiveListsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LiveListsHelper.swift; sourceTree = "<group>"; };
+		33935EB31DA5523C00C5C064 /* FeedsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsHelper.swift; sourceTree = "<group>"; };
 		33935EB51DA5526F00C5C064 /* ServiceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceHelper.swift; sourceTree = "<group>"; };
 		33BA96381DA513DF00BE93A3 /* ElementsApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ElementsApp.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
@@ -106,12 +106,12 @@
 				33935EB11DA54F8700C5C064 /* Service Helpers */,
 				33BA96381DA513DF00BE93A3 /* ElementsApp.swift */,
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
+				33935EAD1DA53A8300C5C064 /* Token.swift */,
 				3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */,
 				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
 				332E05E51DDCA3DB007A55FB /* MessageParser.swift */,
 				332E05E71DDCA919007A55FB /* Message.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
-				33935EAD1DA53A8300C5C064 /* Token.swift */,
 				33935EB51DA5526F00C5C064 /* ServiceHelper.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* ElementsSwift.h */,
@@ -131,7 +131,7 @@
 		33935EB11DA54F8700C5C064 /* Service Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				33935EB31DA5523C00C5C064 /* LiveListsHelper.swift */,
+				33935EB31DA5523C00C5C064 /* FeedsHelper.swift */,
 			);
 			name = "Service Helpers";
 			sourceTree = "<group>";
@@ -290,7 +290,7 @@
 				3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
 				33BA96391DA513DF00BE93A3 /* ElementsApp.swift in Sources */,
-				33935EB41DA5523C00C5C064 /* LiveListsHelper.swift in Sources */,
+				33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */,
 				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */,
 				332E05E81DDCA919007A55FB /* Message.swift in Sources */,
