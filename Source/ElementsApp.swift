@@ -46,6 +46,17 @@ import PromiseKit
             return self.client.subscribe(path: namespacedPath, jwt: jwt, headers: headers)
         }
     }
+    
+    /**
+        Create a new instance of User Notifications
+     
+        - parameter userId: The user we want the notification for
+        
+        - returns:  New instance of the User Notifications
+     */
+    public func userNotifications(userId: String) -> UserNotificationsHelper {
+        return UserNotificationsHelper(app: self, notificationName: userId)
+    }
 
     // TODO: put this somewhere sensible
     internal func sanitisePath(path: String) -> String {

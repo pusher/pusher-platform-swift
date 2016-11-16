@@ -10,34 +10,121 @@ import Cocoa
 import ElementsSwift
 import PromiseKit
 
+class ClickHandler {
+    var handler : () -> ();
+
+    init(handler: @escaping () -> ()) {
+        self.handler = handler;
+    }
+
+    @objc public func buttonClick() {
+        self.handler();
+    }
+}
+
 class ViewController: NSViewController {
-    var elements: ElementsApp!
+    
+    @IBOutlet weak var stackView: NSStackView!
+    
+    @IBOutlet weak var topLabel: NSTextField!
+    
+    @IBAction func subscribeButton(_ sender: Any) {
+        onSubscribe()
+    }
+    
+    @IBAction func unsubscribeButton(_ sender: Any) {
+        onUnsubscribe()
+    }
+    
+    @IBAction func registerButton(_ sender: Any) {
+        onRegister()
+    }
+    @IBAction func unregisterButton(_ sender: Any) {
+        onUnRegister();
+    }
+    
+//    var elementsApp: ElementsApp!
+
+    var handlers: [ClickHandler] = []
+    
+//    var zanNotifications: UserNotificationsHelper?
+    
+    var delegate: AppDelegate!
 
     override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let authorizer = try! SecretAuthorizer(appId: "2", secret: "secret:YOUR_KEY:YOUR_SECRET", grants: nil)
-        elements = try! ElementsApp(appId: "2", cluster: "beta.buildelements.com", authorizer: authorizer)
-
-        // localhost example
-//        elements = try! ElementsApp(appId: "2", cluster: "localhost", authorizer: authorizer, client: BaseClient(cluster: "localhost", port: 10443))
-
-        try! elements.subscribe(path: "/lists/testlist").then { sub -> () in
-            print("1st promise resolved")
-            sub.onEvent = { (eventId: String, headers: [String: String], body: Any) in
-                print(eventId)
-                print(headers)
-                print(body)
-            }
-        }.then { () -> Promise<Data> in
-            return self.elements.request(method: "APPEND", path: "lists/testlist", jwt: nil, headers: nil, body: "testing from swift".data(using: .utf8))
-        }.then { body in
-            print("Body in response to append: \(String(data: body, encoding: .utf8)!)")
+        super.viewDidLoad();
+        delegate = NSApplication.shared().delegate as! AppDelegate
+    }
+    
+    func onSubscribe(){
+        guard delegate.notificationsHelper?.isSubscribed() == false else {
+            print("I am already subscribed!")
+            return
         }
+        
+        delegate.notificationsHelper?.subscribe(
+            notificationHandler: myNotificationHandler,
+            receiptHandler: { (notificationId: String) -> () in
+                print("I was informed that user notification was read: \(notificationId.debugDescription)")
+        })
+        print("Subscribed for in-app notifications!")
+        topLabel.stringValue = "Subscribed to in-app notifications"
+    }
+    
+    func onUnsubscribe(){
+        guard delegate.notificationsHelper?.isSubscribed() == true else {
+            print("I am not subscribed. Go away")
+            return
+        }
+        
+        delegate.notificationsHelper?.unsubscribe()
+        print("Unsubscribing from in-app notifications")
+        topLabel.stringValue = "Unsubscribed from in-app notifications"
+    }
+    
+    func myNotificationHandler(notificationId: String, body: Any) {
+        
+        let sv = NSStackView(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
+        sv.userInterfaceLayoutDirection = NSUserInterfaceLayoutDirection.leftToRight
+        
+        let newLabel = NSTextField(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
+        newLabel.isEditable = false;
+        newLabel.stringValue = notificationId.debugDescription + ": " + "\(body)"
+        
+        sv.addView(newLabel, in: NSStackViewGravity.leading)
+        
+        let button = NSButton(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
+        
+        let handler = ClickHandler(handler: {
+            self.delegate.notificationsHelper?.acknowledge(notificationId: notificationId)
+            button.title = "Acknowledged!"
+        });
+        self.handlers.append(handler)  // DISGRACE: keep strong reference
+        
+        button.title = "Acknowledge"
+        button.target = handler  // DISGRACE: button.target is a weak reference
+        button.action = #selector(handler.buttonClick)
+        
+        
+        sv.addView(button, in: NSStackViewGravity.leading)
+        
+        DispatchQueue.main.async {
+            self.stackView.addView(sv, in: NSStackViewGravity.top)
+        }
+        
+        print("Received user notification: " + notificationId.debugDescription)
+    }
+    
+    func onRegister(){
+//        delegate.notificationsHelper!.register(deviceToken: delegate.notificationsHelper!.deviceToken!)
+        print("onRegister")
+    }
+    
+    func onUnRegister(){
+        print("onUnregister")
     }
 
     override var representedObject: Any? {
         didSet {}
     }
-
 }
