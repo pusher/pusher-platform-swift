@@ -24,9 +24,10 @@ class ViewController: NSViewController {
 
         try! elements.subscribe(path: "/lists/testlist").then { sub -> () in
             print("1st promise resolved")
-            sub.onEvent = { data in
-                let dataString = String(data: data, encoding: .utf8)
-                print("Received this: \(dataString!)")
+            sub.onEvent = { (eventId: String, headers: [String: String], body: Any) in
+                print(eventId)
+                print(headers)
+                print(body)
             }
         }.then { () -> Promise<Data> in
             return self.elements.request(method: "APPEND", path: "lists/testlist", jwt: nil, headers: nil, body: "testing from swift".data(using: .utf8))
