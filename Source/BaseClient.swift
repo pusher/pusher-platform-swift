@@ -102,10 +102,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
                     return
                 }
 
-                let dataString = String(data: data, encoding: String.Encoding.utf8)
-
                 guard let httpResponse = response as? HTTPURLResponse else {
                     // TODO: Print dataString somewhere sensible
+                    let dataString = String(data: data, encoding: String.Encoding.utf8)
                     print(dataString!)
                     reject(RequestError.invalidHttpResponse(data: data))
                     return
@@ -113,6 +112,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
                 guard 200..<300 ~= httpResponse.statusCode else {
                     // TODO: Print dataString somewhere sensible
+                    let dataString = String(data: data, encoding: String.Encoding.utf8)
                     print(dataString!)
                     reject(RequestError.badResponseStatusCode(response: httpResponse, data: data))
                     return
