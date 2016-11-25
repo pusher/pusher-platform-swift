@@ -7,5 +7,5 @@
 //
 
 @objc public protocol ServiceHelper: class {
-    var app: ElementsApp { get set }
+    var app: ElementsApp? { get set }
 }
