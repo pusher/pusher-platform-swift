@@ -39,6 +39,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D6524571DE5F3B300590938 /* Elements macOS Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Elements macOS Example.entitlements"; sourceTree = "<group>"; };
 		332B5A751D9ACA6A00E69AC8 /* Elements macOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements macOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		332B5A781D9ACA6A00E69AC8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -97,6 +98,7 @@
 		332B5A771D9ACA6A00E69AC8 /* Elements macOS Example */ = {
 			isa = PBXGroup;
 			children = (
+				2D6524571DE5F3B300590938 /* Elements macOS Example.entitlements */,
 				332B5A781D9ACA6A00E69AC8 /* AppDelegate.swift */,
 				332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */,
 				332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */,
@@ -141,6 +143,20 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = H7FL434D9W;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.Mac = {
+								enabled = 0;
+							};
+							com.apple.GameCenter = {
+								enabled = 0;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -294,6 +310,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Elements macOS Example/Elements macOS Example.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = H7FL434D9W;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -312,6 +330,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Elements macOS Example/Elements macOS Example.entitlements";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = H7FL434D9W;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -336,7 +356,7 @@
 				332B5A831D9ACA6A00E69AC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		332B5A841D9ACA6A00E69AC8 /* Build configuration list for PBXNativeTarget "Elements macOS Example" */ = {
 			isa = XCConfigurationList;
@@ -345,7 +365,7 @@
 				332B5A861D9ACA6A00E69AC8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

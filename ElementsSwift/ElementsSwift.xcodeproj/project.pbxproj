@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D004EA31DE33E89008CE815 /* UserNotificationsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D004EA21DE33E89008CE815 /* UserNotificationsHelper.swift */; };
+		2D7F574C1DE46368009FA998 /* UserNotifications.md in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F574B1DE46368009FA998 /* UserNotifications.md */; };
 		3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */; };
 		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
 		3329F40D1DC0B530007B29FF /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */; };
@@ -35,6 +37,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2D004EA01DE30737008CE815 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = "../Elements macOS Example/PromiseKit.framework"; sourceTree = "<group>"; };
+		2D004EA21DE33E89008CE815 /* UserNotificationsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationsHelper.swift; sourceTree = "<group>"; };
+		2D7F574B1DE46368009FA998 /* UserNotifications.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = UserNotifications.md; path = ../UserNotifications.md; sourceTree = "<group>"; };
 		3302636C1DC24658007D7317 /* PromiseKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = PromiseKit.framework.dSYM; path = ../Carthage/Build/Mac/PromiseKit.framework.dSYM; sourceTree = "<group>"; };
 		3302636E1DC24681007D7317 /* PMKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PMKFoundation.framework; path = ../Carthage/Build/Mac/PMKFoundation.framework; sourceTree = "<group>"; };
 		3302636F1DC24681007D7317 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = ../Carthage/Build/Mac/PromiseKit.framework; sourceTree = "<group>"; };
@@ -82,6 +87,7 @@
 		33831C491A9CEDF800B124F1 = {
 			isa = PBXGroup;
 			children = (
+				2D7F574B1DE46368009FA998 /* UserNotifications.md */,
 				33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */,
 				33831C8B1A9CF61600B124F1 /* Source */,
 				33BB995C1D21225B00B25C2A /* Tests */,
@@ -132,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				33935EB31DA5523C00C5C064 /* FeedsHelper.swift */,
+				2D004EA21DE33E89008CE815 /* UserNotificationsHelper.swift */,
 			);
 			name = "Service Helpers";
 			sourceTree = "<group>";
@@ -157,6 +164,7 @@
 		42D29A655054030A9B238900 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2D004EA01DE30737008CE815 /* PromiseKit.framework */,
 				3302636E1DC24681007D7317 /* PMKFoundation.framework */,
 				3302636F1DC24681007D7317 /* PromiseKit.framework */,
 				330263701DC24681007D7317 /* PMKFoundation.framework.dSYM */,
@@ -236,6 +244,7 @@
 				TargetAttributes = {
 					33831C881A9CF61600B124F1 = {
 						CreatedOnToolsVersion = 6.3;
+						DevelopmentTeam = H7FL434D9W;
 						LastSwiftMigration = 0800;
 					};
 					33831C931A9CF61600B124F1 = {
@@ -293,8 +302,10 @@
 				33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */,
 				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */,
+				2D004EA31DE33E89008CE815 /* UserNotificationsHelper.swift in Sources */,
 				332E05E81DDCA919007A55FB /* Message.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */,
+				2D7F574C1DE46368009FA998 /* UserNotifications.md in Sources */,
 				33935EAE1DA53A8300C5C064 /* Token.swift in Sources */,
 				33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */,
 			);
@@ -406,11 +417,12 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = H7FL434D9W;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
