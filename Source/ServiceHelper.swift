@@ -14,7 +14,4 @@ public enum ServiceHelperError: Error {
     case noAppObject
     case invalidJSONObjectAsData(Any)
     case failedToJSONSerializeData(Any)
-
-    // TODO: don't think this one is being used
-    case failedToStringifyJSONData(Data)
 }
