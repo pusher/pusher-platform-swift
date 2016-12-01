@@ -21,30 +21,52 @@ import PromiseKit
         try self.client = client ?? BaseClient(cluster: cluster)
     }
 
-    public func request(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
-        let sanitisedPath = sanitisePath(path: path)
-        let namespacedPath = "/apps/\(self.appId)\(sanitisedPath)"
+    public func request(method: String, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
+        let sanitisedPath = sanitise(path: path)
+        let namespacedPath = namespace(path: sanitisedPath, appId: self.appId)
 
         if jwt == nil && self.authorizer != nil {
             return self.authorizer!.authorize().then { jwtFromAuthorizer in
-                return self.client.request(method: method, path: namespacedPath, jwt: jwtFromAuthorizer, headers: headers, body: body)
+                return self.client.request(method: method, path: namespacedPath, queryItems: queryItems, jwt: jwtFromAuthorizer, headers: headers, body: body)
             }
         } else {
-            return self.client.request(method: method, path: namespacedPath, jwt: jwt, headers: headers, body: body)
+            return self.client.request(method: method, path: namespacedPath, queryItems: queryItems, jwt: jwt, headers: headers, body: body)
         }
     }
 
-    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) throws -> Promise<Subscription> {
-        let sanitisedPath = sanitisePath(path: path)
-        let namespacedPath = "/apps/\(self.appId)\(sanitisedPath)"
+    public func subscribe(
+        path: String,
+        queryItems: [URLQueryItem]? = nil,
+        jwt: String? = nil,
+        headers: [String: String]? = nil,
+        onOpen: (() -> Void)? = nil,
+        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil) throws -> Promise<Subscription> {
+            let sanitisedPath = sanitise(path: path)
+            let namespacedPath = namespace(path: sanitisedPath, appId: self.appId)
 
-        if jwt == nil && self.authorizer != nil {
-            return self.authorizer!.authorize().then { jwtFromAuthorizer in
-                return self.client.subscribe(path: namespacedPath, jwt: jwtFromAuthorizer, headers: headers)
+            if jwt == nil && self.authorizer != nil {
+                return self.authorizer!.authorize().then { jwtFromAuthorizer in
+                    return self.client.subscribe(
+                        path: namespacedPath,
+                        queryItems: queryItems,
+                        jwt: jwtFromAuthorizer,
+                        headers: headers,
+                        onOpen: onOpen,
+                        onEvent: onEvent,
+                        onEnd: onEnd
+                    )
+                }
+            } else {
+                return self.client.subscribe(
+                    path: namespacedPath,
+                    jwt: jwt,
+                    headers: headers,
+                    onOpen: onOpen,
+                    onEvent: onEvent,
+                    onEnd: onEnd
+                )
             }
-        } else {
-            return self.client.subscribe(path: namespacedPath, jwt: jwt, headers: headers)
-        }
     }
     
     /**
@@ -58,8 +80,52 @@ import PromiseKit
         return UserNotificationsHelper(app: self, notificationName: userId)
     }
 
-    // TODO: put this somewhere sensible
-    internal func sanitisePath(path: String) -> String {
+    public func subscribeWithResume(
+        path: String,
+        queryItems: [URLQueryItem]? = nil,
+        jwt: String? = nil,
+        headers: [String: String]? = nil,
+        onOpen: (() -> Void)? = nil,
+        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
+            let sanitisedPath = sanitise(path: path)
+            let namespacedPath = namespace(path: sanitisedPath, appId: self.appId)
+
+            if jwt == nil && self.authorizer != nil {
+                return self.authorizer!.authorize().then { jwtFromAuthorizer in
+                    return self.client.subscribeWithResume(
+                        app: self,
+                        path: namespacedPath,
+                        queryItems: queryItems,
+                        jwt: jwtFromAuthorizer,
+                        headers: headers,
+                        onOpen: onOpen,
+                        onEvent: onEvent,
+                        onEnd: onEnd,
+                        onStateChange: onStateChange
+                    )
+                }
+            } else {
+                return self.client.subscribeWithResume(
+                    app: self,
+                    path: namespacedPath,
+                    queryItems: queryItems,
+                    jwt: jwt,
+                    headers: headers,
+                    onOpen: onOpen,
+                    onEvent: onEvent,
+                    onEnd: onEnd,
+                    onStateChange: onStateChange
+                )
+            }
+    }
+
+    public func unsubscribe(taskIdentifier: Int) {
+        self.client.unsubscribe(taskIdentifier: taskIdentifier)
+    }
+
+    internal func sanitise(path: String) -> String {
         var sanitisedPath = ""
 
         for (_, char) in path.characters.enumerated() {
@@ -84,6 +150,18 @@ import PromiseKit
         }
         
         return sanitisedPath
+    }
+
+    // Only prefix with /apps/APP_ID if /apps/ isn't at the start of the path
+    internal func namespace(path: String, appId: String) -> String {
+        let endIndex = path.index(path.startIndex, offsetBy: 6)
+
+        if path.substring(to: endIndex) == "/apps/" {
+            return path
+        } else {
+            let namespacedPath = "/apps/\(self.appId)\(path)"
+            return namespacedPath
+        }
     }
 }
 

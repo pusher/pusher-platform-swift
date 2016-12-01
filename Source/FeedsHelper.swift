@@ -9,32 +9,95 @@
 import PromiseKit
 
 @objc public class FeedsHelper: NSObject, ServiceHelper {
-    // TODO: should this be here?
+    // TODO: should this be here? make it part of the service helper protocol?
     static internal let namespace = "feeds"
 
     public weak var app: ElementsApp? = nil
     public let feedName: String
+
+    // TODO: how does this work with ResumableSubscription - how do we pass the new 
+    // task id to the FeedsHelper when a new underlying Subscription is created?
+    public var subscriptionTaskId: Int? = nil
 
     public init(feedName: String, app: ElementsApp) {
         self.feedName = feedName
         self.app = app
     }
 
-    public func subscribe(lastEventId: String? = nil) throws -> Promise<Subscription> {
+    public func unsubscribe() throws {
         guard self.app != nil else {
-            // TODO: this is wrong - just did it to make it compile
             throw ServiceHelperError.noAppObject
         }
 
-        // TODO: tidy up
-        let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
-        var headers: [String: String]? = nil
-
-        if lastEventId != nil {
-            headers = ["Last-Event-ID": lastEventId!]
+        guard self.subscriptionTaskId != nil else {
+            throw FeedsHelperError.noSubscriptionTaskIdentifier
         }
 
-        return try! self.app!.subscribe(path: path, jwt: nil, headers: headers)
+        self.app!.unsubscribe(taskIdentifier: subscriptionTaskId!)
+    }
+
+    public func subscribeWithResume(
+        onOpen: (() -> Void)? = nil,
+        onAppend: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        lastEventId: String? = nil) throws -> Promise<ResumableSubscription> {
+            guard self.app != nil else {
+                throw ServiceHelperError.noAppObject
+            }
+
+            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+
+            var headers: [String: String]? = nil
+
+            if lastEventId != nil {
+                headers = ["Last-Event-ID": lastEventId!]
+            }
+
+            return try! self.app!.subscribeWithResume(
+                path: path,
+                jwt: nil,
+                headers: headers,
+                onOpen: onOpen,
+                onEvent: onAppend,
+                onEnd: onEnd,
+                onStateChange: onStateChange
+            )
+    }
+
+    public func subscribe(
+        onOpen: (() -> Void)? = nil,
+        onAppend: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+        lastEventId: String? = nil) throws -> Promise<Subscription> {
+            guard self.app != nil else {
+                // TODO: not sure if the noAppObject error should live on the servicehelpererror enum
+                throw ServiceHelperError.noAppObject
+            }
+
+            // TODO: tidy up
+            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+            var headers: [String: String]? = nil
+
+            // TODO: Check that this header is how the lastEventId gets sent
+            if lastEventId != nil {
+                headers = ["Last-Event-ID": lastEventId!]
+            }
+
+            return try! self.app!.subscribe(
+                path: path,
+                jwt: nil,
+                headers: headers,
+                onOpen: onOpen,
+                onEvent: onAppend,
+                onEnd: onEnd
+            ).then { sub -> Promise<Subscription> in
+                // TODO: there must be a better way that re-wrapping the subscription in a Promise, surely!
+                self.subscriptionTaskId = sub.taskIdentifier
+                return Promise<Subscription> { fulfill, reject in
+                    fulfill(sub)
+                }
+            }
     }
 
     public func get(from: String, limit: Int = 50) throws -> Promise<FeedsItemsReponse> {
@@ -44,21 +107,26 @@ import PromiseKit
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-        return self.app!.request(method: "GET", path: path).then { data -> Promise<FeedsItemsReponse> in
+        let queryItems = [URLQueryItem(name: "from_id", value: from), URLQueryItem(name: "limit", value: "\(limit)")]
+
+        return self.app!.request(method: "GET", path: path, queryItems: queryItems).then { data -> Promise<FeedsItemsReponse> in
             return Promise<FeedsItemsReponse> { fulfill, reject in
                 guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
                     reject(FeedsHelperError.failedToDeserializeJSON(data))
                     return
                 }
 
-                // TODO: check what the keys are going to be
-                // TODO: check what happens with response if there is no next id
-                guard let id = json["id"] as? String, let items = json["items"] as? [Any] else {
-                    reject(FeedsHelperError.failedToParseJSONResponse(json))
+                guard let items = json["items"] as? [Any] else {
+                    reject(FeedsHelperError.itemsMissingFromJSONResponse(json))
                     return
                 }
 
-                fulfill(FeedsItemsReponse(nextOlderId: id, items: items))
+                // TODO: make the id a string when Will has made changes
+                if let id = json["next_id"] as? Int {
+                    fulfill(FeedsItemsReponse(nextId: id, items: items))
+                } else {
+                    fulfill(FeedsItemsReponse(items: items))
+                }
             }
         }
     }
@@ -68,11 +136,13 @@ import PromiseKit
             throw ServiceHelperError.noAppObject
         }
 
-        guard JSONSerialization.isValidJSONObject(item) else {
-            throw ServiceHelperError.invalidJSONObjectAsData(item)
+        let wrappedItem: [String: Any] = ["data": item]
+
+        guard JSONSerialization.isValidJSONObject(wrappedItem) else {
+            throw ServiceHelperError.invalidJSONObjectAsData(wrappedItem)
         }
 
-        guard let data = try? JSONSerialization.data(withJSONObject: item, options: []) else {
+        guard let data = try? JSONSerialization.data(withJSONObject: wrappedItem, options: []) else {
             throw ServiceHelperError.failedToJSONSerializeData(item)
         }
 
@@ -85,29 +155,32 @@ import PromiseKit
                     return
                 }
 
-                // TODO: check what the key is going to be
-                guard let id = json["id"] as? String else {
+                // TODO: change this to be a String when Will has made the changes
+                guard let id = json["item_id"] as? Int else {
                     reject(FeedsHelperError.failedToParseJSONResponse(json))
                     return
                 }
 
-                fulfill(id)
+                fulfill(String(id))
             }
         }
     }
 }
 
 @objc public class FeedsItemsReponse: NSObject {
-    public let nextOlderId: String?
+    // TODO: make id string when Will has made changes
+    public let nextId: Int?
     public let items: [Any]
 
-    public init(nextOlderId: String? = nil, items: [Any]) {
-        self.nextOlderId = nextOlderId
+    public init(nextId: Int? = nil, items: [Any]) {
+        self.nextId = nextId
         self.items = items
     }
 }
 
 public enum FeedsHelperError: Error {
+    case noSubscriptionTaskIdentifier
     case failedToDeserializeJSON(Data)
     case failedToParseJSONResponse([String: Any])
+    case itemsMissingFromJSONResponse([String: Any])
 }

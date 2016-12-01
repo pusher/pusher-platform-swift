@@ -14,8 +14,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
 @objc public class BaseClient: NSObject {
     public var jwt: String?
-    public var baseUrl: URL
     public var port: Int?
+    internal var baseUrlComponents: URLComponents
 
     public let subscriptionUrlSession: Foundation.URLSession
     public let subscriptionManager: SubscriptionManager
@@ -23,8 +23,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public init(jwt: String? = nil, cluster: String? = nil, port: Int? = nil) throws {
         self.jwt = jwt
 
-        // TODO: Put in a sensible default
-        let cluster = cluster ?? "sensible.default"
+        let cluster = cluster ?? "beta.buildelements.com"
 
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
@@ -34,11 +33,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             urlComponents.port = port!
         }
 
-        guard let url = urlComponents.url else {
-            throw BaseClientError.invalidBaseUrl(components: urlComponents)
-        }
-
-        self.baseUrl = url
+        self.baseUrlComponents = urlComponents
 
         self.subscriptionManager = SubscriptionManager()
 
@@ -51,35 +46,43 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.subscriptionUrlSession = Foundation.URLSession(configuration: sessionConfiguration, delegate: subscriptionSessionDelegate, delegateQueue: nil)
     }
 
-    public func request(method: HttpMethod, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
-        return request(method: method.rawValue, path: path, jwt: jwt, headers: headers, body: body)
+    public func request(method: HttpMethod, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
+        return request(method: method.rawValue, path: path, queryItems: queryItems, jwt: jwt, headers: headers, body: body)
     }
 
-    public func request(method: String, path: String, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
-        let url = self.baseUrl.appendingPathComponent(path)
+    public func request(method: String, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
+        self.baseUrlComponents.queryItems = queryItems
 
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-
-        // TODO: Not sure we want this timeout to be so long for non-subscribe requests
-        request.timeoutInterval = REALLY_LONG_TIME
-
-        if jwt != nil {
-            request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
-        }
-
-        if headers != nil {
-            for (header, value) in headers! {
-                request.addValue(value, forHTTPHeaderField: header)
-            }
-        }
-
-        if body != nil {
-            request.httpBody = body
-        }
-
-        // TODO: Figure out a sensible URLSessionConfiguration setup to use here
         return Promise<Data> { fulfill, reject in
+
+            guard var url = self.baseUrlComponents.url else {
+                reject(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+                return
+            }
+
+            url = url.appendingPathComponent(path)
+
+            var request = URLRequest(url: url)
+            request.httpMethod = method
+
+            // TODO: Not sure we want this timeout to be so long for non-subscribe requests
+            request.timeoutInterval = REALLY_LONG_TIME
+
+            if jwt != nil {
+                request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
+            }
+
+            if headers != nil {
+                for (header, value) in headers! {
+                    request.addValue(value, forHTTPHeaderField: header)
+                }
+            }
+
+            if body != nil {
+                request.httpBody = body
+            }
+
+            // TODO: Figure out a sensible URLSessionConfiguration setup to use here
             let sessionConfiguration = URLSessionConfiguration.ephemeral
             sessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
             sessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
@@ -91,6 +94,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 delegate: sessionDelegate,
                 delegateQueue: nil
             )
+
             session.dataTask(with: request, completionHandler: { data, response, sessionError in
                 if let error = sessionError {
                     reject(error)
@@ -123,35 +127,143 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
     }
 
-    public func subscribe(path: String, jwt: String? = nil, headers: [String: String]? = nil) -> Promise<Subscription> {
-        let url = self.baseUrl.appendingPathComponent(path)
+    /**
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "SUBSCRIBE"
-        request.timeoutInterval = REALLY_LONG_TIME
+    */
+    public func subscribe(
+        path: String,
+        queryItems: [URLQueryItem]? = nil,
+        jwt: String? = nil,
+        headers: [String: String]? = nil,
+        onOpen: (() -> Void)? = nil,
+        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil) -> Promise<Subscription> {
+            self.baseUrlComponents.queryItems = queryItems
 
-        if jwt != nil {
-            request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
-        }
+            return Promise<Subscription> { fulfill, reject in
+                guard var url = self.baseUrlComponents.url else {
+                    reject(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+                    return
+                }
 
-        if headers != nil {
-            for (header, value) in headers! {
-                request.addValue(value, forHTTPHeaderField: header)
+                url = url.appendingPathComponent(path)
+
+                var request = URLRequest(url: url)
+                request.httpMethod = "SUBSCRIBE"
+                request.timeoutInterval = REALLY_LONG_TIME
+
+                if jwt != nil {
+                    request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
+                }
+
+                if headers != nil {
+                    for (header, value) in headers! {
+                        request.addValue(value, forHTTPHeaderField: header)
+                    }
+                }
+
+                let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
+                let taskIdentifier = task.taskIdentifier
+
+                guard self.subscriptionManager.subscriptions[taskIdentifier] == nil else {
+                    reject(BaseClientError.preExistingTaskIdentifierForSubscription)
+                    return
+                }
+
+                let subscription = Subscription(
+                    path: path,
+                    taskIdentifier: taskIdentifier,
+                    onOpen: onOpen,
+                    onEvent: onEvent,
+                    onEnd: onEnd
+                )
+
+                self.subscriptionManager.subscriptions[taskIdentifier] = (subscription, Resolvers(promiseFulfiller: fulfill, promiseRejector: reject))
+                task.resume()
             }
-        }
+    }
 
-        let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
-        let taskIdentifier = task.taskIdentifier
+    public func subscribeWithResume(
+        app: ElementsApp,
+        path: String,
+        queryItems: [URLQueryItem]? = nil,
+        jwt: String? = nil,
+        headers: [String: String]? = nil,
+        onOpen: (() -> Void)? = nil,
+        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) -> Promise<ResumableSubscription> {
+            self.baseUrlComponents.queryItems = queryItems
 
-        return Promise<Subscription> { fulfill, reject in
-            guard self.subscriptionManager.subscriptions[taskIdentifier] == nil else {
-                reject(BaseClientError.preExistingTaskIdentifierForSubscription)
-                return
+            let resumableSubscription = ResumableSubscription(
+                app: app,
+                path: path,
+                jwt: nil,
+                headers: headers,
+                onStateChange: onStateChange
+            )
+
+            return Promise<Subscription> { subscriptionPromiseFulfill, subscriptionPromiseReject in
+                guard var url = self.baseUrlComponents.url else {
+                    subscriptionPromiseReject(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+                    return
+                }
+
+                url = url.appendingPathComponent(path)
+
+                var request = URLRequest(url: url)
+                request.httpMethod = "SUBSCRIBE"
+                request.timeoutInterval = REALLY_LONG_TIME
+
+                if jwt != nil {
+                    request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
+                }
+
+                if headers != nil {
+                    for (header, value) in headers! {
+                        request.addValue(value, forHTTPHeaderField: header)
+                    }
+                }
+
+                let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
+                let taskIdentifier = task.taskIdentifier
+
+                guard self.subscriptionManager.subscriptions[taskIdentifier] == nil else {
+                    subscriptionPromiseReject(BaseClientError.preExistingTaskIdentifierForSubscription)
+                    return
+                }
+
+                let subscription = Subscription(
+                    path: path,
+                    taskIdentifier: taskIdentifier
+                )
+
+                // TODO: No no no there must be a better way
+                resumableSubscription.subscription = subscription
+                resumableSubscription.onOpen = onOpen
+                resumableSubscription.onEvent = onEvent
+                resumableSubscription.onEnd = onEnd
+
+                self.subscriptionManager.subscriptions[taskIdentifier] = (subscription, Resolvers(promiseFulfiller: subscriptionPromiseFulfill, promiseRejector: subscriptionPromiseReject))
+
+                task.resume()
+            }.then { subscription in
+                return Promise<ResumableSubscription> { fulfill, reject in
+                    resumableSubscription.subscription = subscription
+
+                    fulfill(resumableSubscription)
+                }
             }
+    }
 
-            let subscription = Subscription(path: path, taskIdentifier: taskIdentifier)
-            self.subscriptionManager.subscriptions[taskIdentifier] = (subscription, Resolvers(promiseFulfiller: fulfill, promiseRejector: reject))
-            task.resume()
+    public func unsubscribe(taskIdentifier: Int) {
+        self.subscriptionUrlSession.getAllTasks { tasks in
+            for task in tasks {
+                if task.taskIdentifier == taskIdentifier {
+                    // TODO: check why we can't cancel without cancelling all tasks in the session
+                    task.suspend()
+                }
+            }
         }
     }
 }
@@ -164,23 +276,23 @@ public class SubscriptionSessionDelegate: SessionDelegate, URLSessionDataDelegat
     }
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        // TODO: Do something proper with this eror
+        // TODO: Don't think we should ever really see this error - find out what can cause it
         print("Error, invalid session")
     }
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        // TODO: Do something proper with this eror
-        print("Error with URLSessionTask: \(error?.localizedDescription)")
+        // TODO: Maybe add some debug logging
+        self.subscriptionManager.handleError(taskIdentifier: task.taskIdentifier, error: error)
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-        self.subscriptionManager.handle(task: dataTask, response: response, completionHandler: completionHandler)
+        self.subscriptionManager.handle(taskIdentifier: dataTask.taskIdentifier, response: response, completionHandler: completionHandler)
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         do {
-            let message = try MessageParser.parse(data: data)
-            self.subscriptionManager.handle(message: message, taskIdentifier: dataTask.taskIdentifier)
+            let messages = try MessageParser.parse(data: data)
+            self.subscriptionManager.handle(messages: messages, taskIdentifier: dataTask.taskIdentifier)
         } catch let error as MessageParseError {
             print(error.localizedDescription)
         } catch {
@@ -206,7 +318,7 @@ public class SubscriptionSessionDelegate: SessionDelegate, URLSessionDataDelegat
 }
 
 public enum BaseClientError: Error {
-    case invalidBaseUrl(components: URLComponents)
+    case invalidUrl(components: URLComponents)
     case preExistingTaskIdentifierForSubscription
 }
 

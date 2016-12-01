@@ -19,67 +19,88 @@ internal struct MessageParser {
     }
 
     // Parse errors are truly unexpected here - we trust the server to give us good data
-    static internal func parse(data: Data) throws -> Message {
-        guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []), let jsonArray = jsonObject as? [Any] else {
-            // TODO: Log what was trying to be deserialzied here or in catch block where this is called
-            throw MessageParseError.unableToDeserializeJsonResponse
+    static internal func parse(data: Data) throws -> [Message] {
+        guard let dataString = String(data: data, encoding: .utf8) else {
+            throw MessageParseError.unableToConvertDataToString(data)
         }
 
-        guard jsonArray.count != 0 else {
-            throw MessageParseError.emptyJsonArray
+        let stringMessages = dataString.components(separatedBy: "\n")
+
+        var messages: [Message] = []
+
+        for stringMessage in stringMessages {
+            guard stringMessage != "" else {
+                continue
+            }
+
+            guard let stringMessageData = stringMessage.data(using: .utf8) else {
+                throw MessageParseError.unableToConvertStringToData(stringMessage)
+            }
+
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: stringMessageData, options: []), let jsonArray = jsonObject as? [Any] else {
+                // TODO: Log what was trying to be deserialzied here or in catch block where this is called
+                throw MessageParseError.unableToDeserializeJsonResponse
+            }
+
+            guard jsonArray.count != 0 else {
+                throw MessageParseError.emptyJsonArray
+            }
+
+            guard let messageTypeCode = jsonArray[0] as? Int else {
+                throw MessageParseError.invalidMessageTypeCode
+            }
+
+            let messageType = try parseMessageTypeCode(messageTypeCode: messageTypeCode)
+
+            guard jsonArray.count == messageType.numberOfElements() else {
+                throw MessageParseError.jsonArrayWrongLengthForMessageType(messageType, jsonArray.count)
+            }
+
+            switch messageType {
+            case .KEEP_ALIVE:
+                guard let _ = jsonArray[1] as? String else {
+                    throw MessageParseError.invalidKeepAliveData(jsonArray[1])
+                }
+
+                messages.append(Message.keepAlive)
+
+            case .EVENT:
+                guard let eventId = jsonArray[1] as? String else {
+                    throw MessageParseError.invalidEventId(jsonArray[1])
+                }
+
+                guard let headers = jsonArray[2] as? [String: String] else {
+                    throw MessageParseError.invalidHeaders(jsonArray[2])
+                }
+
+                let body = jsonArray[3]
+
+                messages.append(Message.event(eventId: eventId, headers: headers, body: body))
+
+            case .EOS:
+                guard let statusCode = jsonArray[1] as? Int else {
+                    throw MessageParseError.invalidStatusCode(jsonArray[1])
+                }
+
+                guard let headers = jsonArray[2] as? [String: String] else {
+                    throw MessageParseError.invalidHeaders(jsonArray[2])
+                }
+
+                let errorBody = jsonArray[3]
+
+                messages.append(Message.eos(statusCode: statusCode, headers: headers, errorBody: errorBody))
+            }
         }
 
-        guard let messageTypeCode = jsonArray[0] as? Int else {
-            throw MessageParseError.invalidMessageTypeCode
-        }
-
-        let messageType = try parseMessageTypeCode(messageTypeCode: messageTypeCode)
-
-        guard jsonArray.count == messageType.numberOfElements() else {
-            throw MessageParseError.jsonArrayWrongLengthForMessageType(messageType, jsonArray.count)
-        }
-
-        switch messageType {
-        case .KEEP_ALIVE:
-            guard let _ = jsonArray[1] as? String else {
-                throw MessageParseError.invalidKeepAliveData(jsonArray[1])
-            }
-
-            return Message.keepAlive
-
-        case .EVENT:
-            guard let eventId = jsonArray[1] as? String else {
-                throw MessageParseError.invalidEventId(jsonArray[1])
-            }
-
-            guard let headers = jsonArray[2] as? [String: String] else {
-                throw MessageParseError.invalidHeaders(jsonArray[2])
-            }
-
-            let body = jsonArray[3]
-
-            return Message.event(eventId: eventId, headers: headers, body: body)
-
-
-        case .EOS:
-            guard let statusCode = jsonArray[1] as? Int else {
-                throw MessageParseError.invalidStatusCode(jsonArray[1])
-            }
-
-            guard let headers = jsonArray[2] as? [String: String] else {
-                throw MessageParseError.invalidHeaders(jsonArray[2])
-            }
-
-            let errorBody = jsonArray[3]
-
-            return Message.eos(statusCode: statusCode, headers: headers, errorBody: errorBody)
-        }
+        return messages
     }
 
 }
 
 internal enum MessageParseError: Error {
+    case unableToConvertDataToString(Data)
     case unableToDeserializeJsonResponse
+    case unableToConvertStringToData(String)
     case emptyJsonArray
     case jsonArrayWrongLengthForMessageType(MessageType, Int)
     case unknownMessageTypeCode(Int)
