@@ -11,14 +11,14 @@ import ElementsSwift
 import PromiseKit
 
 class ClickHandler {
-    var handler : () -> ();
+    var handler: () -> ()
 
     init(handler: @escaping () -> ()) {
-        self.handler = handler;
+        self.handler = handler
     }
 
     @objc public func buttonClick() {
-        self.handler();
+        self.handler()
     }
 }
 
@@ -43,7 +43,7 @@ class ViewController: NSViewController {
         onUnRegister();
     }
     
-//    var elementsApp: ElementsApp!
+    var elements: ElementsApp!
 
     var handlers: [ClickHandler] = []
     
@@ -52,8 +52,26 @@ class ViewController: NSViewController {
     var delegate: AppDelegate!
 
     override func viewDidLoad() {
-        super.viewDidLoad();
         delegate = NSApplication.shared().delegate as! AppDelegate
+
+        let authorizer = try! SecretAuthorizer(appId: "2", secret: "secret:somekey:somesecret", grants: nil)
+        elements = try! ElementsApp(appId: "2", cluster: "beta.buildelements.com", authorizer: authorizer)
+
+        let resumable = elements.feeds(feedName: "resumable-newer")
+
+        try! resumable.subscribeWithResume(
+            onOpen: { Void in print("We're open") },
+            onAppend: { itemId, headers, item in print("RECEIVED", itemId, headers, item) } ,
+            onEnd: { statusCode, headers, info in print("END", statusCode, headers, info) },
+            onStateChange: { oldState, newState in print("was \(oldState) now \(newState)") }).then { resSub -> Void in
+                print("Subscribed!")
+            }.then { Void in
+                try! resumable.append(item: ["newValue": 777]).then { appendRes -> Void in
+                    print(appendRes)
+                }
+            }.catch { error in
+                print(error)
+        }
     }
     
     func onSubscribe(){
@@ -61,7 +79,7 @@ class ViewController: NSViewController {
             print("I am already subscribed!")
             return
         }
-        
+
         delegate.notificationsHelper?.subscribe(
             notificationHandler: myNotificationHandler,
             receiptHandler: { (notificationId: String) -> () in
