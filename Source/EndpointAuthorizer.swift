@@ -19,6 +19,7 @@ public class EndpointAuthorizer: Authorizer {
     }
 
     public func authorize() -> Promise<String> {
+        // TODO: need a way to invalidate jwt being cached by the authorizer
         if jwt != nil {
             return Promise { resolve, reject in
                 resolve(self.jwt!)
