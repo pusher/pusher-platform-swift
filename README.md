@@ -13,8 +13,9 @@ What else would you want? Head over to the example app [ViewController.swift](ht
 ## Table of Contents
 
 * [Installation](#installation)
-* [Configuration](#configuration)
-* [Connection](#connection)
+* [Feeds](#feeds)
+* [User Notifications](#user-notifications)
+* [Authorizers](#authorizers)
 * [Testing](#testing)
 * [Communication](#communication)
 * [Credits](#credits)
@@ -37,7 +38,8 @@ To integrate ElementsSwift into your Xcode project using CocoaPods, specify it i
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-platform :ios, '10.0'
+source 'https://github.com/pusher/PrivatePodSpecs.git'
+platform :ios, '10.0' # change this if you're not making an iOS app!
 use_frameworks!
 
 pod 'ElementsSwift'
@@ -76,55 +78,187 @@ To integrate ElementsSwift into your Xcode project using Carthage, specify it in
 github "pusher/elements-client-swift"
 ```
 
+## User Notifications
 
-## Configuration
-
-There are a number of configuration parameters which can be set for the Elements client. For Swift usage they are:
-
-#### Required
-
-- `token (String)` - the token that the client will use to make requests
-- `namespace (String)` - the namespace of the resources the client will be making requests to
-
-#### Optional
-
-- `host (String)` - the host you'd like to connect to
-- `port (Int)` - the port that you'd like to connect to
-
-The `namespace` parameter must be of the type `ElementsNamespace`. This is an enum defined as:
+### TL;DR (let me copy paste something)
 
 ```swift
-public enum ElementsNamespace {
-    case appId(String)
-    case raw(String)
+let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
+let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
+
+let notifications = app.userNotifications(userId: "someUserId")
+
+let notificationHandler: (String, Any) -> () = { notificationId, notificationBody in
+    print("Received notification \(notificationId) with body: \(notificationBody)")
+}
+let receiptHandler: (String) -> () { notificationId in
+    print("Notification \(notificationId) was read")
+}
+
+notifications.subscribe(notificationHandler: notificationHandler, receiptHandler: receiptHandler)
+```
+
+### Getting started
+
+First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id` along with an `authorizer`. An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them. In our example we're going to use a `SimpleTokenAuthorizer`, which, as the name suggests, is an `authorizer` that accepts a token (a JSON web token or JWT to be precise) and uses that for authorization. You can find, or generate, tokens to test things out by visiting [the dashboard](https://elements-dashboard.herokuapp.com).
+
+```swift
+let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
+let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
+```
+
+### Setting up a UserNotificationsHelper
+
+When we've got an `App` then we can create a `UserNotificationsHelper` object:
+
+```swift
+let notifications = app.userNotifications(userId: "someUserId")
+```
+
+### Subscribing to receive notifications
+
+Now that we've got a `UserNotificationsHelper` we can set up subscriptions in order to start receiving notifications.
+
+```swift
+let notificationHandler: (String, Any) -> () = { notificationId, notificationBody in
+    print("Received notification \(notificationId) with body: \(notificationBody)")
+}
+let receiptHandler: (String) -> () { notificationId in
+    print("Notification \(notificationId) was read")
+}
+
+notifications.subscribe(notificationHandler: notificationHandler, receiptHandler: receiptHandler)
+```
+
+### Acknowledge receipt of a notification
+
+To have a client acknowledge receipt of a given notification you just call `acknowledge` on the `UserNotificationsHelper` object and pass in the `notificationId`.
+
+```swift
+notifications.acknowledge(notificationId: "notificationId")
+```
+
+### Setting up native push notifications
+
+#### Registering with APNs
+
+In your app's `AppDelegate` you need to add this code:
+
+```swift
+func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+    notifications.register(deviceToken: "deviceToken")
 }
 ```
 
-You can use it like this:
+#### Unregister from APNS
+
+Unregistering is just as easy:
 
 ```swift
-let namespace = ElementsNamespace.appId("123")
-// => "/apps/123"
-
-let namespace = ElementsNamespace.raw("/some/other/namespace/123")
-// => "/some/other/namespace/123"
+notifications.unregister(deviceToken: Data)
 ```
 
-All of these configuration options need to be passed to a `ElementsClientConfig` object, which in turn needs to be passed to the Elements object when instantiating it, for example:
 
-#### Swift
+## Feeds
+
+### TL;DR (let me copy paste something)
+
 ```swift
-let config = ElementsClientConfig(
-    token: "my.client.token.",
-    namespace: .appId("123")
-)
+let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
+let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
 
-let elements = Elements(config: config)
+let myFeed = app.feeds("myFeed")
+
+try! myFeed.subscribeWithResume(
+    onOpen: { Void in print("We're subscribed to myFeed") },
+    onAppend: { itemId, headers, item in print("Received new item", item) } ,
+    onEnd: { statusCode, headers, info in print("Subscription ended", info) },
+    onStateChange: { oldState, newState in print("State of subscription changed from \(oldState) to \(newState)") }
+).catch { error in
+    print("Error subscribing: \(error)")
+}
 ```
 
-## Connection
+### Getting started
 
-The library uses HTTP/2 to connect to the Elements servers. The functionality for this is provided as part of `URLSession`.
+First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id` along with an `authorizer`. An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them. In our example we're going to use a `SimpleTokenAuthorizer`, which, as the name suggests, is an `authorizer` that accepts a token (a JSON web token or JWT to be precise) and uses that for authorization. You can find, or generate, tokens to test things out by visiting [the dashboard](https://elements-dashboard.herokuapp.com).
+
+```swift
+let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
+let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
+```
+
+### Setting up a FeedsHelper
+
+When we've got an `App` then we can create a `FeedsHelper` object, which is where we specify the name of our feed:
+
+```swift
+let myFeed = app.feeds("myFeed")
+```
+
+### Subscribing to receive new items
+
+Now that we've got a `FeedsHelper` we can subscribe to that feed to start receiving new items. When you subscribe to a feed you also receive (up to) the 50 most recently added items in the feed. For each of these items the `onAppend` function that you provide will be called.
+
+```swift
+try! myFeed.subscribeWithResume(
+    onOpen: { Void in print("We're subscribed to myFeed") },
+    onAppend: { itemId, headers, item in print("Received new item", item) } ,
+    onEnd: { statusCode, headers, info in print("Subscription ended", info) },
+    onStateChange: { oldState, newState in print("State of subscription changed from \(oldState) to \(newState)") }
+).catch { error in
+    print("Error subscribing: \(error)")
+}
+```
+
+### Fetching older items in a feed
+
+If you need to fetch older items in a feed then you can do so by providing the id of the oldest item that the client is currently aware of. The response will then contain (up to) the next 50 oldest items in the feed as well as the id of the next oldest item in the feed.
+
+```swift
+try! myFeed.get(from: "oldestReceivedId").then { res in
+    print("Got these items: \(res.items)")
+    print("Next oldest id is \(res.nextId)")
+}
+```
+
+### Appending to feeds
+
+You can also append items to feeds, provided you have the appropriate permissions.
+
+```swift
+try! myFeed.append(item: ["newValue": 123]).then { res -> Void in
+    print(res) // where res will be the id given to the item if it was successsfully appended to the feed
+}
+```
+
+
+## Authorizers
+
+An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them.
+
+There are two provided `Authorizers` in the library:
+
+- `SimpleTokenAuthorizer`: accepts a token (a JSON web token, or JWT, to be precise) and uses that for authorization
+- `EndpointAuthorizer`: makes a request to the provided URL with the expectation that it will receive a response of the form `{ "jwt": "some.relevant.jwt" }`, where the `jwt` value will then be cached by the authorizer and used for authorization purposes
+
+### SimpleTokenAuthorizer
+
+```swift
+let authorizer = SimpleTokenAuthorizer(jwt: "YOUR.CLIENT.JWT")
+```
+
+### EndpointAuthorizer
+
+```swift
+let requestMutator: ((URLRequest) -> (URLRequest))? = { request in
+    request.httpMethod = "POST"
+    request.httpBody = "some session info".data(using: String.Encoding.utf8)
+    return request
+}
+
+let authorizer = EndpointAuthorizer(url: "https://my.token.endpoint", requestMutator: requestMutator)
+```
 
 
 ## Testing
