@@ -23,33 +23,17 @@ class ClickHandler {
 }
 
 class ViewController: NSViewController {
+    var elements: ElementsApp!
+    var handlers: [ClickHandler] = []
+    var delegate: AppDelegate!
     
     @IBOutlet weak var stackView: NSStackView!
-    
     @IBOutlet weak var topLabel: NSTextField!
     
-    @IBAction func subscribeButton(_ sender: Any) {
-        onSubscribe()
-    }
-    
-    @IBAction func unsubscribeButton(_ sender: Any) {
-        onUnsubscribe()
-    }
-    
-    @IBAction func registerButton(_ sender: Any) {
-        onRegister()
-    }
-    @IBAction func unregisterButton(_ sender: Any) {
-        onUnRegister();
-    }
-    
-    var elements: ElementsApp!
-
-    var handlers: [ClickHandler] = []
-    
-//    var zanNotifications: UserNotificationsHelper?
-    
-    var delegate: AppDelegate!
+    @IBAction func subscribeButton(_ sender: Any) { onSubscribe() }
+    @IBAction func unsubscribeButton(_ sender: Any) { onUnsubscribe() }
+    @IBAction func registerButton(_ sender: Any) { onRegister() }
+    @IBAction func unregisterButton(_ sender: Any) { onUnRegister() }
 
     override func viewDidLoad() {
         delegate = NSApplication.shared().delegate as! AppDelegate
@@ -74,29 +58,33 @@ class ViewController: NSViewController {
         }
     }
     
-    func onSubscribe(){
+    func onSubscribe() {
         guard delegate.notificationsHelper?.isSubscribed() == false else {
             print("I am already subscribed!")
             return
         }
 
-        delegate.notificationsHelper?.subscribe(
+        try! delegate.notificationsHelper?.subscribe(
             notificationHandler: myNotificationHandler,
             receiptHandler: { (notificationId: String) -> () in
                 print("I was informed that user notification was read: \(notificationId.debugDescription)")
         })
+
         print("Subscribed for in-app notifications!")
+
         topLabel.stringValue = "Subscribed to in-app notifications"
     }
     
-    func onUnsubscribe(){
+    func onUnsubscribe() {
         guard delegate.notificationsHelper?.isSubscribed() == true else {
             print("I am not subscribed. Go away")
             return
         }
         
-        delegate.notificationsHelper?.unsubscribe()
+        try! delegate.notificationsHelper?.unsubscribe()
+
         print("Unsubscribing from in-app notifications")
+
         topLabel.stringValue = "Unsubscribed from in-app notifications"
     }
     
@@ -106,17 +94,19 @@ class ViewController: NSViewController {
         sv.userInterfaceLayoutDirection = NSUserInterfaceLayoutDirection.leftToRight
         
         let newLabel = NSTextField(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
-        newLabel.isEditable = false;
-        newLabel.stringValue = notificationId.debugDescription + ": " + "\(body)"
+        newLabel.isEditable = false
+        newLabel.stringValue = "\(notificationId.debugDescription): \(body)"
         
         sv.addView(newLabel, in: NSStackViewGravity.leading)
         
         let button = NSButton(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
         
         let handler = ClickHandler(handler: {
-            self.delegate.notificationsHelper?.acknowledge(notificationId: notificationId)
+            try! self.delegate.notificationsHelper?.acknowledge(notificationId: notificationId)
+
             button.title = "Acknowledged!"
-        });
+        })
+
         self.handlers.append(handler)  // DISGRACE: keep strong reference
         
         button.title = "Acknowledge"
@@ -130,17 +120,11 @@ class ViewController: NSViewController {
             self.stackView.addView(sv, in: NSStackViewGravity.top)
         }
         
-        print("Received user notification: " + notificationId.debugDescription)
+        print("Received user notification: \(notificationId.debugDescription)")
     }
     
-    func onRegister(){
-//        delegate.notificationsHelper!.register(deviceToken: delegate.notificationsHelper!.deviceToken!)
-        print("onRegister")
-    }
-    
-    func onUnRegister(){
-        print("onUnregister")
-    }
+    func onRegister() { print("onRegister") }
+    func onUnRegister() { print("onUnregister") }
 
     override var representedObject: Any? {
         didSet {}
