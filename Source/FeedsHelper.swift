@@ -10,7 +10,7 @@ import PromiseKit
 
 @objc public class FeedsHelper: NSObject, ServiceHelper {
     // TODO: should this be here? make it part of the service helper protocol?
-    static internal let namespace = "feeds"
+    static public let namespace = "feeds"
 
     public weak var app: ElementsApp? = nil
     public let feedName: String

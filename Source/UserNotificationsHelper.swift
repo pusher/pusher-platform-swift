@@ -1,5 +1,6 @@
 public class UserNotificationsHelper: NSObject, ServiceHelper {
     public var app: ElementsApp
+    static public let namespace = "user-notifications"
     public var notificationName: String
     
     public init(app: ElementsApp, notificationName: String){

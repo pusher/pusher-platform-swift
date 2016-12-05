@@ -8,6 +8,7 @@
 
 @objc public protocol ServiceHelper: class {
     var app: ElementsApp? { get set }
+    static var namespace: String { get }
 }
 
 public enum ServiceHelperError: Error {
