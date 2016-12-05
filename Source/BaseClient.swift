@@ -192,7 +192,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) -> Promise<ResumableSubscription> {
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) -> Promise<ResumableSubscription> {
             self.baseUrlComponents.queryItems = queryItems
 
             let resumableSubscription = ResumableSubscription(
@@ -200,7 +201,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 path: path,
                 jwt: nil,
                 headers: headers,
-                onStateChange: onStateChange
+                onStateChange: onStateChange,
+                // TODO: maybe by specifying this here we don't need the unwrap and then immediate
+                // rewrap at the bottom of this func?
+                onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
             )
 
             return Promise<Subscription> { subscriptionPromiseFulfill, subscriptionPromiseReject in

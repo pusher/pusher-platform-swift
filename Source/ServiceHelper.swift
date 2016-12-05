@@ -7,7 +7,7 @@
 //
 
 @objc public protocol ServiceHelper: class {
-    var app: ElementsApp? { get set }
+    var app: App? { get set }
     static var namespace: String { get }
 }
 

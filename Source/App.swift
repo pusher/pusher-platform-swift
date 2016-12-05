@@ -1,14 +1,6 @@
-//
-//  ElementsApp.swift
-//  ElementsSwift
-//
-//  Created by Hamilton Chapman on 05/10/2016.
-//
-//
-
 import PromiseKit
 
-@objc public class ElementsApp: NSObject {
+@objc public class App: NSObject {
     public var appId: String
     public var cluster: String?
     public var authorizer: Authorizer?
@@ -68,7 +60,7 @@ import PromiseKit
                 )
             }
     }
-    
+
     public func subscribeWithResume(
         path: String,
         queryItems: [URLQueryItem]? = nil,
@@ -77,7 +69,8 @@ import PromiseKit
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
             let sanitisedPath = sanitise(path: path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.appId)
 
@@ -92,7 +85,8 @@ import PromiseKit
                         onOpen: onOpen,
                         onEvent: onEvent,
                         onEnd: onEnd,
-                        onStateChange: onStateChange
+                        onStateChange: onStateChange,
+                        onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
                     )
                 }
             } else {
@@ -105,7 +99,8 @@ import PromiseKit
                     onOpen: onOpen,
                     onEvent: onEvent,
                     onEnd: onEnd,
-                    onStateChange: onStateChange
+                    onStateChange: onStateChange,
+                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
                 )
             }
     }
@@ -137,7 +132,7 @@ import PromiseKit
         if !sanitisedPath.hasPrefix("/") {
             sanitisedPath = "/\(sanitisedPath)"
         }
-        
+
         return sanitisedPath
     }
 
@@ -151,15 +146,5 @@ import PromiseKit
             let namespacedPath = "/apps/\(self.appId)\(path)"
             return namespacedPath
         }
-    }
-}
-
-@objc public class ElementsError: NSObject {
-    public let code: Int
-    public let reason: String
-
-    public init(code: Int, reason: String) {
-        self.code = code
-        self.reason = reason
     }
 }

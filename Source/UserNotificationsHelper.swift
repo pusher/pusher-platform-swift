@@ -1,23 +1,23 @@
 public class UserNotificationsHelper: NSObject, ServiceHelper {
     static public let namespace = "user-notifications"
 
-    public var app: ElementsApp? = nil
+    public var app: App? = nil
     public var notificationName: String
-    
-    public init(notificationName: String, app: ElementsApp){
+
+    public init(notificationName: String, app: App){
         self.notificationName = notificationName
         self.app = app
     }
-    
+
     public var subscriptionTaskId: Int? = nil
 
     // TODO: We should probably be returning the underlying subscription, or some sort of wrapper
     /**
         Subscribe to in-app User Notifications
-        
-        - parameter notificationHandler: A function that will be called for each notification that 
+
+        - parameter notificationHandler: A function that will be called for each notification that
                                          is sent to this user
-        - parameter receiptHandler:      A function that will be called for each receipt that is 
+        - parameter receiptHandler:      A function that will be called for each receipt that is
                                          sent to this user
      */
     public func subscribe(notificationHandler: @escaping (String, Any) -> Void, receiptHandler: @escaping (String) -> Void) throws {
@@ -30,7 +30,7 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
         try! self.app!.subscribe(path: path).then { sub -> Void in
             self.subscriptionTaskId = sub.taskIdentifier
 
-            // TODO: Not sure we should be setting the onEvent on the sub directly in the subscribe call, 
+            // TODO: Not sure we should be setting the onEvent on the sub directly in the subscribe call,
             // without returning it
             // TODO: We should do something about throwing suitable errors or calling error handlers (or
             // something equivalent)
@@ -71,17 +71,17 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
 
     /**
         Check whether there's a subscription currently active
-        
+
         - returns: true if there is an open subscription currently, false otherwise
      */
     public func isSubscribed() -> Bool {
         return self.subscriptionTaskId != nil
     }
-    
+
     //TODO: should we return a Bool denoting whether or not the unsubscribe was successful
     /**
         Cancel the current subscription.
-     
+
         - returns: true if the subscription was canceled, false otherwise
      */
     public func unsubscribe() throws {
@@ -95,11 +95,11 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
 
         self.app!.unsubscribe(taskIdentifier: subscriptionTaskId!)
     }
-    
+
     /**
         Acknowledge the receipt of a notification
-        
-        - parameter notificationId: notificationId of a notification passed to the notificationHandler 
+
+        - parameter notificationId: notificationId of a notification passed to the notificationHandler
                                     when subscribing
      */
     public func acknowledge(notificationId: String) throws {
@@ -109,7 +109,7 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
 
         let ackBody = ["type": "receipt", "notificationId": notificationId]
 
-        guard let bodyJson = try JSONSerialization.data(withJSONObject: ackBody, options: []) as? Data else {
+        guard let bodyJson = try? JSONSerialization.data(withJSONObject: ackBody, options: []) else {
             throw UserNotificationsHelperError.failedToJSONSerializeAcknowledgementBody(ackBody)
         }
 
@@ -117,21 +117,21 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
 
         self.app!.request(method: "POST", path: path, body: bodyJson)
     }
-    
+
     /**
         Registers the device token in order to receive push notifications
-     
-        - parameter deviceToken: the token we get in the AppDelegate after successfully registering 
+
+        - parameter deviceToken: the token we get in the AppDelegate after successfully registering
                                  for push notifications
      */
     public func register(deviceToken: Data) throws {
         guard self.app != nil else {
             throw ServiceHelperError.noAppObject
         }
-        
+
         let token = stringifyDeviceToken(data: deviceToken)
 
-        guard let bodyJson = try JSONSerialization.data(withJSONObject: ["deviceToken": token], options: []) as? Data else {
+        guard let bodyJson = try? JSONSerialization.data(withJSONObject: ["deviceToken": token], options: []) else {
             throw UserNotificationsHelperError.failedToJSONSerializeDeviceToken(token)
         }
 
@@ -139,10 +139,10 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
 
         self.app!.request(method: "POST", path: path, body: bodyJson)
     }
-    
+
     /**
         Unregisters the device token from receiving push notifications
-     
+
         - parameter deviceToken: the same token we registered with in the AppDelegate
      */
     public func unregister(deviceToken: Data) throws {
@@ -152,7 +152,7 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
 
         let token = stringifyDeviceToken(data: deviceToken)
 
-        guard let bodyJson = try JSONSerialization.data(withJSONObject: ["deviceToken": token], options: []) as? Data else {
+        guard let bodyJson = try? JSONSerialization.data(withJSONObject: ["deviceToken": token], options: []) else {
             throw UserNotificationsHelperError.failedToJSONSerializeDeviceToken(token)
         }
 

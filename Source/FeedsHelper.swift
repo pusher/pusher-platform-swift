@@ -3,14 +3,12 @@ import PromiseKit
 @objc public class FeedsHelper: NSObject, ServiceHelper {
     static public let namespace = "feeds"
 
-    public weak var app: ElementsApp? = nil
+    public weak var app: App? = nil
     public let feedName: String
 
-    // TODO: how does this work with ResumableSubscription - how do we pass the new 
-    // task id to the FeedsHelper when a new underlying Subscription is created?
     public var subscriptionTaskId: Int? = nil
 
-    public init(feedName: String, app: ElementsApp) {
+    public init(feedName: String, app: App) {
         self.feedName = feedName
         self.app = app
     }
@@ -43,6 +41,12 @@ import PromiseKit
 
             if lastEventId != nil {
                 headers = ["Last-Event-ID": lastEventId!]
+            }
+
+            // TODO: should this be unowned self?
+            let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
+                print("Do we get in the subscribeWithResume onUnderlyingSubscriptionChange in the FeedsHelper?")
+                self.subscriptionTaskId = newSub?.taskIdentifier
             }
 
             return try! self.app!.subscribeWithResume(

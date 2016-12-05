@@ -11,7 +11,8 @@ import Foundation
 @objc public class ResumableSubscription: NSObject {
     public let path: String
 
-    // TODO: THIS IS DISGUSTING
+    // TODO: This is pretty disgusting - may be able to just use willSet
+    // instead of using storage properties like _onOpen
     // TODO: Check memory mangement stuff here - capture list etc
 
     internal var _onOpen: (() -> Void)?
@@ -59,8 +60,15 @@ import Foundation
 
     public var onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)?
 
-    public internal(set) var subscription: Subscription? = nil
-    public internal(set) var app: ElementsApp
+    internal var onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil
+
+    public internal(set) var subscription: Subscription? = nil {
+        willSet {
+            self.onUnderlyingSubscriptionChange?(self.subscription, newValue)
+        }
+    }
+
+    public internal(set) var app: App
 
     public internal(set) var state: ResumableSubscriptionState = .closed
 
@@ -79,9 +87,11 @@ import Foundation
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) {
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) {
             self.path = path
             self.app = app
+            self.onUnderlyingSubscriptionChange = onUnderlyingSubscriptionChange
 
             // TODO: don't like having to do this
             super.init()
@@ -111,7 +121,7 @@ import Foundation
 
     public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any?) {
         // TODO: not always resuming - need to figure out what to do here.
-        // We need to be able to differentiate between a recoverable error and 
+        // We need to be able to differentiate between a recoverable error and
         // errors that mean we need to stop the subscription.
         // Do we therefore also need to setup a onProperEnd (not the real name suggestion)?
         // Then we'd set the state to closed and not try and create a new subscription.
@@ -158,6 +168,7 @@ import Foundation
                 self._onEnd?(statusCode, headers, info)
             }
         ).then { subscription -> Void in
+            print("Successfully created new subscription")
             self.subscription = subscription
 
             // TODO: should this be here?

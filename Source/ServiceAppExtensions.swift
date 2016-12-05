@@ -8,8 +8,8 @@
 
 import Foundation
 
-extension ElementsApp {
- 
+extension App {
+
     public func feeds(feedName: String) -> FeedsHelper {
         return FeedsHelper(feedName: feedName, app: self)
     }
