@@ -1,19 +1,8 @@
-////
-////  SubscriptionManager.swift
-////  ElementsSwift
-////
-////  Created by Hamilton Chapman on 26/10/2016.
-////
-////
-
 import Foundation
 import PromiseKit
 
 @objc public class SubscriptionManager: NSObject {
     public var subscriptions: [Int: (subscription: Subscription, resolvers: Resolvers)] = [:]
-
-    // TODO: Decide what to do with init
-//     public init() {}
 
     internal func handle(taskIdentifier: Int, response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         defer {

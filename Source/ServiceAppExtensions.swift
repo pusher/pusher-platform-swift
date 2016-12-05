@@ -1,11 +1,3 @@
-//
-//  ServiceAppExtensions.swift
-//  ElementsSwift
-//
-//  Created by Hamilton Chapman on 25/11/2016.
-//
-//
-
 import Foundation
 
 extension App {

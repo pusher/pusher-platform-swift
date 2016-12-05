@@ -1,11 +1,3 @@
-//
-//  SimpleTokenAuthorizer.swift
-//  ElementsSwift
-//
-//  Created by Hamilton Chapman on 26/10/2016.
-//
-//
-
 import Foundation
 import JWT
 import PromiseKit

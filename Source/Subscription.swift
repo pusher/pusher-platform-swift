@@ -1,11 +1,3 @@
-//
-//  Subscription.swift
-//  ElementsSwift
-//
-//  Created by Hamilton Chapman on 26/10/2016.
-//
-//
-
 import Foundation
 
 @objc public class Subscription: NSObject {

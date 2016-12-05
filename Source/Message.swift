@@ -1,11 +1,3 @@
-//
-//  Message.swift
-//  ElementsSwift
-//
-//  Created by Hamilton Chapman on 16/11/2016.
-//
-//
-
 import Foundation
 
 internal enum Message {

@@ -1,11 +1,3 @@
-//
-//  ResumableSubscription.swift
-//  ElementsSwift
-//
-//  Created by Hamilton Chapman on 29/11/2016.
-//
-//
-
 import Foundation
 
 @objc public class ResumableSubscription: NSObject {
