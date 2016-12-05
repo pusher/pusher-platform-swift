@@ -26,11 +26,11 @@ import PromiseKit
     }
 
     public func subscribeWithResume(
+        lastEventId: String? = nil,
         onOpen: (() -> Void)? = nil,
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        lastEventId: String? = nil) throws -> Promise<ResumableSubscription> {
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
             guard self.app != nil else {
                 throw ServiceHelperError.noAppObject
             }
@@ -56,15 +56,16 @@ import PromiseKit
                 onOpen: onOpen,
                 onEvent: onAppend,
                 onEnd: onEnd,
-                onStateChange: onStateChange
+                onStateChange: onStateChange,
+                onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
             )
     }
 
     public func subscribe(
+        lastEventId: String? = nil,
         onOpen: (() -> Void)? = nil,
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
-        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        lastEventId: String? = nil) throws -> Promise<Subscription> {
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil) throws -> Promise<Subscription> {
             guard self.app != nil else {
                 throw ServiceHelperError.noAppObject
             }
