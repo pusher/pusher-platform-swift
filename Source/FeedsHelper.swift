@@ -1,7 +1,6 @@
 import PromiseKit
 
 @objc public class FeedsHelper: NSObject, ServiceHelper {
-    // TODO: should this be here? make it part of the service helper protocol?
     static public let namespace = "feeds"
 
     public weak var app: ElementsApp? = nil
@@ -63,15 +62,13 @@ import PromiseKit
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         lastEventId: String? = nil) throws -> Promise<Subscription> {
             guard self.app != nil else {
-                // TODO: not sure if the noAppObject error should live on the servicehelpererror enum
                 throw ServiceHelperError.noAppObject
             }
 
-            // TODO: tidy up
             let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+
             var headers: [String: String]? = nil
 
-            // TODO: Check that this header is how the lastEventId gets sent
             if lastEventId != nil {
                 headers = ["Last-Event-ID": lastEventId!]
             }

@@ -10,7 +10,8 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
     }
     
     public var subscriptionTaskId: Int? = nil
-    
+
+    // TODO: We should probably be returning the underlying subscription, or some sort of wrapper
     /**
         Subscribe to in-app User Notifications
         
@@ -29,18 +30,36 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
         try! self.app!.subscribe(path: path).then { sub -> Void in
             self.subscriptionTaskId = sub.taskIdentifier
 
+            // TODO: Not sure we should be setting the onEvent on the sub directly in the subscribe call, 
+            // without returning it
+            // TODO: We should do something about throwing suitable errors or calling error handlers (or
+            // something equivalent)
+            // TODO: What are we doing with onEnd, onOpen on the subscription?
             sub.onEvent = { (eventId, headers, body) in
+                guard let bodyDict = body as? [String: Any] else {
+                    print("Body couldn't be cast to a dictionary")
+                    return
+                }
 
+                guard let eventType = bodyDict["type"] as? String else {
+                    print("Body dictionary doesn't contain a valid type")
+                    return
+                }
 
-                let bodyDict = body as! [String: Any]
-                let eventType: String = bodyDict["type"] as! String
                 switch eventType {
                 case "notification":
-                    let notificationId : String = bodyDict["notificationId"] as! String
-                    let body : Any = bodyDict["body"]
-                    notificationHandler(notificationId, body)
+                    guard let notificationId = bodyDict["notificationId"] as? String, let notificationBody = bodyDict["body"] else {
+                        print("Invalid notification received: \(bodyDict)")
+                        return
+                    }
+
+                    notificationHandler(notificationId, notificationBody)
                 case "receipt":
-                    let notificationId : String = bodyDict["notificationId"] as! String
+                    guard let notificationId = bodyDict["notificationId"] as? String else {
+                        print("Invalid receipt received: \(bodyDict)")
+                        return
+                    }
+
                     receiptHandler(notificationId)
                 default:
                     print("Unexpected type received: \(eventType)")
@@ -50,7 +69,6 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
         }
     }
 
-    //TODO: this might be a very java thing to do :P
     /**
         Check whether there's a subscription currently active
         
