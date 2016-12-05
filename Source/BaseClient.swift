@@ -176,7 +176,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 
     public func subscribeWithResume(
-        app: ElementsApp,
+        app: App,
         path: String,
         queryItems: [URLQueryItem]? = nil,
         jwt: String? = nil,

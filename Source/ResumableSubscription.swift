@@ -72,7 +72,7 @@ import Foundation
     public var retrySubscriptionTimer: Timer? = nil
 
     public init(
-        app: ElementsApp,
+        app: App,
         path: String,
         jwt: String? = nil,
         headers: [String: String]? = nil,
