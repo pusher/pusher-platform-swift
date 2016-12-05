@@ -12,13 +12,13 @@ import ElementsSwift
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
-    public var elements: ElementsApp!
+    public var elements: App!
     public var notificationsHelper: UserNotificationsHelper?
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         let authorizer = SimpleTokenAuthorizer(jwt: "YOUR.CLIENT.JWT")
-        elements = try! ElementsApp(appId: "3", cluster: "localhost", authorizer: authorizer, client: BaseClient(cluster: "localhost", port: 10443))
+        elements = try! App(id: "3", cluster: "localhost", authorizer: authorizer, client: BaseClient(cluster: "localhost", port: 10443))
 
         notificationsHelper = elements.userNotifications(userId: "zan")
         

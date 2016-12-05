@@ -2,8 +2,8 @@ import Foundation
 
 extension App {
 
-    public func feeds(feedName: String) -> FeedsHelper {
-        return FeedsHelper(feedName: feedName, app: self)
+    public func feeds(_ name: String) -> FeedsHelper {
+        return FeedsHelper(name, app: self)
     }
 
     /**

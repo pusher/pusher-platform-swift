@@ -23,7 +23,7 @@ class ClickHandler {
 }
 
 class ViewController: NSViewController {
-    var elements: ElementsApp!
+    var elements: App!
     var handlers: [ClickHandler] = []
     var delegate: AppDelegate!
     
@@ -38,26 +38,23 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         delegate = NSApplication.shared().delegate as! AppDelegate
 
-        let authorizer = try! SecretAuthorizer(appId: "2", secret: "secret:somekey:somesecret", grants: nil)
-        elements = try! ElementsApp(appId: "2", cluster: "beta.buildelements.com", authorizer: authorizer)
+        let authorizer = try! SecretAuthorizer(appId: "2", secret: "secret:YOUR_KEY:YOUR_SECRET", grants: nil)
+        elements = try! App(id: "2", authorizer: authorizer)
 
-        let resumable = elements.feeds(feedName: "resumable-newer")
+        let resumable = elements.feeds("resumable-newer")
 
         try! resumable.subscribeWithResume(
             onOpen: { Void in print("We're open") },
             onAppend: { itemId, headers, item in print("RECEIVED", itemId, headers, item) } ,
             onEnd: { statusCode, headers, info in print("END", statusCode, headers, info) },
-            onStateChange: { oldState, newState in print("was \(oldState) now \(newState)") }).then { resSub -> Void in
-                print("Subscribed!")
-            }.then { Void in
-                try! resumable.append(item: ["newValue": 777]).then { appendRes -> Void in
-                    print(appendRes)
-                }
-            }.catch { error in
-                print(error)
+            onStateChange: { oldState, newState in print("was \(oldState) now \(newState)") }
+        ).then { resSub -> Void in
+            print("Subscribed!")
+        }.catch { error in
+            print(error)
         }
     }
-    
+
     func onSubscribe() {
         guard delegate.notificationsHelper?.isSubscribed() == false else {
             print("I am already subscribed!")

@@ -160,7 +160,6 @@ import Foundation
                 self._onEnd?(statusCode, headers, info)
             }
         ).then { subscription -> Void in
-            print("Successfully created new subscription")
             self.subscription = subscription
 
             // TODO: should this be here?

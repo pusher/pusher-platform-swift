@@ -1,13 +1,13 @@
 import PromiseKit
 
 @objc public class App: NSObject {
-    public var appId: String
+    public var id: String
     public var cluster: String?
     public var authorizer: Authorizer?
     public var client: BaseClient
 
-    public init(appId: String, cluster: String? = nil, authorizer: Authorizer? = nil, client: BaseClient? = nil) throws {
-        self.appId = appId
+    public init(id: String, cluster: String? = nil, authorizer: Authorizer? = nil, client: BaseClient? = nil) throws {
+        self.id = id
         self.cluster = cluster
         self.authorizer = authorizer
         try self.client = client ?? BaseClient(cluster: cluster)
@@ -15,14 +15,28 @@ import PromiseKit
 
     public func request(method: String, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
         let sanitisedPath = sanitise(path: path)
-        let namespacedPath = namespace(path: sanitisedPath, appId: self.appId)
+        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
         if jwt == nil && self.authorizer != nil {
             return self.authorizer!.authorize().then { jwtFromAuthorizer in
-                return self.client.request(method: method, path: namespacedPath, queryItems: queryItems, jwt: jwtFromAuthorizer, headers: headers, body: body)
+                return self.client.request(
+                    method: method,
+                    path: namespacedPath,
+                    queryItems: queryItems,
+                    jwt: jwtFromAuthorizer,
+                    headers: headers,
+                    body: body
+                )
             }
         } else {
-            return self.client.request(method: method, path: namespacedPath, queryItems: queryItems, jwt: jwt, headers: headers, body: body)
+            return self.client.request(
+                method: method,
+                path: namespacedPath,
+                queryItems: queryItems,
+                jwt: jwt,
+                headers: headers,
+                body: body
+            )
         }
     }
 
@@ -35,7 +49,7 @@ import PromiseKit
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil) throws -> Promise<Subscription> {
             let sanitisedPath = sanitise(path: path)
-            let namespacedPath = namespace(path: sanitisedPath, appId: self.appId)
+            let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
             if jwt == nil && self.authorizer != nil {
                 return self.authorizer!.authorize().then { jwtFromAuthorizer in
@@ -72,7 +86,7 @@ import PromiseKit
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
         onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
             let sanitisedPath = sanitise(path: path)
-            let namespacedPath = namespace(path: sanitisedPath, appId: self.appId)
+            let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
             if jwt == nil && self.authorizer != nil {
                 return self.authorizer!.authorize().then { jwtFromAuthorizer in
@@ -143,7 +157,7 @@ import PromiseKit
         if path.substring(to: endIndex) == "/apps/" {
             return path
         } else {
-            let namespacedPath = "/apps/\(self.appId)\(path)"
+            let namespacedPath = "/apps/\(appId)\(path)"
             return namespacedPath
         }
     }

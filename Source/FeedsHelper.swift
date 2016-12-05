@@ -8,8 +8,8 @@ import PromiseKit
 
     public var subscriptionTaskId: Int? = nil
 
-    public init(feedName: String, app: App) {
-        self.feedName = feedName
+    public init(_ name: String, app: App) {
+        self.feedName = name
         self.app = app
     }
 
@@ -45,7 +45,6 @@ import PromiseKit
 
             // TODO: should this be unowned self?
             let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
-                print("Do we get in the subscribeWithResume onUnderlyingSubscriptionChange in the FeedsHelper?")
                 self.subscriptionTaskId = newSub?.taskIdentifier
             }
 
