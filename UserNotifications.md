@@ -6,13 +6,13 @@ Requesting a UserNotifications object is done with a userId:
 
 ```swift
 
-let app: ElementsApp = createElementsApp(/* here be dragons */)
+let app = createApp(/* here be dragons */)
 
 let notifications = app.userNotifications(userId: "userId")
 
 ```
 
-Subscriptions are passed a notification and receipt handler: 
+Subscriptions are passed a notification and receipt handler:
 
 ```swift
 
@@ -47,7 +47,7 @@ Registering a device token for APNS in AppDelegate
 ```swift
 
 func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    
+
     register(deviceToken: "deviceToken")
 }
 
