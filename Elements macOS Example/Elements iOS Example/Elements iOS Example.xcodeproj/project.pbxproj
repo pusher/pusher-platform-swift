@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2D4332191DF6F827008696FD /* UserNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */; };
+		2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D43321A1DF6F897008696FD /* FeedsViewController.swift */; };
+		2D43321D1DF6FA67008696FD /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; };
+		2D43321E1DF6FA67008696FD /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2D4332231DF6FCBE008696FD /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332201DF6FCBE008696FD /* CryptoSwift.framework */; };
+		2D4332241DF6FCBE008696FD /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332201DF6FCBE008696FD /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2D4332251DF6FCBE008696FD /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332211DF6FCBE008696FD /* JWT.framework */; };
+		2D4332261DF6FCBE008696FD /* JWT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332211DF6FCBE008696FD /* JWT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		2D4332271DF6FCBE008696FD /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332221DF6FCBE008696FD /* PromiseKit.framework */; };
+		2D4332281DF6FCBE008696FD /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332221DF6FCBE008696FD /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		2D65243A1DE5B85C00590938 /* IosViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330263821DC2475E007D7317 /* IosViewController.swift */; };
 		330263811DC2475E007D7317 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330263801DC2475E007D7317 /* AppDelegate.swift */; };
 		330263861DC2475E007D7317 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263841DC2475E007D7317 /* Main.storyboard */; };
@@ -14,7 +24,32 @@
 		3302638B1DC2475E007D7317 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263891DC2475E007D7317 /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		2D43321F1DF6FA67008696FD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				2D43321E1DF6FA67008696FD /* ElementsSwift.framework in Embed Frameworks */,
+				2D4332261DF6FCBE008696FD /* JWT.framework in Embed Frameworks */,
+				2D4332241DF6FCBE008696FD /* CryptoSwift.framework in Embed Frameworks */,
+				2D4332281DF6FCBE008696FD /* PromiseKit.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		2D4332121DF6E0C9008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ElementsSwift.framework; path = ../../ElementsSwift/build/Debug/ElementsSwift.framework; sourceTree = "<group>"; };
+		2D4332141DF6E0CF008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationsViewController.swift; sourceTree = "<group>"; };
+		2D43321A1DF6F897008696FD /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsViewController.swift; sourceTree = "<group>"; };
+		2D43321C1DF6FA67008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D4332201DF6FCBE008696FD /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = "<group>"; };
+		2D4332211DF6FCBE008696FD /* JWT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JWT.framework; sourceTree = "<group>"; };
+		2D4332221DF6FCBE008696FD /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = "<group>"; };
 		3302637D1DC2475E007D7317 /* Elements iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		330263801DC2475E007D7317 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		330263821DC2475E007D7317 /* IosViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IosViewController.swift; sourceTree = "<group>"; };
@@ -29,17 +64,35 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2D43321D1DF6FA67008696FD /* ElementsSwift.framework in Frameworks */,
+				2D4332251DF6FCBE008696FD /* JWT.framework in Frameworks */,
+				2D4332231DF6FCBE008696FD /* CryptoSwift.framework in Frameworks */,
+				2D4332271DF6FCBE008696FD /* PromiseKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2D4332111DF6E0C9008696FD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2D4332121DF6E0C9008696FD /* ElementsSwift.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		330263741DC2475D007D7317 = {
 			isa = PBXGroup;
 			children = (
+				2D4332201DF6FCBE008696FD /* CryptoSwift.framework */,
+				2D4332211DF6FCBE008696FD /* JWT.framework */,
+				2D4332221DF6FCBE008696FD /* PromiseKit.framework */,
+				2D43321C1DF6FA67008696FD /* ElementsSwift.framework */,
+				2D4332141DF6E0CF008696FD /* ElementsSwift.framework */,
 				3302637F1DC2475E007D7317 /* Elements iOS Example */,
 				3302637E1DC2475E007D7317 /* Products */,
+				2D4332111DF6E0C9008696FD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,6 +113,8 @@
 				330263871DC2475E007D7317 /* Assets.xcassets */,
 				330263891DC2475E007D7317 /* LaunchScreen.storyboard */,
 				3302638C1DC2475E007D7317 /* Info.plist */,
+				2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */,
+				2D43321A1DF6F897008696FD /* FeedsViewController.swift */,
 			);
 			path = "Elements iOS Example";
 			sourceTree = "<group>";
@@ -74,6 +129,7 @@
 				330263791DC2475E007D7317 /* Sources */,
 				3302637A1DC2475E007D7317 /* Frameworks */,
 				3302637B1DC2475E007D7317 /* Resources */,
+				2D43321F1DF6FA67008696FD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -138,6 +194,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D65243A1DE5B85C00590938 /* IosViewController.swift in Sources */,
+				2D4332191DF6F827008696FD /* UserNotificationsViewController.swift in Sources */,
+				2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */,
 				330263811DC2475E007D7317 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -262,6 +320,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = H7FL434D9W;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "Elements iOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-iOS-Example";
@@ -275,6 +337,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = H7FL434D9W;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "Elements iOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-iOS-Example";
