@@ -54,44 +54,8 @@ class UserNotificationsViewController: UIViewController {
         inAppLabel.text = "In-App: Not Subscribed"
     }
     
-    
     func myNotificationHandler(notificationId: String, body: Any) {
         
         print("Received notification: \(notificationId.debugDescription)")
     }
-    
-        
-        
-//        let sv = NSStackView(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
-//        sv.userInterfaceLayoutDirection = NSUserInterfaceLayoutDirection.leftToRight
-//        
-//        let newLabel = NSTextField(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
-//        newLabel.isEditable = false
-//        newLabel.stringValue = "\(notificationId.debugDescription): \(body)"
-//        
-//        sv.addView(newLabel, in: NSStackViewGravity.leading)
-//        
-//        let button = NSButton(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
-//        
-//        let handler = ClickHandler(handler: {
-//            try! self.delegate.notificationsHelper?.acknowledge(notificationId: notificationId)
-//            
-//            button.title = "Acknowledged!"
-//        })
-//        
-//        self.handlers.append(handler)  // DISGRACE: keep strong reference
-//        
-//        button.title = "Acknowledge"
-//        button.target = handler  // DISGRACE: button.target is a weak reference
-//        button.action = #selector(handler.buttonClick)
-//        
-//        
-//        sv.addView(button, in: NSStackViewGravity.leading)
-//        
-//        DispatchQueue.main.async {
-//            self.stackView.addView(sv, in: NSStackViewGravity.top)
-//        }
-//        
-//        print("Received user notification: \(notificationId.debugDescription)")
-    
 }
