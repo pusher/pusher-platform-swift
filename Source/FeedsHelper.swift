@@ -37,27 +37,60 @@ import PromiseKit
 
             let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-            var headers: [String: String]? = nil
-
-            if lastEventId != nil {
-                headers = ["Last-Event-ID": lastEventId!]
-            }
-
             // TODO: should this be unowned self?
             let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
                 self.subscriptionTaskId = newSub?.taskIdentifier
             }
 
-            return try! self.app!.subscribeWithResume(
-                path: path,
-                jwt: nil,
-                headers: headers,
-                onOpen: onOpen,
-                onEvent: onAppend,
-                onEnd: onEnd,
-                onStateChange: onStateChange,
-                onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
-            )
+            if lastEventId != nil {
+
+                let headers = ["Last-Event-ID": lastEventId!]
+
+                // TODO: should this be unowned self?
+                let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
+                    self.subscriptionTaskId = newSub?.taskIdentifier
+                }
+
+                return try! self.app!.subscribeWithResume(
+                    path: path,
+                    jwt: nil,
+                    headers: headers,
+                    onOpen: onOpen,
+                    onEvent: onAppend,
+                    onEnd: onEnd,
+                    onStateChange: onStateChange,
+                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                )
+            } else {
+                return try! self.get().then { feedsGetRes in
+                    for item in feedsGetRes.items.reversed() {
+                        guard let itemId = item["id"] as? String else {
+                            // TODO: Probably throw an ppropriate error here
+                            continue
+                        }
+
+                        onAppend?(itemId, [:], item["data"])
+                    }
+
+                    var headers: [String: String] = [:]
+                    var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
+
+                    if mostRecentlyReceivedItemId != nil {
+                        headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
+                    }
+
+                    return try! self.app!.subscribeWithResume(
+                        path: path,
+                        jwt: nil,
+                        headers: headers,
+                        onOpen: onOpen,
+                        onEvent: onAppend,
+                        onEnd: onEnd,
+                        onStateChange: onStateChange,
+                        onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                    )
+                }
+            }
     }
 
     public func subscribe(
@@ -71,36 +104,72 @@ import PromiseKit
 
             let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-            var headers: [String: String]? = nil
-
             if lastEventId != nil {
-                headers = ["Last-Event-ID": lastEventId!]
-            }
 
-            return try! self.app!.subscribe(
-                path: path,
-                jwt: nil,
-                headers: headers,
-                onOpen: onOpen,
-                onEvent: onAppend,
-                onEnd: onEnd
-            ).then { sub -> Promise<Subscription> in
-                // TODO: there must be a better way that re-wrapping the subscription in a Promise, surely!
-                self.subscriptionTaskId = sub.taskIdentifier
-                return Promise<Subscription> { fulfill, reject in
-                    fulfill(sub)
+                let headers = ["Last-Event-ID": lastEventId!]
+
+                return try! self.app!.subscribe(
+                    path: path,
+                    jwt: nil,
+                    headers: headers,
+                    onOpen: onOpen,
+                    onEvent: onAppend,
+                    onEnd: onEnd
+                ).then { sub -> Promise<Subscription> in
+                    // TODO: there must be a better way that re-wrapping the subscription in a Promise, surely!
+                    self.subscriptionTaskId = sub.taskIdentifier
+                    return Promise<Subscription> { fulfill, reject in
+                        fulfill(sub)
+                    }
+                }
+            } else {
+                return try! self.get().then { feedsGetRes in
+                    for item in feedsGetRes.items.reversed() {
+                        guard let itemId = item["id"] as? String else {
+                            // TODO: Probably throw an ppropriate error here
+                            continue
+                        }
+
+                        onAppend?(itemId, [:], item["data"])
+                    }
+
+                    var headers: [String: String] = [:]
+                    var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
+
+                    if mostRecentlyReceivedItemId != nil {
+                        headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
+                    }
+
+                    return try! self.app!.subscribe(
+                        path: path,
+                        jwt: nil,
+                        headers: headers,
+                        onOpen: onOpen,
+                        onEvent: onAppend,
+                        onEnd: onEnd
+                    ).then { sub -> Promise<Subscription> in
+                        // TODO: there must be a better way that re-wrapping the subscription in a Promise, surely!
+                        self.subscriptionTaskId = sub.taskIdentifier
+                        return Promise<Subscription> { fulfill, reject in
+                            fulfill(sub)
+                        }
+                    }
                 }
             }
     }
 
-    public func get(from: String, limit: Int = 50) throws -> Promise<FeedsItemsReponse> {
+    public func get(from: String? = nil, limit: Int = 50) throws -> Promise<FeedsItemsReponse> {
         guard self.app != nil else {
             throw ServiceHelperError.noAppObject
         }
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-        let queryItems = [URLQueryItem(name: "from_id", value: from), URLQueryItem(name: "limit", value: "\(limit)")]
+        var queryItems = [URLQueryItem(name: "limit", value: "\(limit)")]
+
+        if from != nil {
+            queryItems.append(URLQueryItem(name: "from_id", value: from!))
+        }
 
         return self.app!.request(method: "GET", path: path, queryItems: queryItems).then { data -> Promise<FeedsItemsReponse> in
             return Promise<FeedsItemsReponse> { fulfill, reject in
@@ -109,7 +178,7 @@ import PromiseKit
                     return
                 }
 
-                guard let items = json["items"] as? [Any] else {
+                guard let items = json["items"] as? [[String: Any]] else {
                     reject(FeedsHelperError.itemsMissingFromJSONResponse(json))
                     return
                 }
@@ -163,9 +232,9 @@ import PromiseKit
 @objc public class FeedsItemsReponse: NSObject {
     // TODO: make id string when Will has made changes
     public let nextId: Int?
-    public let items: [Any]
+    public let items: [[String: Any]]
 
-    public init(nextId: Int? = nil, items: [Any]) {
+    public init(nextId: Int? = nil, items: [[String: Any]]) {
         self.nextId = nextId
         self.items = items
     }
