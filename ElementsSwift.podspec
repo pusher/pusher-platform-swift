@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'ElementsSwift'
-  s.version          = '0.1.0'
+  s.version          = '0.2.0'
   s.summary          = 'An Elements client library in Swift'
   s.homepage         = 'https://github.com/pusher/elements-client-swift'
   s.license          = 'MIT'
