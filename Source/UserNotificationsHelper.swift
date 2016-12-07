@@ -80,6 +80,7 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
     }
 
     //TODO: should we return a Bool denoting whether or not the unsubscribe was successful
+    //TODO: the guard check is repeated in every method call - is there anything we could do about that?
     /**
         Cancel the current subscription.
 
@@ -95,6 +96,7 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
         }
 
         self.app!.unsubscribe(taskIdentifier: subscriptionTaskId!)
+        self.subscriptionTaskId = nil
     }
 
     /**

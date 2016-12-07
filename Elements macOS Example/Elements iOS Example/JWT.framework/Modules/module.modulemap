@@ -1,0 +1,10 @@
+framework module JWT {
+  umbrella header "JWT.h"
+
+  export *
+  module * { export * }
+}
+
+module JWT.Swift {
+    header "JWT-Swift.h"
+}
