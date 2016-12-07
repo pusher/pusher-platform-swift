@@ -34,15 +34,19 @@ If you don't already have the Cocoapods gem installed, run the following command
 $ gem install cocoapods
 ```
 
-To integrate ElementsSwift into your Xcode project using CocoaPods, specify it in your `Podfile`:
+Then run `pod init` to create your `Podfile`, and add the following lines to it:
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
 source 'https://github.com/pusher/PrivatePodSpecs.git'
 platform :ios, '10.0' # change this if you're not making an iOS app!
-use_frameworks!
 
-pod 'ElementsSwift'
+target 'your-app-name' do
+
+    pod 'ElementsSwift'
+end
+
+# the rest of the file...
 ```
 
 Then, run the following command:
@@ -61,7 +65,7 @@ $ pod install
 
 Also you'll need to make sure that you've not got the version of ElementsSwift locked to an old version in your `Podfile.lock` file.
 
-### Carthage
+### ~~Carthage~~ - For Hackday use CocoaPods
 
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that automates the process of adding frameworks to your Cocoa application.
 
