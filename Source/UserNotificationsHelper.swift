@@ -12,6 +12,7 @@ public class UserNotificationsHelper: NSObject, ServiceHelper {
     public var subscriptionTaskId: Int? = nil
 
     // TODO: We should probably be returning the underlying subscription, or some sort of wrapper
+    // TODO: Should we be giving users the option of using a ResumableSubscription, as in FeedsHelper?
     /**
         Subscribe to in-app User Notifications
 
