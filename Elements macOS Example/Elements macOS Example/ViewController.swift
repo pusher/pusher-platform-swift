@@ -38,7 +38,8 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         delegate = NSApplication.shared().delegate as! AppDelegate
 
-        let authorizer = try! SecretAuthorizer(appId: "2", secret: "secret:YOUR_KEY:YOUR_SECRET", grants: nil)
+        let authorizer = SimpleTokenAuthorizer(jwt: "YOUR.CLIENT.JWT")
+        
         elements = try! App(id: "2", authorizer: authorizer)
 
         let resumable = elements.feeds("resumable-newer")

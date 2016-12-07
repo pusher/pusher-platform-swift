@@ -18,7 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         let authorizer = SimpleTokenAuthorizer(jwt: "YOUR.CLIENT.JWT")
-        elements = try! App(id: "3", cluster: "localhost", authorizer: authorizer, client: BaseClient(cluster: "localhost", port: 10443))
+        elements = try! App(id: "3", authorizer: authorizer)
 
         notificationsHelper = elements.userNotifications(userId: "zan")
         
