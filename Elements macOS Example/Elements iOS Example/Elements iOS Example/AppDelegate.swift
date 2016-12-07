@@ -22,17 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let authorizer = SimpleTokenAuthorizer(jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJncmFudHMiOnsiL2FwcHMvKi91c2VyLW5vdGlmaWNhdGlvbnMvKioiOlsiKiJdfSwiaXNzIjoiNjRlYzNkOGMtYTc4NS00M2Q1LTk4YTUtZTYxNDViYTEzNDgwIn0.QkPB2acA9HrkFytmcXxeSbyPXyoAz2-OmSTQ7lBQCn4")
         elements = try! App(id: "3", authorizer: authorizer)
-        
+        notificationsHelper = elements.userNotifications(userId: "zan")
         
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
-            // Enable or disable features based on authorization.
+            guard granted else {
+                return
+            }
+            application.registerForRemoteNotifications()
         }
-        
-        application.registerForRemoteNotifications()
-        notificationsHelper = elements.userNotifications(userId: "zan")
-
-        
         return true
     }
     

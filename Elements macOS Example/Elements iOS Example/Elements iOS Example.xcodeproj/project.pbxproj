@@ -41,6 +41,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2D2B83271DF821B200357772 /* Elements iOS Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Elements iOS Example.entitlements"; sourceTree = "<group>"; };
 		2D4332121DF6E0C9008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ElementsSwift.framework; path = ../../ElementsSwift/build/Debug/ElementsSwift.framework; sourceTree = "<group>"; };
 		2D4332141DF6E0CF008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationsViewController.swift; sourceTree = "<group>"; };
@@ -105,6 +106,7 @@
 		3302637F1DC2475E007D7317 /* Elements iOS Example */ = {
 			isa = PBXGroup;
 			children = (
+				2D2B83271DF821B200357772 /* Elements iOS Example.entitlements */,
 				330263801DC2475E007D7317 /* AppDelegate.swift */,
 				330263841DC2475E007D7317 /* Main.storyboard */,
 				330263871DC2475E007D7317 /* Assets.xcassets */,
@@ -151,6 +153,11 @@
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = H7FL434D9W;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -315,6 +322,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Elements iOS Example/Elements iOS Example.entitlements";
 				DEVELOPMENT_TEAM = H7FL434D9W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -332,6 +340,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Elements iOS Example/Elements iOS Example.entitlements";
 				DEVELOPMENT_TEAM = H7FL434D9W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
