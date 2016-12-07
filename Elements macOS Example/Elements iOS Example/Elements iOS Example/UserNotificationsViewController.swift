@@ -30,17 +30,6 @@ class UserNotificationsViewController: UIViewController {
         delegate = UIApplication.shared.delegate as! AppDelegate
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        
-        
-        print ("UserNotifications ViewController - viewDidAppear")
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
     func subscribeToUserNotifications() {
         guard delegate.notificationsHelper?.isSubscribed() == false else {
             print("I am already subscribed!")
@@ -69,7 +58,8 @@ class UserNotificationsViewController: UIViewController {
     func myNotificationHandler(notificationId: String, body: Any) {
         
         print("Received notification: \(notificationId.debugDescription)")
-        
+    }
+    
         
         
 //        let sv = NSStackView(frame: NSRect(x: 100, y: 100, width: 100, height: 100))
@@ -103,6 +93,5 @@ class UserNotificationsViewController: UIViewController {
 //        }
 //        
 //        print("Received user notification: \(notificationId.debugDescription)")
-    }
     
 }
