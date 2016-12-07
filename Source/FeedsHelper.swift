@@ -93,15 +93,18 @@ import PromiseKit
             }
     }
 
-    public func get(from: String, limit: Int = 50) throws -> Promise<FeedsItemsReponse> {
+    public func get(from: String? = nil, limit: Int = 50) throws -> Promise<FeedsItemsReponse> {
         guard self.app != nil else {
             throw ServiceHelperError.noAppObject
         }
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-        let queryItems = [URLQueryItem(name: "from_id", value: from), URLQueryItem(name: "limit", value: "\(limit)")]
-
+        var queryItems = [URLQueryItem(name: "limit", value: "\(limit)")]
+        if from != nil {
+            queryItems.append(URLQueryItem(name: "from_id", value: from))
+        }
+        
         return self.app!.request(method: "GET", path: path, queryItems: queryItems).then { data -> Promise<FeedsItemsReponse> in
             return Promise<FeedsItemsReponse> { fulfill, reject in
                 guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
