@@ -42,8 +42,7 @@ source 'git@github.com:pusher/PrivatePodSpecs.git'
 platform :ios, '10.0' # change this if you're not making an iOS app!
 
 target 'your-app-name' do
-
-    pod 'ElementsSwift'
+  pod 'ElementsSwift'
 end
 
 # the rest of the file...
