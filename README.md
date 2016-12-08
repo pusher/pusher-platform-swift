@@ -38,7 +38,7 @@ Then run `pod init` to create your `Podfile`, and add the following lines to it:
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-source 'https://github.com/pusher/PrivatePodSpecs.git'
+source 'git@github.com:pusher/PrivatePodSpecs.git'
 platform :ios, '10.0' # change this if you're not making an iOS app!
 
 target 'your-app-name' do
