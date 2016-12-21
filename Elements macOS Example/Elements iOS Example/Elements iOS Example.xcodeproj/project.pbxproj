@@ -11,12 +11,6 @@
 		2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D43321A1DF6F897008696FD /* FeedsViewController.swift */; };
 		2D43321D1DF6FA67008696FD /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; };
 		2D43321E1DF6FA67008696FD /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2D4332231DF6FCBE008696FD /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332201DF6FCBE008696FD /* CryptoSwift.framework */; };
-		2D4332241DF6FCBE008696FD /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332201DF6FCBE008696FD /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2D4332251DF6FCBE008696FD /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332211DF6FCBE008696FD /* JWT.framework */; };
-		2D4332261DF6FCBE008696FD /* JWT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332211DF6FCBE008696FD /* JWT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		2D4332271DF6FCBE008696FD /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332221DF6FCBE008696FD /* PromiseKit.framework */; };
-		2D4332281DF6FCBE008696FD /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D4332221DF6FCBE008696FD /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		330263811DC2475E007D7317 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330263801DC2475E007D7317 /* AppDelegate.swift */; };
 		330263861DC2475E007D7317 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263841DC2475E007D7317 /* Main.storyboard */; };
 		330263881DC2475E007D7317 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 330263871DC2475E007D7317 /* Assets.xcassets */; };
@@ -31,9 +25,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				2D43321E1DF6FA67008696FD /* ElementsSwift.framework in Embed Frameworks */,
-				2D4332261DF6FCBE008696FD /* JWT.framework in Embed Frameworks */,
-				2D4332241DF6FCBE008696FD /* CryptoSwift.framework in Embed Frameworks */,
-				2D4332281DF6FCBE008696FD /* PromiseKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -47,9 +38,6 @@
 		2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationsViewController.swift; sourceTree = "<group>"; };
 		2D43321A1DF6F897008696FD /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsViewController.swift; sourceTree = "<group>"; };
 		2D43321C1DF6FA67008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D4332201DF6FCBE008696FD /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = "<group>"; };
-		2D4332211DF6FCBE008696FD /* JWT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JWT.framework; sourceTree = "<group>"; };
-		2D4332221DF6FCBE008696FD /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = "<group>"; };
 		3302637D1DC2475E007D7317 /* Elements iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		330263801DC2475E007D7317 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		330263851DC2475E007D7317 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -64,9 +52,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D43321D1DF6FA67008696FD /* ElementsSwift.framework in Frameworks */,
-				2D4332251DF6FCBE008696FD /* JWT.framework in Frameworks */,
-				2D4332231DF6FCBE008696FD /* CryptoSwift.framework in Frameworks */,
-				2D4332271DF6FCBE008696FD /* PromiseKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,9 +69,6 @@
 		330263741DC2475D007D7317 = {
 			isa = PBXGroup;
 			children = (
-				2D4332201DF6FCBE008696FD /* CryptoSwift.framework */,
-				2D4332211DF6FCBE008696FD /* JWT.framework */,
-				2D4332221DF6FCBE008696FD /* PromiseKit.framework */,
 				2D43321C1DF6FA67008696FD /* ElementsSwift.framework */,
 				2D4332141DF6E0CF008696FD /* ElementsSwift.framework */,
 				3302637F1DC2475E007D7317 /* Elements iOS Example */,
