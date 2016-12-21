@@ -11,12 +11,6 @@
 		332B5A7B1D9ACA6A00E69AC8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */; };
 		332B5A7D1D9ACA6A00E69AC8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */; };
 		332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */; };
-		33F1F96C1DC368840021056F /* PromiseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9691DC368840021056F /* PromiseKit.framework */; };
-		33F1F96D1DC368840021056F /* PromiseKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9691DC368840021056F /* PromiseKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33F1F96E1DC368840021056F /* JWT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96A1DC368840021056F /* JWT.framework */; };
-		33F1F96F1DC368840021056F /* JWT.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96A1DC368840021056F /* JWT.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		33F1F9701DC368840021056F /* CryptoSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96B1DC368840021056F /* CryptoSwift.framework */; };
-		33F1F9711DC368840021056F /* CryptoSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F96B1DC368840021056F /* CryptoSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33F1F9731DC368900021056F /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; };
 		33F1F9741DC368900021056F /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -28,10 +22,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				33F1F9711DC368840021056F /* CryptoSwift.framework in Embed Frameworks */,
 				33F1F9741DC368900021056F /* ElementsSwift.framework in Embed Frameworks */,
-				33F1F96F1DC368840021056F /* JWT.framework in Embed Frameworks */,
-				33F1F96D1DC368840021056F /* PromiseKit.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,9 +37,6 @@
 		332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		332B5A7F1D9ACA6A00E69AC8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		332B5A811D9ACA6A00E69AC8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		33F1F9691DC368840021056F /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PromiseKit.framework; sourceTree = "<group>"; };
-		33F1F96A1DC368840021056F /* JWT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JWT.framework; sourceTree = "<group>"; };
-		33F1F96B1DC368840021056F /* CryptoSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = CryptoSwift.framework; sourceTree = "<group>"; };
 		33F1F9721DC368900021056F /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -57,10 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33F1F9701DC368840021056F /* CryptoSwift.framework in Frameworks */,
 				33F1F9731DC368900021056F /* ElementsSwift.framework in Frameworks */,
-				33F1F96E1DC368840021056F /* JWT.framework in Frameworks */,
-				33F1F96C1DC368840021056F /* PromiseKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,9 +55,6 @@
 		330263FA1DC25EB3007D7317 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				33F1F9691DC368840021056F /* PromiseKit.framework */,
-				33F1F96A1DC368840021056F /* JWT.framework */,
-				33F1F96B1DC368840021056F /* CryptoSwift.framework */,
 				33F1F9721DC368900021056F /* ElementsSwift.framework */,
 			);
 			name = Frameworks;
