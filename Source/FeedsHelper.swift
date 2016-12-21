@@ -25,74 +25,99 @@ import Foundation
         self.app!.unsubscribe(taskIdentifier: subscriptionTaskId!)
     }
 
-//    public func subscribeWithResume(
-//        lastEventId: String? = nil,
-//        onOpen: (() -> Void)? = nil,
-//        onAppend: ((String, [String: String], Any) -> Void)? = nil,
-//        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-//        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
-//            guard self.app != nil else {
-//                throw ServiceHelperError.noAppObject
-//            }
-//
-//            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
-//
-//            // TODO: should this be unowned self?
-//            let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
-//                self.subscriptionTaskId = newSub?.taskIdentifier
-//            }
-//
-//            if lastEventId != nil {
-//
-//                let headers = ["Last-Event-ID": lastEventId!]
-//
-//                // TODO: should this be unowned self?
-//                let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
-//                    self.subscriptionTaskId = newSub?.taskIdentifier
-//                }
-//
-//                return try! self.app!.subscribeWithResume(
-//                    path: path,
-//                    jwt: nil,
-//                    headers: headers,
-//                    onOpen: onOpen,
-//                    onEvent: onAppend,
-//                    onEnd: onEnd,
-//                    onStateChange: onStateChange,
-//                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
-//                )
-//            } else {
-//                return try! self.get().then { feedsGetRes in
-//                    for item in feedsGetRes.items.reversed() {
-//                        guard let itemId = item["id"] as? String else {
-//                            // TODO: Probably throw an ppropriate error here
-//                            continue
-//                        }
-//
-//                        onAppend?(itemId, [:], item["data"])
-//                    }
-//
-//                    var headers: [String: String] = [:]
-//                    var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
-//
-//                    if mostRecentlyReceivedItemId != nil {
-//                        headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
-//                    }
-//
-//                    return try! self.app!.subscribeWithResume(
-//                        path: path,
-//                        jwt: nil,
-//                        headers: headers,
-//                        onOpen: onOpen,
-//                        onEvent: onAppend,
-//                        onEnd: onEnd,
-//                        onStateChange: onStateChange,
-//                        onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
-//                    )
-//                }
-//            }
-//    }
-//
+    public func subscribeWithResume(
+        lastEventId: String? = nil,
+        onOpen: (() -> Void)? = nil,
+        onAppend: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        completionHandler: ((Result<ResumableSubscription>) -> Void)? = nil) -> Void {
+            guard self.app != nil else {
+                completionHandler?(.failure(ServiceHelperError.noAppObject))
+                return
+            }
+
+            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+
+            // TODO: should this be unowned self?
+            let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
+                self.subscriptionTaskId = newSub?.taskIdentifier
+            }
+
+            if lastEventId != nil {
+
+                let headers = ["Last-Event-ID": lastEventId!]
+
+                // TODO: should this be unowned self?
+                let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
+                    self.subscriptionTaskId = newSub?.taskIdentifier
+                }
+
+                self.app!.subscribeWithResume(
+                    path: path,
+                    jwt: nil,
+                    headers: headers,
+                    onOpen: onOpen,
+                    onEvent: onAppend,
+                    onEnd: onEnd,
+                    onError: onError,
+                    onStateChange: onStateChange,
+                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                ) { result in
+                    guard let subscription = result.value else {
+                        // TODO: There must be a nicer way to pass the error through
+                        completionHandler?(.failure(result.error!))
+                        return
+                    }
+                    completionHandler?(.success(subscription))
+                }
+            } else {
+                self.get() { result in
+                    switch result {
+                    case .failure(let error):
+                        completionHandler?(.failure(error))
+                    case .success(let feedsGetRes):
+                        for item in feedsGetRes.items.reversed() {
+                            guard let itemId = item["id"] as? String else {
+                                // TODO: Probably throw an ppropriate error here
+                                continue
+                            }
+
+                            // TODO: We don't always want to call onAppend, I imagine, maybe never in fact
+                            onAppend?(itemId, [:], item["data"])
+                        }
+
+                        var headers: [String: String] = [:]
+                        let mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
+
+                        if mostRecentlyReceivedItemId != nil {
+                            headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
+                        }
+
+                        self.app!.subscribeWithResume(
+                            path: path,
+                            jwt: nil,
+                            headers: headers,
+                            onOpen: onOpen,
+                            onEvent: onAppend,
+                            onEnd: onEnd,
+                            onError: onError,
+                            onStateChange: onStateChange,
+                            onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                        ) { result in
+                            guard let subscription = result.value else {
+                                // TODO: There must be a nicer way to pass the error through
+                                completionHandler?(.failure(result.error!))
+                                return
+                            }
+                            completionHandler?(.success(subscription))
+                        }
+                    }
+                }
+            }
+    }
+
     public func subscribe(
         lastEventId: String? = nil,
         onOpen: (() -> Void)? = nil,
@@ -127,6 +152,10 @@ import Foundation
                         completionHandler?(.failure(result.error!))
                         return
                     }
+
+                    //TODO: does this need to be here?
+                    self.subscriptionTaskId = subscription.taskIdentifier
+
                     completionHandler?(.success(subscription))
                 }
             } else {
@@ -146,7 +175,7 @@ import Foundation
                         }
 
                         var headers: [String: String] = [:]
-                        var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
+                        let mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
 
                         if mostRecentlyReceivedItemId != nil {
                             headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
@@ -166,6 +195,10 @@ import Foundation
                                     completionHandler?(.failure(result.error!))
                                     return
                                 }
+
+                                //TODO: does this need to be here?
+                                self.subscriptionTaskId = subscription.taskIdentifier
+
                                 completionHandler?(.success(subscription))
                         }
                     }
@@ -211,8 +244,7 @@ import Foundation
                 return
             }
 
-            // TODO: make the id a string when Will has made changes
-            if let id = json["next_id"] as? Int {
+            if let id = json["next_id"] as? String {
                 completionHandler?(.success(FeedsItemsReponse(nextId: id, items: items)))
             } else {
                 completionHandler?(.success(FeedsItemsReponse(items: items)))
@@ -227,7 +259,7 @@ import Foundation
         }
 
         // TODO: I thought this was supposed to be item, or maybe items now?
-        let wrappedItem: [String: Any] = ["data": item]
+        let wrappedItem: [String: Any] = ["item": item]
 
         guard JSONSerialization.isValidJSONObject(wrappedItem) else {
             completionHandler?(.failure(ServiceHelperError.invalidJSONObjectAsData(wrappedItem)))
@@ -260,8 +292,7 @@ import Foundation
                 return
             }
 
-            // TODO: change this to be a String when Will has made the changes
-            guard let id = json["item_id"] as? Int else {
+            guard let id = json["item_id"] as? String else {
                 completionHandler?(.failure(FeedsHelperError.failedToParseJSONResponse(json)))
                 return
             }
@@ -273,11 +304,10 @@ import Foundation
 }
 
 @objc public class FeedsItemsReponse: NSObject {
-    // TODO: make id string when Will has made changes
-    public let nextId: Int?
+    public let nextId: String?
     public let items: [[String: Any]]
 
-    public init(nextId: Int? = nil, items: [[String: Any]]) {
+    public init(nextId: String? = nil, items: [[String: Any]]) {
         self.nextId = nextId
         self.items = items
     }

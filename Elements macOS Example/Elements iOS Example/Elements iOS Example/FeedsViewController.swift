@@ -6,7 +6,6 @@
 //  Copyright © 2016 Pusher. All rights reserved.
 //
 
-
 import UIKit
 
 class FeedsViewController: UIViewController {
@@ -21,17 +20,16 @@ class FeedsViewController: UIViewController {
         
         delegate = UIApplication.shared.delegate as! AppDelegate
 
-        let feed = delegate.elements.feeds("resumable-newer")
+        let feed = delegate.elements.feeds("resumable-ham")
         
-        try! feed.subscribeWithResume(
-            onOpen: { Void in print("We're open") },
-            onAppend: { itemId, headers, item in print("RECEIVED", itemId, headers, item) } ,
-            onEnd: { statusCode, headers, info in print("END", statusCode, headers, info) },
+        feed.subscribeWithResume(
+            onOpen: { Void in print("OPEN") },
+            onAppend: { itemId, headers, item in print("RECEIVED: ", itemId, headers, item) } ,
+            onEnd: { statusCode, headers, info in print("END: ", statusCode, headers, info) },
+            onError: { error in print("ERROR: ", error) },
             onStateChange: { oldState, newState in print("was \(oldState) now \(newState)") }
-            ).then { resSub -> Void in
-                print("Subscribed!")
-            }.catch { error in
-                print(error)
+        ) { result in
+            print("RESULT: ", result)
         }
     }
 }
