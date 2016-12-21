@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D4332191DF6F827008696FD /* UserNotificationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */; };
 		2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D43321A1DF6F897008696FD /* FeedsViewController.swift */; };
 		2D43321D1DF6FA67008696FD /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; };
 		2D43321E1DF6FA67008696FD /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -35,7 +34,6 @@
 		2D2B83271DF821B200357772 /* Elements iOS Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Elements iOS Example.entitlements"; sourceTree = "<group>"; };
 		2D4332121DF6E0C9008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ElementsSwift.framework; path = ../../ElementsSwift/build/Debug/ElementsSwift.framework; sourceTree = "<group>"; };
 		2D4332141DF6E0CF008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationsViewController.swift; sourceTree = "<group>"; };
 		2D43321A1DF6F897008696FD /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsViewController.swift; sourceTree = "<group>"; };
 		2D43321C1DF6FA67008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3302637D1DC2475E007D7317 /* Elements iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -94,7 +92,6 @@
 				330263871DC2475E007D7317 /* Assets.xcassets */,
 				330263891DC2475E007D7317 /* LaunchScreen.storyboard */,
 				3302638C1DC2475E007D7317 /* Info.plist */,
-				2D4332181DF6F827008696FD /* UserNotificationsViewController.swift */,
 				2D43321A1DF6F897008696FD /* FeedsViewController.swift */,
 			);
 			path = "Elements iOS Example";
@@ -179,7 +176,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D4332191DF6F827008696FD /* UserNotificationsViewController.swift in Sources */,
 				2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */,
 				330263811DC2475E007D7317 /* AppDelegate.swift in Sources */,
 			);

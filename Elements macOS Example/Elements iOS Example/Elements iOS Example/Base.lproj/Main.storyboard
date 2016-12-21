@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11542" systemVersion="16B2657" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="rIz-bf-ulW">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16C67" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="rIz-bf-ulW">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11524"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -40,68 +40,6 @@
             </objects>
             <point key="canvasLocation" x="389.85507246376812" y="336.68478260869568"/>
         </scene>
-        <!--User Notifications-->
-        <scene sceneID="95K-pi-H6j">
-            <objects>
-                <viewController title="User Notifications" id="13C-kw-T3A" customClass="UserNotificationsViewController" customModule="Elements_iOS_Example" customModuleProvider="target" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="ggq-zh-59g"/>
-                        <viewControllerLayoutGuide type="bottom" id="2mQ-wG-mS5"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="zsA-Po-Uf7">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="In-App: Not Subscribed" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pCc-3m-vxD" userLabel="Subscription status">
-                                <rect key="frame" x="20" y="20" width="374" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <stackView opaque="NO" contentMode="scaleToFill" fixedFrame="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="W95-LZ-NTq">
-                                <rect key="frame" x="20" y="78" width="374" height="558"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.80033367543868095" green="1" blue="0.95900238506721536" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <color key="tintColor" red="0.8003336754" green="1" blue="0.95900238510000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                            </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OMk-HA-fKx">
-                                <rect key="frame" x="20" y="639" width="97" height="40"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Subscribe"/>
-                                <connections>
-                                    <action selector="subscribeButton:" destination="13C-kw-T3A" eventType="touchUpInside" id="yPY-oS-XgU"/>
-                                </connections>
-                            </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="tOO-Jh-83K">
-                                <rect key="frame" x="125" y="644" width="87" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Unsubscribe"/>
-                                <connections>
-                                    <action selector="unsubscribeButton:" destination="13C-kw-T3A" eventType="touchUpInside" id="UMy-GU-Pie"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Push: Not registered" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4Ec-EU-wTx">
-                                <rect key="frame" x="20" y="49" width="157" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <accessibility key="accessibilityConfiguration" label="User Notifications"/>
-                    </view>
-                    <tabBarItem key="tabBarItem" title="User Notifications" id="pvG-pt-Yvi" userLabel="User Notifications"/>
-                    <connections>
-                        <outlet property="inAppLabel" destination="pCc-3m-vxD" id="dUi-Of-Vo6"/>
-                        <outlet property="pushLabel" destination="4Ec-EU-wTx" id="jBx-NL-CVx"/>
-                    </connections>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="VQ5-pO-uyo" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="389.85507246376812" y="-317.11956521739131"/>
-        </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="H2z-n5-xeN">
             <objects>
@@ -112,7 +50,6 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="13C-kw-T3A" kind="relationship" relationship="viewControllers" id="uKI-gv-IDj"/>
                         <segue destination="q24-2i-bmd" kind="relationship" relationship="viewControllers" id="QAK-hs-nqx"/>
                     </connections>
                 </tabBarController>
