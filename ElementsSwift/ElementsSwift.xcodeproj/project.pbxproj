@@ -18,7 +18,6 @@
 		335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		338290721DF5CEC6008CDC8F /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* App.swift */; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
-		33935EAA1DA539AD00C5C064 /* SecretAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */; };
 		33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */; };
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* FeedsHelper.swift */; };
@@ -58,14 +57,12 @@
 		33831C941A9CF61600B124F1 /* ElementsSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElementsSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831CD61A9CFFF200B124F1 /* ElementsSwift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElementsSwift.h; path = ../Source/ElementsSwift.h; sourceTree = SOURCE_ROOT; };
 		33935EA71DA5399A00C5C064 /* Authorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorizer.swift; sourceTree = "<group>"; };
-		33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
 		33935EB31DA5523C00C5C064 /* FeedsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsHelper.swift; sourceTree = "<group>"; };
 		33935EB51DA5526F00C5C064 /* ServiceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceHelper.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAppExtensions.swift; sourceTree = "<group>"; };
-		33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Carthage.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,7 +87,6 @@
 			isa = PBXGroup;
 			children = (
 				2D7F574B1DE46368009FA998 /* UserNotifications.md */,
-				33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */,
 				33831C8B1A9CF61600B124F1 /* Source */,
 				33BB995C1D21225B00B25C2A /* Tests */,
 				33831C8A1A9CF61600B124F1 /* Products */,
@@ -149,7 +145,6 @@
 		33935EB21DA54F9400C5C064 /* Authorizers */ = {
 			isa = PBXGroup;
 			children = (
-				33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */,
 				33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */,
 				3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */,
 			);
@@ -299,7 +294,6 @@
 				330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */,
 				33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */,
 				3329F40D1DC0B530007B29FF /* SubscriptionManager.swift in Sources */,
-				33935EAA1DA539AD00C5C064 /* SecretAuthorizer.swift in Sources */,
 				3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
@@ -335,7 +329,6 @@
 /* Begin XCBuildConfiguration section */
 		33831C4E1A9CEDF800B124F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -371,7 +364,6 @@
 		};
 		33831C4F1A9CEDF800B124F1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
