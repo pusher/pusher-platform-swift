@@ -7,18 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D004EA31DE33E89008CE815 /* UserNotificationsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D004EA21DE33E89008CE815 /* UserNotificationsHelper.swift */; };
-		2D7F574C1DE46368009FA998 /* UserNotifications.md in Sources */ = {isa = PBXBuildFile; fileRef = 2D7F574B1DE46368009FA998 /* UserNotifications.md */; };
 		330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E59061DEDD38900C92897 /* ResumableSubscription.swift */; };
 		3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */; };
 		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
-		3329F40D1DC0B530007B29FF /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */; };
 		332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* MessageParser.swift */; };
 		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
 		335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		337C551E1E02DC8100C5A317 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551D1E02DC8100C5A317 /* Result.swift */; };
+		337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */; };
 		338290721DF5CEC6008CDC8F /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* App.swift */; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
-		33935EAA1DA539AD00C5C064 /* SecretAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */; };
 		33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */; };
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* FeedsHelper.swift */; };
@@ -39,8 +37,6 @@
 
 /* Begin PBXFileReference section */
 		2D004EA01DE30737008CE815 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = "../Elements macOS Example/PromiseKit.framework"; sourceTree = "<group>"; };
-		2D004EA21DE33E89008CE815 /* UserNotificationsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserNotificationsHelper.swift; sourceTree = "<group>"; };
-		2D7F574B1DE46368009FA998 /* UserNotifications.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = UserNotifications.md; path = ../UserNotifications.md; sourceTree = "<group>"; };
 		3302636C1DC24658007D7317 /* PromiseKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = PromiseKit.framework.dSYM; path = ../Carthage/Build/Mac/PromiseKit.framework.dSYM; sourceTree = "<group>"; };
 		3302636E1DC24681007D7317 /* PMKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PMKFoundation.framework; path = ../Carthage/Build/Mac/PMKFoundation.framework; sourceTree = "<group>"; };
 		3302636F1DC24681007D7317 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = ../Carthage/Build/Mac/PromiseKit.framework; sourceTree = "<group>"; };
@@ -48,9 +44,10 @@
 		330E59061DEDD38900C92897 /* ResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumableSubscription.swift; sourceTree = "<group>"; };
 		3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTokenAuthorizer.swift; sourceTree = "<group>"; };
 		3329F40A1DC0B4C0007B29FF /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
-		3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		332E05E51DDCA3DB007A55FB /* MessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
 		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
+		337C551D1E02DC8100C5A317 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionSessionDelegate.swift; sourceTree = "<group>"; };
 		337C9EE01C38B708006CC757 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		338290711DF5CEC6008CDC8F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		33831C891A9CF61600B124F1 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,14 +55,12 @@
 		33831C941A9CF61600B124F1 /* ElementsSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElementsSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831CD61A9CFFF200B124F1 /* ElementsSwift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElementsSwift.h; path = ../Source/ElementsSwift.h; sourceTree = SOURCE_ROOT; };
 		33935EA71DA5399A00C5C064 /* Authorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorizer.swift; sourceTree = "<group>"; };
-		33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SecretAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
 		33935EB31DA5523C00C5C064 /* FeedsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsHelper.swift; sourceTree = "<group>"; };
 		33935EB51DA5526F00C5C064 /* ServiceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceHelper.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAppExtensions.swift; sourceTree = "<group>"; };
-		33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Carthage.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,8 +84,6 @@
 		33831C491A9CEDF800B124F1 = {
 			isa = PBXGroup;
 			children = (
-				2D7F574B1DE46368009FA998 /* UserNotifications.md */,
-				33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */,
 				33831C8B1A9CF61600B124F1 /* Source */,
 				33BB995C1D21225B00B25C2A /* Tests */,
 				33831C8A1A9CF61600B124F1 /* Products */,
@@ -115,13 +108,14 @@
 				338290711DF5CEC6008CDC8F /* App.swift */,
 				33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */,
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
-				3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */,
+				337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */,
 				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
 				330E59061DEDD38900C92897 /* ResumableSubscription.swift */,
 				332E05E51DDCA3DB007A55FB /* MessageParser.swift */,
 				332E05E71DDCA919007A55FB /* Message.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
 				33935EB51DA5526F00C5C064 /* ServiceHelper.swift */,
+				337C551D1E02DC8100C5A317 /* Result.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* ElementsSwift.h */,
 			);
@@ -141,7 +135,6 @@
 			isa = PBXGroup;
 			children = (
 				33935EB31DA5523C00C5C064 /* FeedsHelper.swift */,
-				2D004EA21DE33E89008CE815 /* UserNotificationsHelper.swift */,
 			);
 			name = "Service Helpers";
 			sourceTree = "<group>";
@@ -149,7 +142,6 @@
 		33935EB21DA54F9400C5C064 /* Authorizers */ = {
 			isa = PBXGroup;
 			children = (
-				33935EA91DA539AD00C5C064 /* SecretAuthorizer.swift */,
 				33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */,
 				3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */,
 			);
@@ -298,19 +290,17 @@
 			files = (
 				330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */,
 				33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */,
-				3329F40D1DC0B530007B29FF /* SubscriptionManager.swift in Sources */,
-				33935EAA1DA539AD00C5C064 /* SecretAuthorizer.swift in Sources */,
+				337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */,
 				3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
 				33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */,
 				33E2D3F51DE85759002BF75E /* ServiceAppExtensions.swift in Sources */,
+				337C551E1E02DC8100C5A317 /* Result.swift in Sources */,
 				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */,
-				2D004EA31DE33E89008CE815 /* UserNotificationsHelper.swift in Sources */,
 				332E05E81DDCA919007A55FB /* Message.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */,
-				2D7F574C1DE46368009FA998 /* UserNotifications.md in Sources */,
 				33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -335,7 +325,6 @@
 /* Begin XCBuildConfiguration section */
 		33831C4E1A9CEDF800B124F1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -363,7 +352,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos tvos iphoneos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos appletvos iphoneos";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -371,7 +360,6 @@
 		};
 		33831C4F1A9CEDF800B124F1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 33F1A6B71DAC3E62005C7717 /* Carthage.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_WARN_BOOL_CONVERSION = YES;
@@ -397,7 +385,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = "";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos tvos iphoneos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos appletvos iphoneos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;

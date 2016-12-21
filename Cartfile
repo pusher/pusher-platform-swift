@@ -1,2 +1,0 @@
-github "kylef/JSONWebToken.swift" "master"
-github "mxcl/PromiseKit" ~> 4.0

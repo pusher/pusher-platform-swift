@@ -50,6 +50,21 @@ import Foundation
         }
     }
 
+    internal var _onError: ((Error) -> Void)?
+    public var onError: ((Error) -> Void)? {
+        get {
+            return self._onError
+        }
+
+        set {
+            self._onError = newValue
+            self.subscription?.onError = { error in
+                self.handleOnError(error: error)
+                self._onError?(error)
+            }
+        }
+    }
+
     public var onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)?
 
     internal var onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil
@@ -111,7 +126,12 @@ import Foundation
         self.lastEventIdReceived = eventId
     }
 
-    public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any?) {
+    public func handleOnError(error: Error) {
+        // TODO: what do we do when handling an error?
+        handleOnEnd() // TODO: Fix this - it's a hack while I figure out what we need to do
+    }
+
+    public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any? = nil) {
         // TODO: not always resuming - need to figure out what to do here.
         // We need to be able to differentiate between a recoverable error and
         // errors that mean we need to stop the subscription.
@@ -144,7 +164,7 @@ import Foundation
             headers = ["Last-Event-ID": self.lastEventIdReceived!]
         }
 
-        try? self.app.subscribe(
+        self.app.subscribe(
             path: self.path,
             headers: headers,
             onOpen: {
@@ -159,16 +179,19 @@ import Foundation
                 self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
                 self._onEnd?(statusCode, headers, info)
             }
-        ).then { subscription -> Void in
-            self.subscription = subscription
+        ) { result in
+            switch result {
+            case .failure(let error):
+                print("Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
+            case .success(let subscription):
+                self.subscription = subscription
 
-            // TODO: should this be here?
-            // Don't think it's necessary as a non-repeating timer should
-            // invalidate itself as soon as it's fired, which should be straightaway
-            self.retrySubscriptionTimer?.invalidate()
-            self.retrySubscriptionTimer = nil
-        }.catch { error in
-            print("Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
+                // TODO: should this be here?
+                // Don't think it's necessary as a non-repeating timer should
+                // invalidate itself as soon as it's fired, which should be straightaway
+                self.retrySubscriptionTimer?.invalidate()
+                self.retrySubscriptionTimer = nil
+            }
         }
     }
 }
