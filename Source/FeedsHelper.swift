@@ -1,4 +1,4 @@
-import PromiseKit
+import Foundation
 
 @objc public class FeedsHelper: NSObject, ServiceHelper {
     static public let namespace = "feeds"
@@ -25,142 +25,158 @@ import PromiseKit
         self.app!.unsubscribe(taskIdentifier: subscriptionTaskId!)
     }
 
-    public func subscribeWithResume(
+//    public func subscribeWithResume(
+//        lastEventId: String? = nil,
+//        onOpen: (() -> Void)? = nil,
+//        onAppend: ((String, [String: String], Any) -> Void)? = nil,
+//        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+//        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
+//            guard self.app != nil else {
+//                throw ServiceHelperError.noAppObject
+//            }
+//
+//            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+//
+//            // TODO: should this be unowned self?
+//            let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
+//                self.subscriptionTaskId = newSub?.taskIdentifier
+//            }
+//
+//            if lastEventId != nil {
+//
+//                let headers = ["Last-Event-ID": lastEventId!]
+//
+//                // TODO: should this be unowned self?
+//                let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
+//                    self.subscriptionTaskId = newSub?.taskIdentifier
+//                }
+//
+//                return try! self.app!.subscribeWithResume(
+//                    path: path,
+//                    jwt: nil,
+//                    headers: headers,
+//                    onOpen: onOpen,
+//                    onEvent: onAppend,
+//                    onEnd: onEnd,
+//                    onStateChange: onStateChange,
+//                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+//                )
+//            } else {
+//                return try! self.get().then { feedsGetRes in
+//                    for item in feedsGetRes.items.reversed() {
+//                        guard let itemId = item["id"] as? String else {
+//                            // TODO: Probably throw an ppropriate error here
+//                            continue
+//                        }
+//
+//                        onAppend?(itemId, [:], item["data"])
+//                    }
+//
+//                    var headers: [String: String] = [:]
+//                    var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
+//
+//                    if mostRecentlyReceivedItemId != nil {
+//                        headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
+//                    }
+//
+//                    return try! self.app!.subscribeWithResume(
+//                        path: path,
+//                        jwt: nil,
+//                        headers: headers,
+//                        onOpen: onOpen,
+//                        onEvent: onAppend,
+//                        onEnd: onEnd,
+//                        onStateChange: onStateChange,
+//                        onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+//                    )
+//                }
+//            }
+//    }
+//
+    public func subscribe(
         lastEventId: String? = nil,
         onOpen: (() -> Void)? = nil,
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
+        onError: ((Error) -> Void)? = nil,
+        completionHandler: ((Result<Subscription>) -> Void)? = nil) -> Void {
             guard self.app != nil else {
-                throw ServiceHelperError.noAppObject
+                completionHandler?(.failure(ServiceHelperError.noAppObject))
+                return
             }
 
             let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-            // TODO: should this be unowned self?
-            let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
-                self.subscriptionTaskId = newSub?.taskIdentifier
-            }
-
             if lastEventId != nil {
-
                 let headers = ["Last-Event-ID": lastEventId!]
 
-                // TODO: should this be unowned self?
-                let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
-                    self.subscriptionTaskId = newSub?.taskIdentifier
-                }
 
-                return try! self.app!.subscribeWithResume(
+                // TODO: Why not just call subscribe inside the completionHandler? - (because it might not be defined?)
+                // TODO: should the completion handler be required?
+                self.app!.subscribe(
                     path: path,
                     jwt: nil,
                     headers: headers,
                     onOpen: onOpen,
                     onEvent: onAppend,
                     onEnd: onEnd,
-                    onStateChange: onStateChange,
-                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
-                )
-            } else {
-                return try! self.get().then { feedsGetRes in
-                    for item in feedsGetRes.items.reversed() {
-                        guard let itemId = item["id"] as? String else {
-                            // TODO: Probably throw an ppropriate error here
-                            continue
-                        }
-
-                        onAppend?(itemId, [:], item["data"])
+                    onError: onError
+                ) { result in
+                    guard let subscription = result.value else {
+                        // TODO: There must be a nicer way to pass the error through
+                        completionHandler?(.failure(result.error!))
+                        return
                     }
-
-                    var headers: [String: String] = [:]
-                    var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
-
-                    if mostRecentlyReceivedItemId != nil {
-                        headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
-                    }
-
-                    return try! self.app!.subscribeWithResume(
-                        path: path,
-                        jwt: nil,
-                        headers: headers,
-                        onOpen: onOpen,
-                        onEvent: onAppend,
-                        onEnd: onEnd,
-                        onStateChange: onStateChange,
-                        onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
-                    )
-                }
-            }
-    }
-
-    public func subscribe(
-        lastEventId: String? = nil,
-        onOpen: (() -> Void)? = nil,
-        onAppend: ((String, [String: String], Any) -> Void)? = nil,
-        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil) throws -> Promise<Subscription> {
-            guard self.app != nil else {
-                throw ServiceHelperError.noAppObject
-            }
-
-            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
-
-            if lastEventId != nil {
-
-                let headers = ["Last-Event-ID": lastEventId!]
-
-                return try! self.app!.subscribe(
-                    path: path,
-                    jwt: nil,
-                    headers: headers,
-                    onOpen: onOpen,
-                    onEvent: onAppend,
-                    onEnd: onEnd
-                ).then { sub -> Promise<Subscription> in
-                    // TODO: there must be a better way that re-wrapping the subscription in a Promise, surely!
-                    self.subscriptionTaskId = sub.taskIdentifier
-                    return Promise<Subscription> { fulfill, reject in
-                        fulfill(sub)
-                    }
+                    completionHandler?(.success(subscription))
                 }
             } else {
-                return try! self.get().then { feedsGetRes in
-                    for item in feedsGetRes.items.reversed() {
-                        guard let itemId = item["id"] as? String else {
-                            // TODO: Probably throw an ppropriate error here
-                            continue
+                self.get() { result in
+                    switch result {
+                    case .failure(let error):
+                        completionHandler?(.failure(error))
+                    case .success(let feedsGetRes):
+                        for item in feedsGetRes.items.reversed() {
+                            guard let itemId = item["id"] as? String else {
+                                // TODO: Probably throw an ppropriate error here
+                                continue
+                            }
+
+                            // TODO: We don't always want to call onAppend, I imagine, maybe never in fact
+                            onAppend?(itemId, [:], item["data"])
                         }
 
-                        onAppend?(itemId, [:], item["data"])
-                    }
+                        var headers: [String: String] = [:]
+                        var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
 
-                    var headers: [String: String] = [:]
-                    var mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
+                        if mostRecentlyReceivedItemId != nil {
+                            headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
+                        }
 
-                    if mostRecentlyReceivedItemId != nil {
-                        headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
-                    }
-
-                    return try! self.app!.subscribe(
-                        path: path,
-                        jwt: nil,
-                        headers: headers,
-                        onOpen: onOpen,
-                        onEvent: onAppend,
-                        onEnd: onEnd
-                    ).then { sub -> Promise<Subscription> in
-                        // TODO: there must be a better way that re-wrapping the subscription in a Promise, surely!
-                        self.subscriptionTaskId = sub.taskIdentifier
-                        return Promise<Subscription> { fulfill, reject in
-                            fulfill(sub)
+                        self.app!.subscribe(
+                            path: path,
+                            jwt: nil,
+                            headers: headers,
+                            onOpen: onOpen,
+                            onEvent: onAppend,
+                            onEnd: onEnd,
+                            onError: onError
+                        ) { result in
+                                guard let subscription = result.value else {
+                                    // TODO: There must be a nicer way to pass the error through
+                                    completionHandler?(.failure(result.error!))
+                                    return
+                                }
+                                completionHandler?(.success(subscription))
                         }
                     }
                 }
             }
     }
 
-    public func get(from: String? = nil, limit: Int = 50) throws -> Promise<FeedsItemsReponse> {
+    public func get(from: String? = nil, limit: Int = 50, completionHandler: ((Result<FeedsItemsReponse>) -> Void)? = nil) -> Void {
         guard self.app != nil else {
-            throw ServiceHelperError.noAppObject
+            completionHandler?(.failure(ServiceHelperError.noAppObject))
+            return
         }
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
@@ -171,62 +187,89 @@ import PromiseKit
             queryItems.append(URLQueryItem(name: "from_id", value: from!))
         }
 
-        return self.app!.request(method: "GET", path: path, queryItems: queryItems).then { data -> Promise<FeedsItemsReponse> in
-            return Promise<FeedsItemsReponse> { fulfill, reject in
-                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                    reject(FeedsHelperError.failedToDeserializeJSON(data))
-                    return
-                }
+        let appRequest = AppRequest(method: "GET", path: path, queryItems: queryItems)
 
-                guard let items = json["items"] as? [[String: Any]] else {
-                    reject(FeedsHelperError.itemsMissingFromJSONResponse(json))
-                    return
-                }
+        self.app!.request(using: appRequest) { result in
+            guard let data = result.value else {
+                // TODO: There must be a nicer way to pass the error through
+                completionHandler?(.failure(result.error!))
+                return
+            }
 
-                // TODO: make the id a string when Will has made changes
-                if let id = json["next_id"] as? Int {
-                    fulfill(FeedsItemsReponse(nextId: id, items: items))
-                } else {
-                    fulfill(FeedsItemsReponse(items: items))
-                }
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
+                completionHandler?(.failure(FeedsHelperError.failedToDeserializeJSON(data)))
+                return
+            }
+
+            guard let json = jsonObject as? [String: Any] else {
+                completionHandler?(.failure(FeedsHelperError.failedToCastJSONObjectToDictionary(jsonObject)))
+                return
+            }
+
+            guard let items = json["items"] as? [[String: Any]] else {
+                completionHandler?(.failure(FeedsHelperError.itemsMissingFromJSONResponse(json)))
+                return
+            }
+
+            // TODO: make the id a string when Will has made changes
+            if let id = json["next_id"] as? Int {
+                completionHandler?(.success(FeedsItemsReponse(nextId: id, items: items)))
+            } else {
+                completionHandler?(.success(FeedsItemsReponse(items: items)))
             }
         }
     }
 
-    public func append(item: Any) throws -> Promise<String> {
+    public func append(item: Any, completionHandler: ((Result<String>) -> Void)? = nil) -> Void {
         guard self.app != nil else {
-            throw ServiceHelperError.noAppObject
+            completionHandler?(.failure(ServiceHelperError.noAppObject))
+            return
         }
 
+        // TODO: I thought this was supposed to be item, or maybe items now?
         let wrappedItem: [String: Any] = ["data": item]
 
         guard JSONSerialization.isValidJSONObject(wrappedItem) else {
-            throw ServiceHelperError.invalidJSONObjectAsData(wrappedItem)
+            completionHandler?(.failure(ServiceHelperError.invalidJSONObjectAsData(wrappedItem)))
+            return
         }
 
         guard let data = try? JSONSerialization.data(withJSONObject: wrappedItem, options: []) else {
-            throw ServiceHelperError.failedToJSONSerializeData(item)
+            completionHandler?(.failure(ServiceHelperError.failedToJSONSerializeData(item)))
+            return
         }
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-        return self.app!.request(method: "APPEND", path: path, jwt: nil, headers: nil, body: data).then { data -> Promise<String> in
-            return Promise<String> { fulfill, reject in
-                guard let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else {
-                    reject(FeedsHelperError.failedToDeserializeJSON(data))
-                    return
-                }
+        let appRequest = AppRequest(method: "APPEND", path: path, body: data)
 
-                // TODO: change this to be a String when Will has made the changes
-                guard let id = json["item_id"] as? Int else {
-                    reject(FeedsHelperError.failedToParseJSONResponse(json))
-                    return
-                }
-
-                fulfill(String(id))
+        self.app!.request(using: appRequest) { result in
+            guard let data = result.value else {
+                // TODO: There must be a nicer way to pass the error through
+                completionHandler?(.failure(result.error!))
+                return
             }
+
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
+                completionHandler?(.failure(FeedsHelperError.failedToDeserializeJSON(data)))
+                return
+            }
+
+            guard let json = jsonObject as? [String: Any] else {
+                completionHandler?(.failure(FeedsHelperError.failedToCastJSONObjectToDictionary(jsonObject)))
+                return
+            }
+
+            // TODO: change this to be a String when Will has made the changes
+            guard let id = json["item_id"] as? Int else {
+                completionHandler?(.failure(FeedsHelperError.failedToParseJSONResponse(json)))
+                return
+            }
+
+            completionHandler?(.success(String(id)))
         }
     }
+
 }
 
 @objc public class FeedsItemsReponse: NSObject {
@@ -243,6 +286,7 @@ import PromiseKit
 public enum FeedsHelperError: Error {
     case noSubscriptionTaskIdentifier
     case failedToDeserializeJSON(Data)
+    case failedToCastJSONObjectToDictionary(Any)
     case failedToParseJSONResponse([String: Any])
     case itemsMissingFromJSONResponse([String: Any])
 }

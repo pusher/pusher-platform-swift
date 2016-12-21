@@ -13,8 +13,8 @@ extension App {
 
      - returns:  New instance of the User Notifications
      */
-    public func userNotifications(userId: String) -> UserNotificationsHelper {
-        return UserNotificationsHelper(notificationName: userId, app: self)
-    }
+//    public func userNotifications(userId: String) -> UserNotificationsHelper {
+//        return UserNotificationsHelper(notificationName: userId, app: self)
+//    }
 
 }

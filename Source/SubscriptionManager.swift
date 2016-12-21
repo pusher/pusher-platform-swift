@@ -1,15 +1,25 @@
 import Foundation
-import PromiseKit
+
+@objc public class SubscriptionDelegate: NSObject {
+
+}
+
+
+
 
 @objc public class SubscriptionManager: NSObject {
-    public var subscriptions: [Int: (subscription: Subscription, resolvers: Resolvers)] = [:]
+    // TODO: Remove me
+//    public var subscriptions: [Int: (subscription: Subscription, resolvers: Resolvers)] = [:]
+
+    // TODO: If we use [Int] then we need to be very careful to avoid conflicts in taskIds (i.e. always ensure cleanup is finished before adding a new taskId)
+    public var subscriptions: [Int: Subscription] = [:]
 
     internal func handle(taskIdentifier: Int, response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         defer {
             completionHandler(.allow)
         }
 
-        guard let subTuple = subscriptions[taskIdentifier] else {
+        guard subscriptions.contains(taskIdentifier) else {
             return
         }
 
@@ -18,11 +28,17 @@ import PromiseKit
         }
 
         if 200..<300 ~= httpResponse.statusCode {
+
+            // TODO: THIS IS THE IMPORTANT BIT FOR STRUCTURAL CONSIDERATIONS - WHAT OWNS / REFERENCES WHAT?
+
+
             // TODO: when do we call onOpen on the subscription? do we need to if we're using promises?
             // if we were to call it, it would be here, after fulfilling the subscription, I suppose
-            subTuple.resolvers.promiseFulfiller(subTuple.subscription)
+//            subTuple.resolvers.promiseFulfiller(subTuple.subscription)
+            print("We good")
         } else {
-            subTuple.resolvers.promiseRejector(RequestError.invalidHttpResponse(data: nil))
+//            subTuple.resolvers.promiseRejector(RequestError.invalidHttpResponse(data: nil))
+            print("We bad")
         }
     }
 
@@ -58,12 +74,13 @@ import PromiseKit
     }
 }
 
-@objc public class Resolvers: NSObject {
-    public let promiseFulfiller: (Subscription) -> Void
-    public let promiseRejector: (Error) -> Void
-
-    public init(promiseFulfiller: @escaping (Subscription) -> Void, promiseRejector: @escaping (Error) -> Void) {
-        self.promiseFulfiller = promiseFulfiller
-        self.promiseRejector = promiseRejector
-    }
-}
+// TODO: Remove me
+//@objc public class Resolvers: NSObject {
+//    public let promiseFulfiller: (Subscription) -> Void
+//    public let promiseRejector: (Error) -> Void
+//
+//    public init(promiseFulfiller: @escaping (Subscription) -> Void, promiseRejector: @escaping (Error) -> Void) {
+//        self.promiseFulfiller = promiseFulfiller
+//        self.promiseRejector = promiseRejector
+//    }
+//}

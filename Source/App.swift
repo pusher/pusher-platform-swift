@@ -1,4 +1,24 @@
-import PromiseKit
+import Foundation
+
+// TODO: Move this somewhere sensible
+@objc public class AppRequest: NSObject {
+    public let method: String
+    public let path: String
+    public let queryItems: [URLQueryItem]?
+    public let jwt: String?
+    public let headers: [String: String]?
+    public let body: Data?
+
+    public init(method: String, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) {
+        self.method = method
+        self.path = path
+        self.queryItems = queryItems
+        self.jwt = jwt
+        self.headers = headers
+        self.body = body
+    }
+}
+
 
 @objc public class App: NSObject {
     public var id: String
@@ -13,33 +33,44 @@ import PromiseKit
         try self.client = client ?? BaseClient(cluster: cluster)
     }
 
-    public func request(method: String, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
-        let sanitisedPath = sanitise(path: path)
+    public func request(using appRequest: AppRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
+        let sanitisedPath = sanitise(path: appRequest.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-        if jwt == nil && self.authorizer != nil {
-            return self.authorizer!.authorize().then { jwtFromAuthorizer in
-                return self.client.request(
-                    method: method,
-                    path: namespacedPath,
-                    queryItems: queryItems,
-                    jwt: jwtFromAuthorizer,
-                    headers: headers,
-                    body: body
-                )
+        if appRequest.jwt == nil && self.authorizer != nil {
+            self.authorizer!.authorize { result in
+                switch result {
+                case .failure(let error): completionHandler(.failure(error))
+                case .success(let jwtFromAuthorizer):
+                    // TODO: Stop having to create the AppRequest in two places when they're so similar
+
+                    let baseClientRequest = AppRequest(
+                        method: appRequest.method,
+                        path: namespacedPath,
+                        queryItems: appRequest.queryItems,
+                        jwt: jwtFromAuthorizer,
+                        headers: appRequest.headers,
+                        body: appRequest.body
+                    )
+
+                    self.client.request(using: baseClientRequest, completionHandler: completionHandler)
+                }
             }
         } else {
-            return self.client.request(
-                method: method,
+            let baseClientRequest = AppRequest(
+                method: appRequest.method,
                 path: namespacedPath,
-                queryItems: queryItems,
-                jwt: jwt,
-                headers: headers,
-                body: body
+                queryItems: appRequest.queryItems,
+                jwt: appRequest.jwt,
+                headers: appRequest.headers,
+                body: appRequest.body
             )
+
+            self.client.request(using: baseClientRequest, completionHandler: completionHandler)
         }
     }
 
+    // TODO: Should this be -> Subscription? or maybe always return a Subscription, or Result<Subscription>
     public func subscribe(
         path: String,
         queryItems: [URLQueryItem]? = nil,
@@ -47,65 +78,32 @@ import PromiseKit
         headers: [String: String]? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
-        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil) throws -> Promise<Subscription> {
-            let sanitisedPath = sanitise(path: path)
-            let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
-
-            if jwt == nil && self.authorizer != nil {
-                return self.authorizer!.authorize().then { jwtFromAuthorizer in
-                    return self.client.subscribe(
-                        path: namespacedPath,
-                        queryItems: queryItems,
-                        jwt: jwtFromAuthorizer,
-                        headers: headers,
-                        onOpen: onOpen,
-                        onEvent: onEvent,
-                        onEnd: onEnd
-                    )
-                }
-            } else {
-                return self.client.subscribe(
-                    path: namespacedPath,
-                    jwt: jwt,
-                    headers: headers,
-                    onOpen: onOpen,
-                    onEvent: onEvent,
-                    onEnd: onEnd
-                )
-            }
-    }
-
-    public func subscribeWithResume(
-        path: String,
-        queryItems: [URLQueryItem]? = nil,
-        jwt: String? = nil,
-        headers: [String: String]? = nil,
-        onOpen: (() -> Void)? = nil,
-        onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
+        onError: ((Error) -> Void)? = nil,
+        completionHandler: @escaping (Result<Subscription>) -> Void) -> Void {
             let sanitisedPath = sanitise(path: path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
             if jwt == nil && self.authorizer != nil {
-                return self.authorizer!.authorize().then { jwtFromAuthorizer in
-                    return self.client.subscribeWithResume(
-                        app: self,
-                        path: namespacedPath,
-                        queryItems: queryItems,
-                        jwt: jwtFromAuthorizer,
-                        headers: headers,
-                        onOpen: onOpen,
-                        onEvent: onEvent,
-                        onEnd: onEnd,
-                        onStateChange: onStateChange,
-                        onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
-                    )
+                self.authorizer!.authorize { result in
+                    switch result {
+                    case .failure(let error): completionHandler(.failure(error))
+                    case .success(let jwtFromAuthorizer):
+                        self.client.subscribe(
+                            path: namespacedPath,
+                            queryItems: queryItems,
+                            jwt: jwtFromAuthorizer,
+                            headers: headers,
+                            onOpen: onOpen,
+                            onEvent: onEvent,
+                            onEnd: onEnd,
+                            onError: onError,
+                            completionHandler: completionHandler
+                        )
+                    }
                 }
             } else {
-                return self.client.subscribeWithResume(
-                    app: self,
+                let subscription = self.client.subscribe(
                     path: namespacedPath,
                     queryItems: queryItems,
                     jwt: jwt,
@@ -113,11 +111,55 @@ import PromiseKit
                     onOpen: onOpen,
                     onEvent: onEvent,
                     onEnd: onEnd,
-                    onStateChange: onStateChange,
-                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                    onError: onError,
+                    completionHandler: completionHandler
                 )
             }
     }
+//
+//    public func subscribeWithResume(
+//        path: String,
+//        queryItems: [URLQueryItem]? = nil,
+//        jwt: String? = nil,
+//        headers: [String: String]? = nil,
+//        onOpen: (() -> Void)? = nil,
+//        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+//        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+//        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+//        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) throws -> Promise<ResumableSubscription> {
+//            let sanitisedPath = sanitise(path: path)
+//            let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+//
+//            if jwt == nil && self.authorizer != nil {
+//                return self.authorizer!.authorize().then { jwtFromAuthorizer in
+//                    return self.client.subscribeWithResume(
+//                        app: self,
+//                        path: namespacedPath,
+//                        queryItems: queryItems,
+//                        jwt: jwtFromAuthorizer,
+//                        headers: headers,
+//                        onOpen: onOpen,
+//                        onEvent: onEvent,
+//                        onEnd: onEnd,
+//                        onStateChange: onStateChange,
+//                        onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+//                    )
+//                }
+//            } else {
+//                return self.client.subscribeWithResume(
+//                    app: self,
+//                    path: namespacedPath,
+//                    queryItems: queryItems,
+//                    jwt: jwt,
+//                    headers: headers,
+//                    onOpen: onOpen,
+//                    onEvent: onEvent,
+//                    onEnd: onEnd,
+//                    onStateChange: onStateChange,
+//                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+//                )
+//            }
+//    }
 
     public func unsubscribe(taskIdentifier: Int) {
         self.client.unsubscribe(taskIdentifier: taskIdentifier)
