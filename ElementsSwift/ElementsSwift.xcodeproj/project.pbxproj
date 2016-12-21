@@ -13,7 +13,7 @@
 		332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* MessageParser.swift */; };
 		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
 		335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		337C551E1E02DC8100C5A317 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551D1E02DC8100C5A317 /* Response.swift */; };
+		337C551E1E02DC8100C5A317 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551D1E02DC8100C5A317 /* Result.swift */; };
 		337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */; };
 		338290721DF5CEC6008CDC8F /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* App.swift */; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
@@ -46,7 +46,7 @@
 		3329F40A1DC0B4C0007B29FF /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		332E05E51DDCA3DB007A55FB /* MessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
 		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
-		337C551D1E02DC8100C5A317 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
+		337C551D1E02DC8100C5A317 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionSessionDelegate.swift; sourceTree = "<group>"; };
 		337C9EE01C38B708006CC757 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		338290711DF5CEC6008CDC8F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 				332E05E71DDCA919007A55FB /* Message.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
 				33935EB51DA5526F00C5C064 /* ServiceHelper.swift */,
-				337C551D1E02DC8100C5A317 /* Response.swift */,
+				337C551D1E02DC8100C5A317 /* Result.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* ElementsSwift.h */,
 			);
@@ -296,7 +296,7 @@
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
 				33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */,
 				33E2D3F51DE85759002BF75E /* ServiceAppExtensions.swift in Sources */,
-				337C551E1E02DC8100C5A317 /* Response.swift in Sources */,
+				337C551E1E02DC8100C5A317 /* Result.swift in Sources */,
 				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */,
 				332E05E81DDCA919007A55FB /* Message.swift in Sources */,
