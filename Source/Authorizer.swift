@@ -1,5 +1,5 @@
-import PromiseKit
+import Foundation
 
 public protocol Authorizer {
-    func authorize() -> Promise<String>
+    func authorize(completionHandler: @escaping (Result<String>) -> Void) -> Void
 }
