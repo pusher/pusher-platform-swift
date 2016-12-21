@@ -5,16 +5,16 @@ let CLIENT_NAME = "elements-client-swift"
 let REALLY_LONG_TIME: Double = 252_460_800
 
 @objc public class BaseClient: NSObject {
-    public var jwt: String?
     public var port: Int?
     internal var baseUrlComponents: URLComponents
 
     public let subscriptionUrlSession: Foundation.URLSession
-    public let subscriptionManager: SubscriptionManager
 
-    public init(jwt: String? = nil, cluster: String? = nil, port: Int? = nil) throws {
-        self.jwt = jwt
+    // TODO: We might not want to keep a reference to this and instead just access it 
+    // through subscriptionUrlSession.delegate
+    public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
+    public init(cluster: String? = nil, port: Int? = nil) throws {
         let cluster = cluster ?? "beta.buildelements.com"
 
         var urlComponents = URLComponents()
@@ -27,14 +27,11 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         self.baseUrlComponents = urlComponents
 
-        self.subscriptionManager = SubscriptionManager()
-
-        let subscriptionSessionDelegate = SubscriptionSessionDelegate(subscriptionManager:  subscriptionManager)
-
         let sessionConfiguration = URLSessionConfiguration.ephemeral
         sessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
         sessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
 
+        self.subscriptionSessionDelegate = SubscriptionSessionDelegate()
         self.subscriptionUrlSession = Foundation.URLSession(configuration: sessionConfiguration, delegate: subscriptionSessionDelegate, delegateQueue: nil)
     }
 
@@ -79,13 +76,11 @@ let REALLY_LONG_TIME: Double = 252_460_800
         sessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
         sessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
 
-        let sessionDelegate = SessionDelegate()
 
-        let session = URLSession(
-            configuration: sessionConfiguration,
-            delegate: sessionDelegate,
-            delegateQueue: nil
-        )
+        // TODO: Decide whether a delegate is required
+//        let sessionDelegate = SessionDelegate()
+
+        let session = URLSession(configuration: sessionConfiguration)
 
         session.dataTask(with: request, completionHandler: { data, response, sessionError in
             if let error = sessionError {
@@ -157,7 +152,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
             let taskIdentifier = task.taskIdentifier
 
-            guard self.subscriptionManager.subscriptions[taskIdentifier] == nil else {
+            guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
                 completionHandler(.failure(BaseClientError.preExistingTaskIdentifierForSubscription))
                 return
             }
@@ -171,94 +166,88 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 onError: onError
             )
 
+            // TODO: Should we call success before setting the subscription in the session delegate?
             completionHandler(.success(subscription))
 
-        // TODO: FIXME
-//            self.subscriptionManager.subscriptions[taskIdentifier] = (subscription, Resolvers(promiseFulfiller: fulfill, promiseRejector: reject))
-
-            self.subscriptionManager.subscriptions.append(taskIdentifier)
-
-
+            self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
 
             task.resume()
     }
-//
-//    public func subscribeWithResume(
-//        app: App,
-//        path: String,
-//        queryItems: [URLQueryItem]? = nil,
-//        jwt: String? = nil,
-//        headers: [String: String]? = nil,
-//        onOpen: (() -> Void)? = nil,
-//        onEvent: ((String, [String: String], Any) -> Void)? = nil,
-//        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-//        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-//        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) -> Promise<ResumableSubscription> {
-//            self.baseUrlComponents.queryItems = queryItems
-//
-//            let resumableSubscription = ResumableSubscription(
-//                app: app,
-//                path: path,
-//                jwt: nil,
-//                headers: headers,
-//                onStateChange: onStateChange,
-//                // TODO: maybe by specifying this here we don't need the unwrap and then immediate
-//                // rewrap at the bottom of this func?
-//                onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
-//            )
-//
-//            return Promise<Subscription> { subscriptionPromiseFulfill, subscriptionPromiseReject in
-//                guard var url = self.baseUrlComponents.url else {
-//                    subscriptionPromiseReject(BaseClientError.invalidUrl(components: self.baseUrlComponents))
-//                    return
-//                }
-//
-//                url = url.appendingPathComponent(path)
-//
-//                var request = URLRequest(url: url)
-//                request.httpMethod = "SUBSCRIBE"
-//                request.timeoutInterval = REALLY_LONG_TIME
-//
-//                if jwt != nil {
-//                    request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
-//                }
-//
-//                if headers != nil {
-//                    for (header, value) in headers! {
-//                        request.addValue(value, forHTTPHeaderField: header)
-//                    }
-//                }
-//
-//                let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
-//                let taskIdentifier = task.taskIdentifier
-//
-//                guard self.subscriptionManager.subscriptions[taskIdentifier] == nil else {
-//                    subscriptionPromiseReject(BaseClientError.preExistingTaskIdentifierForSubscription)
-//                    return
-//                }
-//
-//                let subscription = Subscription(
-//                    path: path,
-//                    taskIdentifier: taskIdentifier
-//                )
-//
-//                // TODO: No no no there must be a better way
-//                resumableSubscription.subscription = subscription
-//                resumableSubscription.onOpen = onOpen
-//                resumableSubscription.onEvent = onEvent
-//                resumableSubscription.onEnd = onEnd
-//
-//                self.subscriptionManager.subscriptions[taskIdentifier] = (subscription, Resolvers(promiseFulfiller: subscriptionPromiseFulfill, promiseRejector: subscriptionPromiseReject))
-//
-//                task.resume()
-//            }.then { subscription in
-//                return Promise<ResumableSubscription> { fulfill, reject in
-//                    resumableSubscription.subscription = subscription
-//
-//                    fulfill(resumableSubscription)
-//                }
-//            }
-//    }
+
+    public func subscribeWithResume(
+        app: App,
+        path: String,
+        queryItems: [URLQueryItem]? = nil,
+        jwt: String? = nil,
+        headers: [String: String]? = nil,
+        onOpen: (() -> Void)? = nil,
+        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil,
+        completionHandler: (Result<ResumableSubscription>) -> Void) -> Void {
+            self.baseUrlComponents.queryItems = queryItems
+
+            let resumableSubscription = ResumableSubscription(
+                app: app,
+                path: path,
+                jwt: nil,
+                headers: headers,
+                onStateChange: onStateChange,
+                // TODO: maybe by specifying this here we don't need the unwrap and then immediate
+                // rewrap at the bottom of this func?
+                onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+            )
+
+            guard var url = self.baseUrlComponents.url else {
+                completionHandler(.failure(BaseClientError.invalidUrl(components: self.baseUrlComponents)))
+                return
+            }
+
+            url = url.appendingPathComponent(path)
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "SUBSCRIBE"
+            request.timeoutInterval = REALLY_LONG_TIME
+
+            if jwt != nil {
+                request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
+            }
+
+            if headers != nil {
+                for (header, value) in headers! {
+                    request.addValue(value, forHTTPHeaderField: header)
+                }
+            }
+
+            let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
+            let taskIdentifier = task.taskIdentifier
+
+            // TODO: This dopesn't seem threadsafe
+            guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
+                completionHandler(.failure(BaseClientError.preExistingTaskIdentifierForSubscription))
+                return
+            }
+
+            let subscription = Subscription(
+                path: path,
+                taskIdentifier: taskIdentifier
+            )
+
+            // TODO: No no no there must be a better way
+            resumableSubscription.subscription = subscription
+            resumableSubscription.onOpen = onOpen
+            resumableSubscription.onEvent = onEvent
+            resumableSubscription.onEnd = onEnd
+            resumableSubscription.onError = onError
+
+            self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
+
+            completionHandler(.success(resumableSubscription))
+
+            task.resume()
+    }
 
     public func unsubscribe(taskIdentifier: Int) {
         self.subscriptionUrlSession.getAllTasks { tasks in
@@ -272,56 +261,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 }
 
-
-// TODO: URLSessionTaskDelegate
-
-public class SubscriptionSessionDelegate: SessionDelegate, URLSessionDataDelegate {
-    public let subscriptionManager: SubscriptionManager
-
-    public init(subscriptionManager: SubscriptionManager) {
-        self.subscriptionManager = subscriptionManager
-    }
-
-    public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        // TODO: Don't think we should ever really see this error - find out what can cause it
-        print("Error, invalid session")
-    }
-
-    public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        // TODO: Maybe add some debug logging
-        self.subscriptionManager.handleError(taskIdentifier: task.taskIdentifier, error: error)
-    }
-
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-        self.subscriptionManager.handle(taskIdentifier: dataTask.taskIdentifier, response: response, completionHandler: completionHandler)
-    }
-
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        do {
-            let messages = try MessageParser.parse(data: data)
-            self.subscriptionManager.handle(messages: messages, taskIdentifier: dataTask.taskIdentifier)
-        } catch let error as MessageParseError {
-            print(error.localizedDescription)
-        } catch {
-            print("Unable to parse message received over subscription")
-        }
-    }
-}
-
-@objc public class SessionDelegate: NSObject, URLSessionDelegate {
-
-    // TODO: Remove this when all TLS stuff is sorted out properly
-    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard challenge.previousFailureCount == 0 else {
-            challenge.sender?.cancel(challenge)
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
-        }
-
-        let allowAllCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
-        completionHandler(.useCredential, allowAllCredential)
-    }
-}
 
 public enum BaseClientError: Error {
     case invalidUrl(components: URLComponents)

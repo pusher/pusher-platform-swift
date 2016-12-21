@@ -10,11 +10,11 @@
 		330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E59061DEDD38900C92897 /* ResumableSubscription.swift */; };
 		3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */; };
 		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
-		3329F40D1DC0B530007B29FF /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */; };
 		332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* MessageParser.swift */; };
 		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
 		335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		337C551E1E02DC8100C5A317 /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551D1E02DC8100C5A317 /* Response.swift */; };
+		337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */; };
 		338290721DF5CEC6008CDC8F /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* App.swift */; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
 		33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */; };
@@ -44,10 +44,10 @@
 		330E59061DEDD38900C92897 /* ResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumableSubscription.swift; sourceTree = "<group>"; };
 		3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTokenAuthorizer.swift; sourceTree = "<group>"; };
 		3329F40A1DC0B4C0007B29FF /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
-		3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionManager.swift; sourceTree = "<group>"; };
 		332E05E51DDCA3DB007A55FB /* MessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
 		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		337C551D1E02DC8100C5A317 /* Response.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
+		337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionSessionDelegate.swift; sourceTree = "<group>"; };
 		337C9EE01C38B708006CC757 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		338290711DF5CEC6008CDC8F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		33831C891A9CF61600B124F1 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,7 +108,7 @@
 				338290711DF5CEC6008CDC8F /* App.swift */,
 				33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */,
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
-				3329F40C1DC0B530007B29FF /* SubscriptionManager.swift */,
+				337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */,
 				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
 				330E59061DEDD38900C92897 /* ResumableSubscription.swift */,
 				332E05E51DDCA3DB007A55FB /* MessageParser.swift */,
@@ -290,7 +290,7 @@
 			files = (
 				330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */,
 				33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */,
-				3329F40D1DC0B530007B29FF /* SubscriptionManager.swift in Sources */,
+				337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */,
 				3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
@@ -352,7 +352,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos tvos iphoneos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos appletvos iphoneos";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -385,7 +385,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				SDKROOT = "";
-				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos tvos iphoneos";
+				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos appletvos iphoneos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;

@@ -8,12 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D43321A1DF6F897008696FD /* FeedsViewController.swift */; };
-		2D43321D1DF6FA67008696FD /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; };
-		2D43321E1DF6FA67008696FD /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2D43321C1DF6FA67008696FD /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		330263811DC2475E007D7317 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330263801DC2475E007D7317 /* AppDelegate.swift */; };
 		330263861DC2475E007D7317 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263841DC2475E007D7317 /* Main.storyboard */; };
 		330263881DC2475E007D7317 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 330263871DC2475E007D7317 /* Assets.xcassets */; };
 		3302638B1DC2475E007D7317 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263891DC2475E007D7317 /* LaunchScreen.storyboard */; };
+		338CC3131E0A8FCB002125C4 /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */; };
+		338CC3141E0A8FCB002125C4 /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,7 +23,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				2D43321E1DF6FA67008696FD /* ElementsSwift.framework in Embed Frameworks */,
+				338CC3141E0A8FCB002125C4 /* ElementsSwift.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -32,16 +32,14 @@
 
 /* Begin PBXFileReference section */
 		2D2B83271DF821B200357772 /* Elements iOS Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Elements iOS Example.entitlements"; sourceTree = "<group>"; };
-		2D4332121DF6E0C9008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ElementsSwift.framework; path = ../../ElementsSwift/build/Debug/ElementsSwift.framework; sourceTree = "<group>"; };
-		2D4332141DF6E0CF008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D43321A1DF6F897008696FD /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsViewController.swift; sourceTree = "<group>"; };
-		2D43321C1DF6FA67008696FD /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3302637D1DC2475E007D7317 /* Elements iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		330263801DC2475E007D7317 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		330263851DC2475E007D7317 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		330263871DC2475E007D7317 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3302638A1DC2475E007D7317 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3302638C1DC2475E007D7317 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,7 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D43321D1DF6FA67008696FD /* ElementsSwift.framework in Frameworks */,
+				338CC3131E0A8FCB002125C4 /* ElementsSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,7 +57,7 @@
 		2D4332111DF6E0C9008696FD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2D4332121DF6E0C9008696FD /* ElementsSwift.framework */,
+				338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -67,8 +65,6 @@
 		330263741DC2475D007D7317 = {
 			isa = PBXGroup;
 			children = (
-				2D43321C1DF6FA67008696FD /* ElementsSwift.framework */,
-				2D4332141DF6E0CF008696FD /* ElementsSwift.framework */,
 				3302637F1DC2475E007D7317 /* Elements iOS Example */,
 				3302637E1DC2475E007D7317 /* Products */,
 				2D4332111DF6E0C9008696FD /* Frameworks */,
@@ -88,11 +84,11 @@
 			children = (
 				2D2B83271DF821B200357772 /* Elements iOS Example.entitlements */,
 				330263801DC2475E007D7317 /* AppDelegate.swift */,
+				2D43321A1DF6F897008696FD /* FeedsViewController.swift */,
 				330263841DC2475E007D7317 /* Main.storyboard */,
 				330263871DC2475E007D7317 /* Assets.xcassets */,
 				330263891DC2475E007D7317 /* LaunchScreen.storyboard */,
 				3302638C1DC2475E007D7317 /* Info.plist */,
-				2D43321A1DF6F897008696FD /* FeedsViewController.swift */,
 			);
 			path = "Elements iOS Example";
 			sourceTree = "<group>";
@@ -310,6 +306,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-iOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -328,6 +325,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-iOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
