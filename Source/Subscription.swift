@@ -7,6 +7,7 @@ import Foundation
     public var onOpen: (() -> Void)?
     public var onEvent: ((String, [String: String], Any) -> Void)?
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)?
+    // TODO: Do we need onError as well as onEnd?
     public var onError: ((Error) -> Void)?
 
     public init(
