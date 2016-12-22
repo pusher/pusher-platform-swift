@@ -3,64 +3,40 @@ import Foundation
 @objc public class ResumableSubscription: NSObject {
     public let path: String
 
-    // TODO: This is pretty disgusting - may be able to just use willSet
-    // instead of using storage properties like _onOpen
     // TODO: Check memory mangement stuff here - capture list etc
 
-    internal var _onOpen: (() -> Void)?
     public var onOpen: (() -> Void)? {
-        get {
-            return self._onOpen
-        }
-        set {
-            self._onOpen = newValue
+        willSet {
             self.subscription?.onOpen = {
                 self.handleOnOpen()
-                self._onOpen?()
+                newValue?()
             }
         }
     }
 
-    internal var _onEvent: ((String, [String: String], Any) -> Void)?
     public var onEvent: ((String, [String: String], Any) -> Void)? {
-        get {
-            return self._onEvent
-        }
-
-        set {
-            self._onEvent = newValue
+        willSet {
             self.subscription?.onEvent = { eventId, headers, data in
                 self.handleOnEvent(eventId: eventId, headers: headers, data: data)
-                self._onEvent?(eventId, headers, data)
+                newValue?(eventId, headers, data)
             }
         }
     }
 
-    internal var _onEnd: ((Int?, [String: String]?, Any?) -> Void)?
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
-        get {
-            return self._onEnd
-        }
-        set {
-            self._onEnd = newValue
+        willSet {
             self.subscription?.onEnd = { statusCode, headers, info in
                 self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
-                self._onEnd?(statusCode, headers, info)
+                newValue?(statusCode, headers, info)
             }
         }
     }
 
-    internal var _onError: ((Error) -> Void)?
     public var onError: ((Error) -> Void)? {
-        get {
-            return self._onError
-        }
-
-        set {
-            self._onError = newValue
+        willSet {
             self.subscription?.onError = { error in
                 self.handleOnError(error: error)
-                self._onError?(error)
+                newValue?(error)
             }
         }
     }
@@ -83,14 +59,12 @@ import Foundation
     // if someone wants to store the lastEventIdReceived themselves, e.g. persistently
     public internal(set) var lastEventIdReceived: String? = nil
 
-    // TODO: Make internal!
-    public var retrySubscriptionTimer: Timer? = nil
+    internal var retrySubscriptionTimer: Timer? = nil
 
     public init(
+        // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?  
         app: App,
         path: String,
-        jwt: String? = nil,
-        headers: [String: String]? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
@@ -117,7 +91,7 @@ import Foundation
     }
 
     public func handleOnOpen() {
-        // TODO: Not sure this ever gets called
+        // TODO: Not sure this ever gets called with the current setup
         self.changeState(to: .open)
     }
 
@@ -127,8 +101,10 @@ import Foundation
     }
 
     public func handleOnError(error: Error) {
-        // TODO: what do we do when handling an error?
-        handleOnEnd() // TODO: Fix this - it's a hack while I figure out what we need to do
+        // TODO: Fix this - it's a hack while I figure out what we need to do
+        // Perhaps just call the onError() closure and then attempt subscription again,
+        // provided we want to keep on retrying subscriptions at that point
+        handleOnEnd()
     }
 
     public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any? = nil) {
@@ -153,43 +129,31 @@ import Foundation
     }
 
     internal func setupNewSubscription() {
-        // TODO: clean this up - shouldn't have to repeat the onOpen, onEvent and onEnd closures.
-        // Maybe we can use the old subscription's closures? Probably.
-        // TODO: what to do if this throws?
-
-        // TODO: Add some debug logging that prints what the lastEventIdReceived is
         var headers: [String: String]? = nil
 
         if self.lastEventIdReceived != nil {
+            // TODO: Add some debug logging that prints what the lastEventIdReceived is
             headers = ["Last-Event-ID": self.lastEventIdReceived!]
         }
 
         let subscribeRequest = SubscribeRequest(path: self.path, headers: headers)
 
         self.app.subscribe(
-            onOpen: {
-                self.handleOnOpen()
-                self._onOpen?()
-            },
-            onEvent: { eventId, headers, data in
-                self.handleOnEvent(eventId: eventId, headers: headers, data: data)
-                self._onEvent?(eventId, headers, data)
-            },
-            onEnd: { statusCode, headers, info in
-                self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
-                self._onEnd?(statusCode, headers, info)
-            }
             using: subscribeRequest,
+            onOpen: self.subscription?.onOpen,
+            onEvent: self.subscription?.onEvent,
+            onEnd: self.subscription?.onEnd,
+            onError: self.subscription?.onError
         ) { result in
             switch result {
             case .failure(let error):
+                // TODO: does it make sense to handle this error like this?
+                // What sort of error would we even get here?
+                self.handleOnError(error: error)
                 print("Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
             case .success(let subscription):
                 self.subscription = subscription
 
-                // TODO: should this be here?
-                // Don't think it's necessary as a non-repeating timer should
-                // invalidate itself as soon as it's fired, which should be straightaway
                 self.retrySubscriptionTimer?.invalidate()
                 self.retrySubscriptionTimer = nil
             }
