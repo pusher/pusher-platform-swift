@@ -13,67 +13,48 @@ import Foundation
         try self.client = client ?? BaseClient(cluster: cluster)
     }
 
-    public func request(using appRequest: AppRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
-        let sanitisedPath = sanitise(path: appRequest.path)
+    public func request(using generalRequest: GeneralRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
+        let sanitisedPath = sanitise(path: generalRequest.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-        if appRequest.jwt == nil && self.authorizer != nil {
+        let mutableBaseClientRequest = generalRequest
+        mutableBaseClientRequest.path = namespacedPath
+
+        if generalRequest.jwt == nil && self.authorizer != nil {
             self.authorizer!.authorize { result in
                 switch result {
                 case .failure(let error): completionHandler(.failure(error))
                 case .success(let jwtFromAuthorizer):
-                    // TODO: Stop having to create the AppRequest in two places when they're so similar
-
-                    let baseClientRequest = AppRequest(
-                        method: appRequest.method,
-                        path: namespacedPath,
-                        queryItems: appRequest.queryItems,
-                        jwt: jwtFromAuthorizer,
-                        headers: appRequest.headers,
-                        body: appRequest.body
-                    )
-
-                    self.client.request(using: baseClientRequest, completionHandler: completionHandler)
+                    mutableBaseClientRequest.jwt = jwtFromAuthorizer
+                    self.client.request(using: mutableBaseClientRequest, completionHandler: completionHandler)
                 }
             }
         } else {
-            let baseClientRequest = AppRequest(
-                method: appRequest.method,
-                path: namespacedPath,
-                queryItems: appRequest.queryItems,
-                jwt: appRequest.jwt,
-                headers: appRequest.headers,
-                body: appRequest.body
-            )
-
-            self.client.request(using: baseClientRequest, completionHandler: completionHandler)
+            self.client.request(using: mutableBaseClientRequest, completionHandler: completionHandler)
         }
     }
 
-    // TODO: Should this be -> Subscription? or maybe always return a Subscription, or Result<Subscription>
     public func subscribe(
-        path: String,
-        queryItems: [URLQueryItem]? = nil,
-        jwt: String? = nil,
-        headers: [String: String]? = nil,
+        using subscribeRequest: SubscribeRequest,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         completionHandler: @escaping (Result<Subscription>) -> Void) -> Void {
-            let sanitisedPath = sanitise(path: path)
+            let sanitisedPath = sanitise(path: subscribeRequest.path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-            if jwt == nil && self.authorizer != nil {
+            let mutableBaseClientRequest = subscribeRequest
+            mutableBaseClientRequest.path = namespacedPath
+
+            if subscribeRequest.jwt == nil && self.authorizer != nil {
                 self.authorizer!.authorize { result in
                     switch result {
                     case .failure(let error): completionHandler(.failure(error))
                     case .success(let jwtFromAuthorizer):
+                        mutableBaseClientRequest.jwt = jwtFromAuthorizer
                         self.client.subscribe(
-                            path: namespacedPath,
-                            queryItems: queryItems,
-                            jwt: jwtFromAuthorizer,
-                            headers: headers,
+                            using: mutableBaseClientRequest,
                             onOpen: onOpen,
                             onEvent: onEvent,
                             onEnd: onEnd,
@@ -84,10 +65,7 @@ import Foundation
                 }
             } else {
                 self.client.subscribe(
-                    path: namespacedPath,
-                    queryItems: queryItems,
-                    jwt: jwt,
-                    headers: headers,
+                    using: mutableBaseClientRequest,
                     onOpen: onOpen,
                     onEvent: onEvent,
                     onEnd: onEnd,
@@ -98,10 +76,7 @@ import Foundation
     }
 
     public func subscribeWithResume(
-        path: String,
-        queryItems: [URLQueryItem]? = nil,
-        jwt: String? = nil,
-        headers: [String: String]? = nil,
+        using subscribeRequest: SubscribeRequest,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
@@ -109,20 +84,21 @@ import Foundation
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
         onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil,
         completionHandler: @escaping (Result<ResumableSubscription>) -> Void) -> Void {
-            let sanitisedPath = sanitise(path: path)
+            let sanitisedPath = sanitise(path: subscribeRequest.path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-            if jwt == nil && self.authorizer != nil {
+            let mutableBaseClientRequest = subscribeRequest
+            mutableBaseClientRequest.path = namespacedPath
+
+            if subscribeRequest.jwt == nil && self.authorizer != nil {
                 self.authorizer!.authorize { result in
                     switch result {
                     case .failure(let error): completionHandler(.failure(error))
                     case .success(let jwtFromAuthorizer):
+                        mutableBaseClientRequest.jwt = jwtFromAuthorizer
                         self.client.subscribeWithResume(
+                            using: mutableBaseClientRequest,
                             app: self,
-                            path: namespacedPath,
-                            queryItems: queryItems,
-                            jwt: jwtFromAuthorizer,
-                            headers: headers,
                             onOpen: onOpen,
                             onEvent: onEvent,
                             onEnd: onEnd,
@@ -135,11 +111,8 @@ import Foundation
                 }
             } else {
                 self.client.subscribeWithResume(
+                    using: mutableBaseClientRequest,
                     app: self,
-                    path: namespacedPath,
-                    queryItems: queryItems,
-                    jwt: jwt,
-                    headers: headers,
                     onOpen: onOpen,
                     onEvent: onEvent,
                     onEnd: onEnd,
@@ -192,24 +165,5 @@ import Foundation
             let namespacedPath = "/apps/\(appId)\(path)"
             return namespacedPath
         }
-    }
-}
-
-// TODO: Move this somewhere sensible
-@objc public class AppRequest: NSObject {
-    public let method: String
-    public let path: String
-    public let queryItems: [URLQueryItem]?
-    public let jwt: String?
-    public let headers: [String: String]?
-    public let body: Data?
-
-    public init(method: String, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) {
-        self.method = method
-        self.path = path
-        self.queryItems = queryItems
-        self.jwt = jwt
-        self.headers = headers
-        self.body = body
     }
 }

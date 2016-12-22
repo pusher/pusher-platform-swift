@@ -164,9 +164,9 @@ import Foundation
             headers = ["Last-Event-ID": self.lastEventIdReceived!]
         }
 
+        let subscribeRequest = SubscribeRequest(path: self.path, headers: headers)
+
         self.app.subscribe(
-            path: self.path,
-            headers: headers,
             onOpen: {
                 self.handleOnOpen()
                 self._onOpen?()
@@ -179,6 +179,7 @@ import Foundation
                 self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
                 self._onEnd?(statusCode, headers, info)
             }
+            using: subscribeRequest,
         ) { result in
             switch result {
             case .failure(let error):

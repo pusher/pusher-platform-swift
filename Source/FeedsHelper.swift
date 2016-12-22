@@ -40,24 +40,16 @@ import Foundation
 
             let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-            // TODO: should this be unowned self?
             let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
                 self.subscriptionTaskId = newSub?.taskIdentifier
             }
 
             if lastEventId != nil {
-
                 let headers = ["Last-Event-ID": lastEventId!]
-
-                // TODO: should this be unowned self?
-                let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
-                    self.subscriptionTaskId = newSub?.taskIdentifier
-                }
+                let subscribeRequest = SubscribeRequest(path: path, headers: headers)
 
                 self.app!.subscribeWithResume(
-                    path: path,
-                    jwt: nil,
-                    headers: headers,
+                    using: subscribeRequest,
                     onOpen: onOpen,
                     onEvent: onAppend,
                     onEnd: onEnd,
@@ -65,12 +57,11 @@ import Foundation
                     onStateChange: onStateChange,
                     onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
                 ) { result in
-                    guard let subscription = result.value else {
-                        // TODO: There must be a nicer way to pass the error through
-                        completionHandler?(.failure(result.error!))
-                        return
-                    }
-                    completionHandler?(.success(subscription))
+                        guard let subscription = result.value else {
+                            completionHandler?(.failure(result.error!))
+                            return
+                        }
+                        completionHandler?(.success(subscription))
                 }
             } else {
                 self.get() { result in
@@ -80,12 +71,12 @@ import Foundation
                     case .success(let feedsGetRes):
                         for item in feedsGetRes.items.reversed() {
                             guard let itemId = item["id"] as? String else {
-                                // TODO: Probably throw an ppropriate error here
+                                // TODO: Add some debug logging
                                 continue
                             }
 
                             // TODO: We don't always want to call onAppend, I imagine, maybe never in fact
-                            onAppend?(itemId, [:], item["data"])
+                            onAppend?(itemId, [:], item["data"] as Any)
                         }
 
                         var headers: [String: String] = [:]
@@ -95,10 +86,10 @@ import Foundation
                             headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
                         }
 
+                        let subscribeRequest = SubscribeRequest(path: path, headers: headers)
+
                         self.app!.subscribeWithResume(
-                            path: path,
-                            jwt: nil,
-                            headers: headers,
+                            using: subscribeRequest,
                             onOpen: onOpen,
                             onEvent: onAppend,
                             onEnd: onEnd,
@@ -106,12 +97,11 @@ import Foundation
                             onStateChange: onStateChange,
                             onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
                         ) { result in
-                            guard let subscription = result.value else {
-                                // TODO: There must be a nicer way to pass the error through
-                                completionHandler?(.failure(result.error!))
-                                return
-                            }
-                            completionHandler?(.success(subscription))
+                                guard let subscription = result.value else {
+                                    completionHandler?(.failure(result.error!))
+                                    return
+                                }
+                                completionHandler?(.success(subscription))
                         }
                     }
                 }
@@ -124,7 +114,7 @@ import Foundation
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
-        completionHandler: ((Result<Subscription>) -> Void)? = nil) -> Void {
+        completionHandler: ((Result<Subscription>) -> Void)? = nil) -> Void { // TODO: should the completion handler be required?
             guard self.app != nil else {
                 completionHandler?(.failure(ServiceHelperError.noAppObject))
                 return
@@ -134,21 +124,16 @@ import Foundation
 
             if lastEventId != nil {
                 let headers = ["Last-Event-ID": lastEventId!]
+                let subscribeRequest = SubscribeRequest(path: path, headers: headers)
 
-
-                // TODO: Why not just call subscribe inside the completionHandler? - (because it might not be defined?)
-                // TODO: should the completion handler be required?
                 self.app!.subscribe(
-                    path: path,
-                    jwt: nil,
-                    headers: headers,
+                    using: subscribeRequest,
                     onOpen: onOpen,
                     onEvent: onAppend,
                     onEnd: onEnd,
                     onError: onError
                 ) { result in
                     guard let subscription = result.value else {
-                        // TODO: There must be a nicer way to pass the error through
                         completionHandler?(.failure(result.error!))
                         return
                     }
@@ -171,7 +156,7 @@ import Foundation
                             }
 
                             // TODO: We don't always want to call onAppend, I imagine, maybe never in fact
-                            onAppend?(itemId, [:], item["data"])
+                            onAppend?(itemId, [:], item["data"] as Any)
                         }
 
                         var headers: [String: String] = [:]
@@ -181,17 +166,16 @@ import Foundation
                             headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
                         }
 
+                        let subscribeRequest = SubscribeRequest(path: path, headers: headers)
+
                         self.app!.subscribe(
-                            path: path,
-                            jwt: nil,
-                            headers: headers,
+                            using: subscribeRequest,
                             onOpen: onOpen,
                             onEvent: onAppend,
                             onEnd: onEnd,
                             onError: onError
                         ) { result in
                                 guard let subscription = result.value else {
-                                    // TODO: There must be a nicer way to pass the error through
                                     completionHandler?(.failure(result.error!))
                                     return
                                 }
@@ -220,11 +204,10 @@ import Foundation
             queryItems.append(URLQueryItem(name: "from_id", value: from!))
         }
 
-        let appRequest = AppRequest(method: "GET", path: path, queryItems: queryItems)
+        let generalRequest = GeneralRequest(method: "GET", path: path, queryItems: queryItems)
 
-        self.app!.request(using: appRequest) { result in
+        self.app!.request(using: generalRequest) { result in
             guard let data = result.value else {
-                // TODO: There must be a nicer way to pass the error through
                 completionHandler?(.failure(result.error!))
                 return
             }
@@ -252,32 +235,30 @@ import Foundation
         }
     }
 
-    public func append(item: Any, completionHandler: ((Result<String>) -> Void)? = nil) -> Void {
+    public func append(items: [Any], completionHandler: ((Result<String>) -> Void)? = nil) -> Void {
         guard self.app != nil else {
             completionHandler?(.failure(ServiceHelperError.noAppObject))
             return
         }
 
-        // TODO: I thought this was supposed to be item, or maybe items now?
-        let wrappedItem: [String: Any] = ["item": item]
+        let wrappedItems: [String: Any] = ["items": items]
 
-        guard JSONSerialization.isValidJSONObject(wrappedItem) else {
-            completionHandler?(.failure(ServiceHelperError.invalidJSONObjectAsData(wrappedItem)))
+        guard JSONSerialization.isValidJSONObject(wrappedItems) else {
+            completionHandler?(.failure(ServiceHelperError.invalidJSONObjectAsData(wrappedItems)))
             return
         }
 
-        guard let data = try? JSONSerialization.data(withJSONObject: wrappedItem, options: []) else {
-            completionHandler?(.failure(ServiceHelperError.failedToJSONSerializeData(item)))
+        guard let data = try? JSONSerialization.data(withJSONObject: wrappedItems, options: []) else {
+            completionHandler?(.failure(ServiceHelperError.failedToJSONSerializeData(wrappedItems)))
             return
         }
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-        let appRequest = AppRequest(method: "APPEND", path: path, body: data)
+        let generalRequest = GeneralRequest(method: "APPEND", path: path, body: data)
 
-        self.app!.request(using: appRequest) { result in
+        self.app!.request(using: generalRequest) { result in
             guard let data = result.value else {
-                // TODO: There must be a nicer way to pass the error through
                 completionHandler?(.failure(result.error!))
                 return
             }
@@ -299,6 +280,10 @@ import Foundation
 
             completionHandler?(.success(String(id)))
         }
+    }
+
+    public func append(item: Any, completionHandler: ((Result<String>) -> Void)? = nil) -> Void {
+        self.append(items: [item], completionHandler: completionHandler)
     }
 
 }

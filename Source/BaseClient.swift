@@ -10,7 +10,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
     public let subscriptionUrlSession: Foundation.URLSession
 
-    // TODO: We might not want to keep a reference to this and instead just access it 
+    // TODO: We might not want to keep a reference to this and instead just access it
     // through subscriptionUrlSession.delegate
     public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
@@ -41,34 +41,34 @@ let REALLY_LONG_TIME: Double = 252_460_800
 //    }
 
 
-    public func request(using appRequest: AppRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
-        self.baseUrlComponents.queryItems = appRequest.queryItems
+    public func request(using generalRequest: GeneralRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
+        self.baseUrlComponents.queryItems = generalRequest.queryItems
 
         guard var url = self.baseUrlComponents.url else {
             completionHandler(.failure(BaseClientError.invalidUrl(components: self.baseUrlComponents)))
             return
         }
 
-        url = url.appendingPathComponent(appRequest.path)
+        url = url.appendingPathComponent(generalRequest.path)
 
         var request = URLRequest(url: url)
-        request.httpMethod = appRequest.method
+        request.httpMethod = generalRequest.method
 
         // TODO: Not sure we want this timeout to be so long for non-subscribe requests
         request.timeoutInterval = REALLY_LONG_TIME
 
-        if appRequest.jwt != nil {
-            request.addValue("JWT \(appRequest.jwt!)", forHTTPHeaderField: "Authorization")
+        if generalRequest.jwt != nil {
+            request.addValue("JWT \(generalRequest.jwt!)", forHTTPHeaderField: "Authorization")
         }
 
-        if appRequest.headers != nil {
-            for (header, value) in appRequest.headers! {
+        if generalRequest.headers != nil {
+            for (header, value) in generalRequest.headers! {
                 request.addValue(value, forHTTPHeaderField: header)
             }
         }
 
-        if appRequest.body != nil {
-            request.httpBody = appRequest.body!
+        if generalRequest.body != nil {
+            request.httpBody = generalRequest.body!
         }
 
         // TODO: Figure out a sensible URLSessionConfiguration setup to use here
@@ -117,34 +117,31 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
     */
     public func subscribe(
-        path: String,
-        queryItems: [URLQueryItem]? = nil,
-        jwt: String? = nil,
-        headers: [String: String]? = nil,
+        using subscribeRequest: SubscribeRequest,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         completionHandler: (Result<Subscription>) -> Void) -> Void {
-            self.baseUrlComponents.queryItems = queryItems
+            self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
             guard var url = self.baseUrlComponents.url else {
                 completionHandler(.failure(BaseClientError.invalidUrl(components: self.baseUrlComponents)))
                 return
             }
 
-            url = url.appendingPathComponent(path)
+            url = url.appendingPathComponent(subscribeRequest.path)
 
             var request = URLRequest(url: url)
             request.httpMethod = "SUBSCRIBE"
             request.timeoutInterval = REALLY_LONG_TIME
 
-            if jwt != nil {
-                request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
+            if let jwt = subscribeRequest.jwt {
+                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
             }
 
-            if headers != nil {
-                for (header, value) in headers! {
+            if let headers = subscribeRequest.headers {
+                for (header, value) in headers {
                     request.addValue(value, forHTTPHeaderField: header)
                 }
             }
@@ -158,7 +155,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             }
 
             let subscription = Subscription(
-                path: path,
+                path: subscribeRequest.path,
                 taskIdentifier: taskIdentifier,
                 onOpen: onOpen,
                 onEvent: onEvent,
@@ -175,11 +172,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 
     public func subscribeWithResume(
+        using subscribeRequest: SubscribeRequest,
         app: App,
-        path: String,
-        queryItems: [URLQueryItem]? = nil,
-        jwt: String? = nil,
-        headers: [String: String]? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
@@ -187,16 +181,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
         onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil,
         completionHandler: (Result<ResumableSubscription>) -> Void) -> Void {
-            self.baseUrlComponents.queryItems = queryItems
+            self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
             let resumableSubscription = ResumableSubscription(
                 app: app,
-                path: path,
-                jwt: nil,
-                headers: headers,
+                path: subscribeRequest.path,
                 onStateChange: onStateChange,
-                // TODO: maybe by specifying this here we don't need the unwrap and then immediate
-                // rewrap at the bottom of this func?
                 onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
             )
 
@@ -205,18 +195,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 return
             }
 
-            url = url.appendingPathComponent(path)
+            url = url.appendingPathComponent(subscribeRequest.path)
 
             var request = URLRequest(url: url)
             request.httpMethod = "SUBSCRIBE"
             request.timeoutInterval = REALLY_LONG_TIME
 
-            if jwt != nil {
-                request.addValue("JWT \(jwt!)", forHTTPHeaderField: "Authorization")
+            if let jwt = subscribeRequest.jwt {
+                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
             }
 
-            if headers != nil {
-                for (header, value) in headers! {
+            if let headers = subscribeRequest.headers {
+                for (header, value) in headers {
                     request.addValue(value, forHTTPHeaderField: header)
                 }
             }
@@ -231,7 +221,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             }
 
             let subscription = Subscription(
-                path: path,
+                path: subscribeRequest.path,
                 taskIdentifier: taskIdentifier
             )
 
@@ -260,7 +250,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
     }
 }
-
 
 public enum BaseClientError: Error {
     case invalidUrl(components: URLComponents)
