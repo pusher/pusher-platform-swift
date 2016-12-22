@@ -13,7 +13,7 @@ internal struct MessageParser {
     // Parse errors are truly unexpected here - we trust the server to give us good data
     static internal func parse(data: Data) throws -> [Message] {
         guard let dataString = String(data: data, encoding: .utf8) else {
-            throw MessageParseError.unableToConvertDataToString(data)
+            throw MessageParseError.failedToConvertDataToString(data)
         }
 
         let stringMessages = dataString.components(separatedBy: "\n")
@@ -26,12 +26,15 @@ internal struct MessageParser {
             }
 
             guard let stringMessageData = stringMessage.data(using: .utf8) else {
-                throw MessageParseError.unableToConvertStringToData(stringMessage)
+                throw MessageParseError.failedToConvertStringToData(stringMessage)
             }
 
-            guard let jsonObject = try? JSONSerialization.jsonObject(with: stringMessageData, options: []), let jsonArray = jsonObject as? [Any] else {
-                // TODO: Log what was trying to be deserialzied here or in catch block where this is called
-                throw MessageParseError.unableToDeserializeJsonResponse
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: stringMessageData, options: []) else {
+                throw MessageParseError.failedToDeserializeJson(stringMessageData)
+            }
+
+            guard let jsonArray = jsonObject as? [Any] else {
+                throw MessageParseError.failedToCastJSONObjectToDictionary(jsonObject)
             }
 
             guard jsonArray.count != 0 else {
@@ -90,9 +93,10 @@ internal struct MessageParser {
 }
 
 internal enum MessageParseError: Error {
-    case unableToConvertDataToString(Data)
-    case unableToDeserializeJsonResponse
-    case unableToConvertStringToData(String)
+    case failedToConvertDataToString(Data)
+    case failedToDeserializeJson(Data)
+    case failedToCastJSONObjectToDictionary(Any)
+    case failedToConvertStringToData(String)
     case emptyJsonArray
     case jsonArrayWrongLengthForMessageType(MessageType, Int)
     case unknownMessageTypeCode(Int)
