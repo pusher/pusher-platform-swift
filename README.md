@@ -14,7 +14,6 @@ What else would you want? Head over to the example app [ViewController.swift](ht
 
 * [Installation](#installation)
 * [Feeds](#feeds)
-* [User Notifications](#user-notifications)
 * [Authorizers](#authorizers)
 * [Testing](#testing)
 * [Communication](#communication)
@@ -80,87 +79,6 @@ To integrate ElementsSwift into your Xcode project using Carthage, specify it in
 ```ogdl
 github "pusher/elements-client-swift"
 ```
-
-## User Notifications
-
-### TL;DR (let me copy paste something)
-
-```swift
-let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
-let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
-
-let notifications = app.userNotifications(userId: "someUserId")
-
-let notificationHandler: (String, Any) -> () = { notificationId, notificationBody in
-    print("Received notification \(notificationId) with body: \(notificationBody)")
-}
-let receiptHandler: (String) -> () { notificationId in
-    print("Notification \(notificationId) was read")
-}
-
-notifications.subscribe(notificationHandler: notificationHandler, receiptHandler: receiptHandler)
-```
-
-### Getting started
-
-First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id` along with an `authorizer`. An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them. In our example we're going to use a `SimpleTokenAuthorizer`, which, as the name suggests, is an `authorizer` that accepts a token (a JSON web token or JWT to be precise) and uses that for authorization. You can find, or generate, tokens to test things out by visiting [the dashboard](https://elements-dashboard.herokuapp.com).
-
-```swift
-let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
-let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
-```
-
-### Setting up a UserNotificationsHelper
-
-When we've got an `App` then we can create a `UserNotificationsHelper` object:
-
-```swift
-let notifications = app.userNotifications(userId: "someUserId")
-```
-
-### Subscribing to receive notifications
-
-Now that we've got a `UserNotificationsHelper` we can set up subscriptions in order to start receiving notifications.
-
-```swift
-let notificationHandler: (String, Any) -> () = { notificationId, notificationBody in
-    print("Received notification \(notificationId) with body: \(notificationBody)")
-}
-let receiptHandler: (String) -> () { notificationId in
-    print("Notification \(notificationId) was read")
-}
-
-notifications.subscribe(notificationHandler: notificationHandler, receiptHandler: receiptHandler)
-```
-
-### Acknowledge receipt of a notification
-
-To have a client acknowledge receipt of a given notification you just call `acknowledge` on the `UserNotificationsHelper` object and pass in the `notificationId`.
-
-```swift
-notifications.acknowledge(notificationId: "notificationId")
-```
-
-### Setting up native push notifications
-
-#### Registering with APNs
-
-In your app's `AppDelegate` you need to add this code:
-
-```swift
-func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-    notifications.register(deviceToken: "deviceToken")
-}
-```
-
-#### Unregister from APNS
-
-Unregistering is just as easy:
-
-```swift
-notifications.unregister(deviceToken: Data)
-```
-
 
 ## Feeds
 
