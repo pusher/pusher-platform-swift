@@ -62,7 +62,7 @@ import Foundation
     internal var retrySubscriptionTimer: Timer? = nil
 
     public init(
-        // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?  
+        // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?
         app: App,
         path: String,
         onOpen: (() -> Void)? = nil,
@@ -131,9 +131,9 @@ import Foundation
     internal func setupNewSubscription() {
         var headers: [String: String]? = nil
 
-        if self.lastEventIdReceived != nil {
-            // TODO: Add some debug logging that prints what the lastEventIdReceived is
-            headers = ["Last-Event-ID": self.lastEventIdReceived!]
+        if let eventId = self.lastEventIdReceived {
+            DefaultLogger.Logger.log(message: "Creating new Subscription with Last-Event-ID \(eventId)")
+            headers = ["Last-Event-ID": eventId]
         }
 
         let subscribeRequest = SubscribeRequest(path: self.path, headers: headers)
@@ -150,7 +150,7 @@ import Foundation
                 // TODO: does it make sense to handle this error like this?
                 // What sort of error would we even get here?
                 self.handleOnError(error: error)
-                print("Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
+                DefaultLogger.Logger.log(message: "Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
             case .success(let subscription):
                 self.subscription = subscription
 
