@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		330DD21C1E0C433A00EC251F /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330DD21B1E0C433A00EC251F /* Logger.swift */; };
 		330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E59061DEDD38900C92897 /* ResumableSubscription.swift */; };
 		3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */; };
 		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
@@ -42,6 +43,7 @@
 		3302636E1DC24681007D7317 /* PMKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PMKFoundation.framework; path = ../Carthage/Build/Mac/PMKFoundation.framework; sourceTree = "<group>"; };
 		3302636F1DC24681007D7317 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = ../Carthage/Build/Mac/PromiseKit.framework; sourceTree = "<group>"; };
 		330263701DC24681007D7317 /* PMKFoundation.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = PMKFoundation.framework.dSYM; path = ../Carthage/Build/Mac/PMKFoundation.framework.dSYM; sourceTree = "<group>"; };
+		330DD21B1E0C433A00EC251F /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		330E59061DEDD38900C92897 /* ResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumableSubscription.swift; sourceTree = "<group>"; };
 		3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTokenAuthorizer.swift; sourceTree = "<group>"; };
 		3329F40A1DC0B4C0007B29FF /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				33935EB51DA5526F00C5C064 /* ServiceHelper.swift */,
 				337C551D1E02DC8100C5A317 /* Result.swift */,
 				33F37F771E0C20CC0048457F /* Request.swift */,
+				330DD21B1E0C433A00EC251F /* Logger.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* ElementsSwift.h */,
 			);
@@ -298,6 +301,7 @@
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
 				33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */,
+				330DD21C1E0C433A00EC251F /* Logger.swift in Sources */,
 				33F37F781E0C20CC0048457F /* Request.swift in Sources */,
 				33E2D3F51DE85759002BF75E /* ServiceAppExtensions.swift in Sources */,
 				337C551E1E02DC8100C5A317 /* Result.swift in Sources */,
