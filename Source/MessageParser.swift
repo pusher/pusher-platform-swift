@@ -3,9 +3,9 @@ import Foundation
 internal struct MessageParser {
     static fileprivate func parseMessageTypeCode(messageTypeCode: Int) throws -> MessageType {
         switch messageTypeCode {
-        case 0: return .KEEP_ALIVE
-        case 1: return .EVENT
-        case 255: return .EOS
+        case 0: return .keepAlive
+        case 1: return .event
+        case 255: return .eos
         default: throw MessageParseError.unknownMessageTypeCode(messageTypeCode)
         }
     }
@@ -52,14 +52,14 @@ internal struct MessageParser {
             }
 
             switch messageType {
-            case .KEEP_ALIVE:
+            case .keepAlive:
                 guard let _ = jsonArray[1] as? String else {
                     throw MessageParseError.invalidKeepAliveData(jsonArray[1])
                 }
 
                 messages.append(Message.keepAlive)
 
-            case .EVENT:
+            case .event:
                 guard let eventId = jsonArray[1] as? String else {
                     throw MessageParseError.invalidEventId(jsonArray[1])
                 }
@@ -72,7 +72,7 @@ internal struct MessageParser {
 
                 messages.append(Message.event(eventId: eventId, headers: headers, body: body))
 
-            case .EOS:
+            case .eos:
                 guard let statusCode = jsonArray[1] as? Int else {
                     throw MessageParseError.invalidStatusCode(jsonArray[1])
                 }
@@ -109,15 +109,15 @@ internal enum MessageParseError: Error {
 }
 
 internal enum MessageType {
-    case KEEP_ALIVE
-    case EVENT
-    case EOS
+    case keepAlive
+    case event
+    case eos
 
     internal func numberOfElements() -> Int {
         switch self {
-        case .KEEP_ALIVE: return 2
-        case .EVENT: return 4
-        case .EOS: return 4
+        case .keepAlive: return 2
+        case .event: return 4
+        case .eos: return 4
         }
     }
 }
