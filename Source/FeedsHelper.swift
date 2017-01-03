@@ -71,7 +71,7 @@ import Foundation
                     case .success(let feedsGetRes):
                         for item in feedsGetRes.items.reversed() {
                             guard let itemId = item["id"] as? String else {
-                                // TODO: Add some debug logging
+                                DefaultLogger.Logger.log(message: "Item received without an id")
                                 continue
                             }
 
@@ -151,7 +151,7 @@ import Foundation
                     case .success(let feedsGetRes):
                         for item in feedsGetRes.items.reversed() {
                             guard let itemId = item["id"] as? String else {
-                                // TODO: Probably throw an ppropriate error here
+                                DefaultLogger.Logger.log(message: "Item received without an id")
                                 continue
                             }
 
@@ -204,7 +204,7 @@ import Foundation
             queryItems.append(URLQueryItem(name: "from_id", value: from!))
         }
 
-        let generalRequest = GeneralRequest(method: "GET", path: path, queryItems: queryItems)
+        let generalRequest = GeneralRequest(method: HttpMethod.GET.rawValue, path: path, queryItems: queryItems)
 
         self.app!.request(using: generalRequest) { result in
             guard let data = result.value else {
@@ -255,7 +255,7 @@ import Foundation
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-        let generalRequest = GeneralRequest(method: "APPEND", path: path, body: data)
+        let generalRequest = GeneralRequest(method: HttpMethod.APPEND.rawValue, path: path, body: data)
 
         self.app!.request(using: generalRequest) { result in
             guard let data = result.value else {
@@ -274,7 +274,7 @@ import Foundation
             }
 
             guard let id = json["item_id"] as? String else {
-                completionHandler?(.failure(FeedsHelperError.failedToParseJSONResponse(json)))
+                completionHandler?(.failure(FeedsHelperError.itemIdNotFoundInResponseJSON(json)))
                 return
             }
 
@@ -302,6 +302,6 @@ public enum FeedsHelperError: Error {
     case noSubscriptionTaskIdentifier
     case failedToDeserializeJSON(Data)
     case failedToCastJSONObjectToDictionary(Any)
-    case failedToParseJSONResponse([String: Any])
+    case itemIdNotFoundInResponseJSON([String: Any])
     case itemsMissingFromJSONResponse([String: Any])
 }

@@ -21,8 +21,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
         urlComponents.scheme = "https"
         urlComponents.host = cluster
 
-        if port != nil {
-            urlComponents.port = port!
+        if let port = port {
+            urlComponents.port = port
         }
 
         self.baseUrlComponents = urlComponents
@@ -34,12 +34,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.subscriptionSessionDelegate = SubscriptionSessionDelegate()
         self.subscriptionUrlSession = Foundation.URLSession(configuration: sessionConfiguration, delegate: subscriptionSessionDelegate, delegateQueue: nil)
     }
-
-    // TODO: Fix this to work with AppRequest setup
-//    public func request(method: HttpMethod, path: String, queryItems: [URLQueryItem]? = nil, jwt: String? = nil, headers: [String: String]? = nil, body: Data? = nil) -> Promise<Data> {
-//        return request(method: method.rawValue, path: path, queryItems: queryItems, jwt: jwt, headers: headers, body: body)
-//    }
-
 
     public func request(using generalRequest: GeneralRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
         self.baseUrlComponents.queryItems = generalRequest.queryItems
@@ -57,18 +51,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
         // TODO: Not sure we want this timeout to be so long for non-subscribe requests
         request.timeoutInterval = REALLY_LONG_TIME
 
-        if generalRequest.jwt != nil {
-            request.addValue("JWT \(generalRequest.jwt!)", forHTTPHeaderField: "Authorization")
+        if let jwt = generalRequest.jwt {
+            request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
         }
 
-        if generalRequest.headers != nil {
-            for (header, value) in generalRequest.headers! {
+        if let headers = generalRequest.headers {
+            for (header, value) in headers {
                 request.addValue(value, forHTTPHeaderField: header)
             }
         }
 
-        if generalRequest.body != nil {
-            request.httpBody = generalRequest.body!
+        if let body = generalRequest.body {
+            request.httpBody = body
         }
 
         // TODO: Figure out a sensible URLSessionConfiguration setup to use here
@@ -94,17 +88,11 @@ let REALLY_LONG_TIME: Double = 252_460_800
             }
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                // TODO: Print dataString somewhere sensible
-                let dataString = String(data: data, encoding: String.Encoding.utf8)
-                print(dataString!)
-                completionHandler(.failure(RequestError.invalidHttpResponse(data: data)))
+                completionHandler(.failure(RequestError.invalidHttpResponse(response: response, data: data)))
                 return
             }
 
             guard 200..<300 ~= httpResponse.statusCode else {
-                // TODO: Print dataString somewhere sensible
-                let dataString = String(data: data, encoding: String.Encoding.utf8)
-                print(dataString!)
                 completionHandler(.failure(RequestError.badResponseStatusCode(response: httpResponse, data: data)))
                 return
             }
@@ -133,7 +121,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             url = url.appendingPathComponent(subscribeRequest.path)
 
             var request = URLRequest(url: url)
-            request.httpMethod = "SUBSCRIBE"
+            request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
             request.timeoutInterval = REALLY_LONG_TIME
 
             if let jwt = subscribeRequest.jwt {
@@ -163,10 +151,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 onError: onError
             )
 
-            // TODO: Should we call success before setting the subscription in the session delegate?
-            completionHandler(.success(subscription))
-
             self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
+            completionHandler(.success(subscription))
 
             task.resume()
     }
@@ -198,7 +184,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             url = url.appendingPathComponent(subscribeRequest.path)
 
             var request = URLRequest(url: url)
-            request.httpMethod = "SUBSCRIBE"
+            request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
             request.timeoutInterval = REALLY_LONG_TIME
 
             if let jwt = subscribeRequest.jwt {
@@ -233,7 +219,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
             resumableSubscription.onError = onError
 
             self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
-
             completionHandler(.success(resumableSubscription))
 
             task.resume()
@@ -257,8 +242,8 @@ public enum BaseClientError: Error {
 }
 
 public enum RequestError: Error {
-    case badResponseStatusCode(response: HTTPURLResponse, data: Data)
-    case invalidHttpResponse(data: Data?)
+    case invalidHttpResponse(response: URLResponse?, data: Data?)
+    case badResponseStatusCode(response: HTTPURLResponse, data: Data?)
     case noDataPresent
 }
 
@@ -270,4 +255,6 @@ public enum HttpMethod: String {
     case OPTIONS
     case PATCH
     case HEAD
+    case SUBSCRIBE
+    case APPEND
 }
