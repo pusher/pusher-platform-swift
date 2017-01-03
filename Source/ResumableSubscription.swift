@@ -52,13 +52,8 @@ import Foundation
     }
 
     public internal(set) var app: App
-
     public internal(set) var state: ResumableSubscriptionState = .closed
-
-    // TODO: we should also provide some sort of closurse that can be set up to be called
-    // if someone wants to store the lastEventIdReceived themselves, e.g. persistently
     public internal(set) var lastEventIdReceived: String? = nil
-
     internal var retrySubscriptionTimer: Timer? = nil
 
     public init(
@@ -96,7 +91,6 @@ import Foundation
     }
 
     public func handleOnEvent(eventId: String, headers: [String: String]?, data: Any) {
-        // TODO: potentially call "eventIdReceived" callback, although maybe onEvent itself is enough?
         self.lastEventIdReceived = eventId
     }
 
