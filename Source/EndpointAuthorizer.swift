@@ -12,68 +12,71 @@ public class EndpointAuthorizer: Authorizer {
 
     public func authorize(completionHandler: @escaping (Result<String>) -> Void) -> Void {
         // TODO: need a way to invalidate jwt being cached by the authorizer
-        if jwt != nil {
+        guard self.jwt == nil else {
             completionHandler(.success(self.jwt!))
-        } else {
-            var request = URLRequest(url: URL(string: url)!)
-            request.httpMethod = "POST"
+            return
+        }
 
-            // TODO: Why is this an empty string?
-            request.httpBody = "".data(using: String.Encoding.utf8)
+        guard let endpointURL = URL(string: self.url) else {
+            completionHandler(.failure(EndpointAuthorizerError.failedToCreateURLObject(self.url)))
+            return
+        }
 
-            if requestMutator != nil {
-                request = requestMutator!(request)
+        var request = URLRequest(url: endpointURL)
+        request.httpMethod = "POST"
+
+        if requestMutator != nil {
+            request = requestMutator!(request)
+        }
+
+        URLSession.shared.dataTask(with: request, completionHandler: { data, response, sessionError in
+            if let error = sessionError {
+                completionHandler(.failure(error))
+                return
             }
 
-            URLSession.shared.dataTask(with: request, completionHandler: { data, response, sessionError in
-                if let error = sessionError {
-                    completionHandler(.failure(error))
-                    return
-                }
+            guard let data = data else {
+                completionHandler(.failure(EndpointAuthorizerError.noDataPresent))
+                return
+            }
 
-                guard let data = data else {
-                    completionHandler(.failure(EndpointAuthorizerError.noDataPresent))
-                    return
-                }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                completionHandler(.failure(EndpointAuthorizerError.invalidHttpResponse(response: response, data: data)))
+                return
+            }
 
-                let dataString = String(data: data, encoding: String.Encoding.utf8)
+            guard 200..<300 ~= httpResponse.statusCode else {
+                completionHandler(.failure(EndpointAuthorizerError.badResponseStatusCode(response: httpResponse, data: data)))
+                return
+            }
 
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    // TODO: Print dataString somewhere sensible
-                    print("Invalid response object, data: \(dataString)")
-                    completionHandler(.failure(EndpointAuthorizerError.invalidHttpResponse(data: data)))
-                    return
-                }
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
+                completionHandler(.failure(EndpointAuthorizerError.failedToDeserializeJSON(data)))
+                return
+            }
 
-                guard 200..<300 ~= httpResponse.statusCode else {
-                    // TODO: Print dataString somewhere sensible
-                    print("Bad status code, data: \(dataString)")
-                    completionHandler(.failure(EndpointAuthorizerError.badResponseStatusCode(response: httpResponse, data: data)))
-                    return
-                }
+            guard let json = jsonObject as? [String: String] else {
+                completionHandler(.failure(EndpointAuthorizerError.failedToCastJSONObjectToDictionary(jsonObject)))
+                return
+            }
 
-                guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []), let json = jsonObject as? [String: String] else {
-                    // TODO: Log what was trying to be deserialzied here or in catch block where this is called
-                    completionHandler(.failure(EndpointAuthorizerError.unableToDeserializeJsonResponse))
-                    return
-                }
+            guard let jwt = json["jwt"] else {
+                completionHandler(.failure(EndpointAuthorizerError.jwtKeyNotPresentInResponseJSON(json)))
+                return
+            }
 
-                guard json["jwt"] != nil else {
-                    completionHandler(.failure(EndpointAuthorizerError.jwtKeyNotPresentInResponse))
-                    return
-                }
-
-                self.jwt = json["jwt"]!
-                completionHandler(.success(json["jwt"]!))
-            })
-        }
+            self.jwt = jwt
+            completionHandler(.success(jwt))
+        }).resume()
     }
 }
 
 public enum EndpointAuthorizerError: Error {
-    case unableToDeserializeJsonResponse
-    case badResponseStatusCode(response: HTTPURLResponse, data: Data)
-    case invalidHttpResponse(data: Data)
+    case failedToCreateURLObject(String)
     case noDataPresent
-    case jwtKeyNotPresentInResponse
+    case invalidHttpResponse(response: URLResponse?, data: Data)
+    case badResponseStatusCode(response: HTTPURLResponse, data: Data)
+    case failedToDeserializeJSON(Data)
+    case failedToCastJSONObjectToDictionary(Any)
+    case jwtKeyNotPresentInResponseJSON([String: String])
 }
