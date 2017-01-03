@@ -1,18 +1,15 @@
 import Foundation
 
-
-// TODO: URLSessionTaskDelegate
-
 public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
     public var subscriptions: [Int: Subscription] = [:]
 
+    // MARK: URLSessionDataDelegate
+
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        // TODO: Don't think we should ever really see this error - find out what can cause it
-        print("Error, invalid session")
+        DefaultLogger.Logger.log(message: "Session became invalid: \(session)")
     }
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        // TODO: Maybe add some debug logging
         handleError(taskIdentifier: task.taskIdentifier, error: error)
     }
 
@@ -25,9 +22,9 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
             let messages = try MessageParser.parse(data: data)
             handle(messages: messages, taskIdentifier: dataTask.taskIdentifier)
         } catch let error as MessageParseError {
-            print(error.localizedDescription)
-        } catch {
-            print("Unable to parse message received over subscription")
+            DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
+        } catch let error {
+            DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
         }
     }
 
@@ -40,23 +37,25 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
         }
 
         guard let subscription = self.subscriptions[taskIdentifier] else {
+            DefaultLogger.Logger.log(message: "No subscription found paired with taskIdentifier \(taskIdentifier)")
             return
         }
 
         guard let httpResponse = response as? HTTPURLResponse else {
+            subscription.onError?(RequestError.invalidHttpResponse(response: response, data: nil))
             return
         }
 
         if 200..<300 ~= httpResponse.statusCode {
             subscription.onOpen?()
         } else {
-            subscription.onError?(RequestError.invalidHttpResponse(data: nil))
+            subscription.onError?(RequestError.badResponseStatusCode(response: httpResponse, data: nil))
         }
     }
 
     internal func handle(messages: [Message], taskIdentifier: Int) {
         guard let subscription = self.subscriptions[taskIdentifier] else {
-            print("No subscription found paired with taskIdentifier \(taskIdentifier)")
+            DefaultLogger.Logger.log(message: "No subscription found paired with taskIdentifier \(taskIdentifier)")
             return
         }
 
@@ -74,10 +73,10 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
 
     internal func handleError(taskIdentifier: Int, error: Error?) {
         guard let subscription = subscriptions[taskIdentifier] else {
+            DefaultLogger.Logger.log(message: "No subscription found paired with taskIdentifier \(taskIdentifier)")
             return
         }
 
-        // TODO: Do we want localizedDescription or just the error?
         subscription.onEnd?(nil, nil, error)
     }
 
