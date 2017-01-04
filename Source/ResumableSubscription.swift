@@ -2,6 +2,7 @@ import Foundation
 
 @objc public class ResumableSubscription: NSObject {
     public let path: String
+    public internal(set) var unsubscribed: Bool = false
 
     // TODO: Check memory mangement stuff here - capture list etc
 
@@ -42,15 +43,7 @@ import Foundation
     }
 
     public var onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)?
-
-    internal var onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil
-
-    public internal(set) var subscription: Subscription? = nil {
-        willSet {
-            self.onUnderlyingSubscriptionChange?(self.subscription, newValue)
-        }
-    }
-
+    public internal(set) var subscription: Subscription? = nil
     public internal(set) var app: App
     public internal(set) var state: ResumableSubscriptionState = .closed
     public internal(set) var lastEventIdReceived: String? = nil
@@ -63,11 +56,9 @@ import Foundation
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil) {
+        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) {
             self.path = path
             self.app = app
-            self.onUnderlyingSubscriptionChange = onUnderlyingSubscriptionChange
 
             // TODO: don't like having to do this
             super.init()
@@ -107,6 +98,12 @@ import Foundation
         // errors that mean we need to stop the subscription.
         // Do we therefore also need to setup a onProperEnd (not the real name suggestion)?
         // Then we'd set the state to closed and not try and create a new subscription.
+
+        guard !self.unsubscribed else {
+            self.changeState(to: .closed)
+            return
+        }
+
         if self.state != .resuming {
             self.changeState(to: .resuming)
         }

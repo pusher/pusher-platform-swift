@@ -6,23 +6,51 @@ import Foundation
     public weak var app: App? = nil
     public let feedName: String
 
-    public var subscriptionTaskId: Int? = nil
+    // TODO: Maybe need to sort out making sure that you can't subscribe if
+    // subscription already exists, or make sure that you can't subscribeWithResume
+    // if a Subscription already exists, and likewise with not being able to call
+    // subscribe if a ResumableSubscription alreading exists
+    public internal(set) var subscription: Subscription? = nil
+    public internal(set) var resumableSubscription: ResumableSubscription? = nil
 
     public init(_ name: String, app: App) {
         self.feedName = name
         self.app = app
     }
 
-    public func unsubscribe() throws {
+    public func unsubscribe(completionHandler: ((Result<Bool>) -> Void)? = nil) -> Void {
         guard self.app != nil else {
-            throw ServiceHelperError.noAppObject
+            completionHandler?(.failure(ServiceHelperError.noAppObject))
+            return
         }
 
-        guard self.subscriptionTaskId != nil else {
-            throw FeedsHelperError.noSubscriptionTaskIdentifier
+        guard self.subscription != nil || self.resumableSubscription != nil else {
+            completionHandler?(.failure(FeedsHelperError.noSubscriptionOrResumableSubscription))
+            return
         }
 
-        self.app!.unsubscribe(taskIdentifier: subscriptionTaskId!)
+        if let subscription = self.subscription {
+            guard let taskId = subscription.taskIdentifier else {
+                completionHandler?(.failure(FeedsHelperError.taskIdentifierForSubscriptionNotPresent(subscription)))
+                return
+            }
+            
+            self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
+        } else if let resumableSubscription = self.resumableSubscription {
+            guard let subscription = self.resumableSubscription?.subscription else {
+                completionHandler?(.failure(FeedsHelperError.underlyingSubscriptionForResumableSubscriptionNotPresent(resumableSubscription)))
+                return
+            }
+
+            guard let taskId = subscription.taskIdentifier else {
+                completionHandler?(.failure(FeedsHelperError.taskIdentifierForSubscriptionNotPresent(subscription)))
+                return
+            }
+
+            resumableSubscription.changeState(to: .closing)
+            resumableSubscription.unsubscribed = true
+            self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
+        }
     }
 
     public func subscribeWithResume(
@@ -40,10 +68,6 @@ import Foundation
 
             let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-            let onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = { oldSub, newSub in
-                self.subscriptionTaskId = newSub?.taskIdentifier
-            }
-
             if lastEventId != nil {
                 let headers = ["Last-Event-ID": lastEventId!]
                 let subscribeRequest = SubscribeRequest(path: path, headers: headers)
@@ -54,14 +78,15 @@ import Foundation
                     onEvent: onAppend,
                     onEnd: onEnd,
                     onError: onError,
-                    onStateChange: onStateChange,
-                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                    onStateChange: onStateChange
                 ) { result in
-                        guard let subscription = result.value else {
+                        guard let resumableSubscription = result.value else {
                             completionHandler?(.failure(result.error!))
                             return
                         }
-                        completionHandler?(.success(subscription))
+
+                        self.resumableSubscription = resumableSubscription
+                        completionHandler?(.success(resumableSubscription))
                 }
             } else {
                 self.get() { result in
@@ -75,7 +100,6 @@ import Foundation
                                 continue
                             }
 
-                            // TODO: We don't always want to call onAppend, I imagine, maybe never in fact
                             onAppend?(itemId, [:], item["data"] as Any)
                         }
 
@@ -94,14 +118,15 @@ import Foundation
                             onEvent: onAppend,
                             onEnd: onEnd,
                             onError: onError,
-                            onStateChange: onStateChange,
-                            onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                            onStateChange: onStateChange
                         ) { result in
-                                guard let subscription = result.value else {
+                                guard let resumableSubscription = result.value else {
                                     completionHandler?(.failure(result.error!))
                                     return
                                 }
-                                completionHandler?(.success(subscription))
+
+                                self.resumableSubscription = resumableSubscription
+                                completionHandler?(.success(resumableSubscription))
                         }
                     }
                 }
@@ -114,7 +139,8 @@ import Foundation
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
-        completionHandler: ((Result<Subscription>) -> Void)? = nil) -> Void { // TODO: should the completion handler be required?
+        // TODO: should the completion handler be required?
+        completionHandler: ((Result<Subscription>) -> Void)? = nil) -> Void {
             guard self.app != nil else {
                 completionHandler?(.failure(ServiceHelperError.noAppObject))
                 return
@@ -138,9 +164,7 @@ import Foundation
                         return
                     }
 
-                    //TODO: does this need to be here?
-                    self.subscriptionTaskId = subscription.taskIdentifier
-
+                    self.subscription = subscription
                     completionHandler?(.success(subscription))
                 }
             } else {
@@ -155,7 +179,6 @@ import Foundation
                                 continue
                             }
 
-                            // TODO: We don't always want to call onAppend, I imagine, maybe never in fact
                             onAppend?(itemId, [:], item["data"] as Any)
                         }
 
@@ -180,9 +203,7 @@ import Foundation
                                     return
                                 }
 
-                                //TODO: does this need to be here?
-                                self.subscriptionTaskId = subscription.taskIdentifier
-
+                                self.subscription = subscription
                                 completionHandler?(.success(subscription))
                         }
                     }
@@ -299,9 +320,11 @@ import Foundation
 }
 
 public enum FeedsHelperError: Error {
-    case noSubscriptionTaskIdentifier
+    case noSubscriptionOrResumableSubscription
     case failedToDeserializeJSON(Data)
     case failedToCastJSONObjectToDictionary(Any)
     case itemIdNotFoundInResponseJSON([String: Any])
     case itemsMissingFromJSONResponse([String: Any])
+    case taskIdentifierForSubscriptionNotPresent(Subscription)
+    case underlyingSubscriptionForResumableSubscriptionNotPresent(ResumableSubscription)
 }

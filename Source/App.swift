@@ -82,7 +82,6 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil,
         completionHandler: @escaping (Result<ResumableSubscription>) -> Void) -> Void {
             let sanitisedPath = sanitise(path: subscribeRequest.path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
@@ -104,7 +103,6 @@ import Foundation
                             onEnd: onEnd,
                             onError: onError,
                             onStateChange: onStateChange,
-                            onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange,
                             completionHandler: completionHandler
                         )
                     }
@@ -118,14 +116,13 @@ import Foundation
                     onEnd: onEnd,
                     onError: onError,
                     onStateChange: onStateChange,
-                    onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange,
                     completionHandler: completionHandler
                 )
             }
     }
 
-    public func unsubscribe(taskIdentifier: Int) {
-        self.client.unsubscribe(taskIdentifier: taskIdentifier)
+    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) {
+        self.client.unsubscribe(taskIdentifier: taskIdentifier, completionHandler: completionHandler)
     }
 
     internal func sanitise(path: String) -> String {

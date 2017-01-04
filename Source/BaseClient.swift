@@ -9,9 +9,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
     internal var baseUrlComponents: URLComponents
 
     public let subscriptionUrlSession: Foundation.URLSession
-
-    // TODO: We might not want to keep a reference to this and instead just access it
-    // through subscriptionUrlSession.delegate
     public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
     public init(cluster: String? = nil, port: Int? = nil) throws {
@@ -48,9 +45,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var request = URLRequest(url: url)
         request.httpMethod = generalRequest.method
 
-        // TODO: Not sure we want this timeout to be so long for non-subscribe requests
-        request.timeoutInterval = REALLY_LONG_TIME
-
         if let jwt = generalRequest.jwt {
             request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
         }
@@ -65,15 +59,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.httpBody = body
         }
 
-        // TODO: Figure out a sensible URLSessionConfiguration setup to use here
         let sessionConfiguration = URLSessionConfiguration.ephemeral
-        sessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
-        sessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
-
-
-        // TODO: Decide whether a delegate is required
-//        let sessionDelegate = SessionDelegate()
-
         let session = URLSession(configuration: sessionConfiguration)
 
         session.dataTask(with: request, completionHandler: { data, response, sessionError in
@@ -101,9 +87,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }).resume()
     }
 
-    /**
-
-    */
     public func subscribe(
         using subscribeRequest: SubscribeRequest,
         onOpen: (() -> Void)? = nil,
@@ -165,15 +148,13 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        onUnderlyingSubscriptionChange: ((Subscription?, Subscription?) -> Void)? = nil,
         completionHandler: (Result<ResumableSubscription>) -> Void) -> Void {
             self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
             let resumableSubscription = ResumableSubscription(
                 app: app,
                 path: subscribeRequest.path,
-                onStateChange: onStateChange,
-                onUnderlyingSubscriptionChange: onUnderlyingSubscriptionChange
+                onStateChange: onStateChange
             )
 
             guard var url = self.baseUrlComponents.url else {
@@ -224,14 +205,22 @@ let REALLY_LONG_TIME: Double = 252_460_800
             task.resume()
     }
 
-    public func unsubscribe(taskIdentifier: Int) {
+    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) -> Void {
         self.subscriptionUrlSession.getAllTasks { tasks in
-            for task in tasks {
-                if task.taskIdentifier == taskIdentifier {
-                    // TODO: check why we can't cancel without cancelling all tasks in the session
-                    task.suspend()
-                }
+            guard tasks.count > 0 else {
+                completionHandler?(.failure(BaseClientError.noTasksForSubscriptionUrlSession(self.subscriptionUrlSession)))
+                return
             }
+
+            let filteredTasks = tasks.filter { $0.taskIdentifier == taskIdentifier }
+
+            guard filteredTasks.count == 1 else {
+                completionHandler?(.failure(BaseClientError.noTaskWithMatchingTaskIdentifierFound(taskId: taskIdentifier, session: self.subscriptionUrlSession)))
+                return
+            }
+
+            filteredTasks.first!.cancel()
+            completionHandler?(.success(true))
         }
     }
 }
@@ -239,6 +228,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
 public enum BaseClientError: Error {
     case invalidUrl(components: URLComponents)
     case preExistingTaskIdentifierForSubscription
+    case noTasksForSubscriptionUrlSession(URLSession)
+    case noTaskWithMatchingTaskIdentifierFound(taskId: Int, session: URLSession)
 }
 
 public enum RequestError: Error {
