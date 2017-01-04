@@ -79,19 +79,4 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
 
         subscription.onEnd?(nil, nil, error)
     }
-
-
-    // MARK: TLS auth challenge
-
-    // TODO: Remove this when all TLS stuff is sorted out properly
-    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-        guard challenge.previousFailureCount == 0 else {
-            challenge.sender?.cancel(challenge)
-            completionHandler(.cancelAuthenticationChallenge, nil)
-            return
-        }
-
-        let allowAllCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
-        completionHandler(.useCredential, allowAllCredential)
-    }
 }
