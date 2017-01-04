@@ -2,6 +2,9 @@ import Foundation
 
 public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
     public var subscriptions: [Int: Subscription] = [:]
+    internal let handleDataQueue = DispatchQueue(label: "com.pusher.subscriptiondelegate.data")
+    internal let handleErrorQueue = DispatchQueue(label: "com.pusher.subscriptiondelegate.error")
+    internal let handleResponseQueue = DispatchQueue(label: "com.pusher.subscriptiondelegate.response")
 
     // MARK: URLSessionDataDelegate
 
@@ -10,21 +13,27 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
     }
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        handleError(taskIdentifier: task.taskIdentifier, error: error)
+        handleErrorQueue.async {
+            self.handleError(taskIdentifier: task.taskIdentifier, error: error)
+        }
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
-        handle(taskIdentifier: dataTask.taskIdentifier, response: response, completionHandler: completionHandler)
+        handleResponseQueue.async {
+            self.handle(taskIdentifier: dataTask.taskIdentifier, response: response, completionHandler: completionHandler)
+        }
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        do {
-            let messages = try MessageParser.parse(data: data)
-            handle(messages: messages, taskIdentifier: dataTask.taskIdentifier)
-        } catch let error as MessageParseError {
-            DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
-        } catch let error {
-            DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
+        handleDataQueue.async {
+            do {
+                let messages = try MessageParser.parse(data: data)
+                self.handle(messages: messages, taskIdentifier: dataTask.taskIdentifier)
+            } catch let error as MessageParseError {
+                DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
+            } catch let error {
+                DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
+            }
         }
     }
 
