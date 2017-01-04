@@ -86,17 +86,23 @@ github "pusher/elements-client-swift"
 
 ```swift
 let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
-let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
+let app = try! App(id: "yourAppId", authorizer: authorizer)
 
 let myFeed = app.feeds("myFeed")
 
-try! myFeed.subscribeWithResume(
+myFeed.subscribeWithResume(
     onOpen: { Void in print("We're subscribed to myFeed") },
     onAppend: { itemId, headers, item in print("Received new item", item) } ,
     onEnd: { statusCode, headers, info in print("Subscription ended", info) },
+    onError: { error in print("Error: ", error) },
     onStateChange: { oldState, newState in print("State of subscription changed from \(oldState) to \(newState)") }
-).catch { error in
-    print("Error subscribing: \(error)")
+) { result in
+    switch result {
+    case .failure(let error):
+        // handle the error appropriately
+    case .success(let sub):
+        // you now have access to the subscription if you want to dig into internal-y things
+    }
 }
 ```
 
@@ -122,13 +128,19 @@ let myFeed = app.feeds("myFeed")
 Now that we've got a `FeedsHelper` we can subscribe to that feed to start receiving new items. When you subscribe to a feed you also receive (up to) the 50 most recently added items in the feed. For each of these items the `onAppend` function that you provide will be called.
 
 ```swift
-try! myFeed.subscribeWithResume(
+myFeed.subscribeWithResume(
     onOpen: { Void in print("We're subscribed to myFeed") },
     onAppend: { itemId, headers, item in print("Received new item", item) } ,
     onEnd: { statusCode, headers, info in print("Subscription ended", info) },
+    onError: { error in print("Error: ", error) },
     onStateChange: { oldState, newState in print("State of subscription changed from \(oldState) to \(newState)") }
-).catch { error in
-    print("Error subscribing: \(error)")
+) { result in
+    switch result {
+    case .failure(let error):
+        // handle the error appropriately
+    case .success(let sub):
+        // you now have access to the subscription if you want to dig into internal-y things
+    }
 }
 ```
 
@@ -137,9 +149,13 @@ try! myFeed.subscribeWithResume(
 If you need to fetch older items in a feed then you can do so by providing the id of the oldest item that the client is currently aware of. The response will then contain (up to) the next 50 oldest items in the feed as well as the id of the next oldest item in the feed.
 
 ```swift
-try! myFeed.get(from: "oldestReceivedId").then { res in
-    print("Got these items: \(res.items)")
-    print("Next oldest id is \(res.nextId)")
+myFeed.get(from: "oldestReceivedId", limit: 10) { result in
+    switch result {
+    case .failure(let error):
+        // handle the error appropriately
+    case .success(let feedsGetResponse):
+        print(feedsGetResponse.items, feedsGetResponse.nextId)
+    }
 }
 ```
 
@@ -148,8 +164,28 @@ try! myFeed.get(from: "oldestReceivedId").then { res in
 You can also append items to feeds, provided you have the appropriate permissions.
 
 ```swift
-try! myFeed.append(item: ["newValue": 123]).then { res -> Void in
-    print(res) // where res will be the id given to the item if it was successsfully appended to the feed
+myFeed.append(item: ["newValue": 123]) { result in
+    switch result {
+    case .failure(let error):
+        // handle the error appropriately
+    case .success(let itemId):
+        print(itemId)
+    }
+}
+```
+
+Appending multiple items to a feed in one request is done like this:
+
+```swift
+myFeed.append(items: [["newValue": 123], ["someOtherKey": "someString"]]) { result in
+    switch result {
+    case .failure(let error):
+        // handle the error appropriately
+    case .success(let itemId):
+        // here the itemId returned is the id of the most recently appended item
+        // i.e. the last item in the items array passed in as a parameter
+        print(itemId)
+    }
 }
 ```
 
