@@ -9,19 +9,19 @@
 import UIKit
 
 class FeedsViewController: UIViewController {
-    
+
     @IBOutlet var feedLabel: UILabel!
-    
+
     var delegate: AppDelegate!
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Feeds ViewController")
-        
+
         delegate = UIApplication.shared.delegate as! AppDelegate
 
         let feed = delegate.elements.feeds("resumable-ham")
-        
+
         feed.subscribeWithResume(
             onOpen: { Void in print("OPEN") },
             onAppend: { itemId, headers, item in print("RECEIVED: ", itemId, headers, item) } ,
