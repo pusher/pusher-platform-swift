@@ -13,12 +13,34 @@ import Foundation
     public internal(set) var subscription: Subscription? = nil
     public internal(set) var resumableSubscription: ResumableSubscription? = nil
 
+    public internal(set) var nextIdForFetchingOlderItems: String? = nil
+    public internal(set) var moreItemsToFetch: Bool = true
+
     public init(_ name: String, app: App) {
         self.feedName = name
         self.app = app
     }
 
-    public func unsubscribe(completionHandler: ((Result<Bool>) -> Void)? = nil) -> Void {
+    public func fetchOlderItems(from id: String? = nil, limit: Int? = nil, completionHandler: @escaping (Result<[[String: Any]]>) -> Void) {
+        guard self.moreItemsToFetch else {
+            DefaultLogger.Logger.log(message: "No older items to fetch in feed: \(self.feedName)")
+            completionHandler(.success([]))
+            return
+        }
+
+        let idToFetchFrom = id ?? self.nextIdForFetchingOlderItems
+
+        self.get(from: idToFetchFrom, limit: limit) { result in
+            switch result {
+            case .failure(let error):
+                completionHandler(.failure(error))
+            case .success(let feedsGetRes):
+                completionHandler(.success(feedsGetRes.items))
+            }
+        }
+    }
+
+    public func unsubscribe(completionHandler: ((Result<Bool>) -> Void)? = nil) {
         guard self.app != nil else {
             completionHandler?(.failure(ServiceHelperError.noAppObject))
             return
@@ -34,7 +56,7 @@ import Foundation
                 completionHandler?(.failure(FeedsHelperError.taskIdentifierForSubscriptionNotPresent(subscription)))
                 return
             }
-            
+
             self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
         } else if let resumableSubscription = self.resumableSubscription {
             guard let subscription = self.resumableSubscription?.subscription else {
@@ -60,7 +82,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        completionHandler: ((Result<ResumableSubscription>) -> Void)? = nil) -> Void {
+        completionHandler: ((Result<ResumableSubscription>) -> Void)? = nil) {
             guard self.app != nil else {
                 completionHandler?(.failure(ServiceHelperError.noAppObject))
                 return
@@ -96,7 +118,7 @@ import Foundation
                     case .success(let feedsGetRes):
                         for item in feedsGetRes.items.reversed() {
                             guard let itemId = item["id"] as? String else {
-                                DefaultLogger.Logger.log(message: "Item received without an id")
+                                DefaultLogger.Logger.log(message: "Item received without an id \(item)")
                                 continue
                             }
 
@@ -140,7 +162,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         // TODO: should the completion handler be required?
-        completionHandler: ((Result<Subscription>) -> Void)? = nil) -> Void {
+        completionHandler: ((Result<Subscription>) -> Void)? = nil) {
             guard self.app != nil else {
                 completionHandler?(.failure(ServiceHelperError.noAppObject))
                 return
@@ -159,13 +181,13 @@ import Foundation
                     onEnd: onEnd,
                     onError: onError
                 ) { result in
-                    guard let subscription = result.value else {
-                        completionHandler?(.failure(result.error!))
-                        return
-                    }
+                        guard let subscription = result.value else {
+                            completionHandler?(.failure(result.error!))
+                            return
+                        }
 
-                    self.subscription = subscription
-                    completionHandler?(.success(subscription))
+                        self.subscription = subscription
+                        completionHandler?(.success(subscription))
                 }
             } else {
                 self.get() { result in
@@ -175,7 +197,7 @@ import Foundation
                     case .success(let feedsGetRes):
                         for item in feedsGetRes.items.reversed() {
                             guard let itemId = item["id"] as? String else {
-                                DefaultLogger.Logger.log(message: "Item received without an id")
+                                DefaultLogger.Logger.log(message: "Item received without an id \(item)")
                                 continue
                             }
 
@@ -211,7 +233,7 @@ import Foundation
             }
     }
 
-    public func get(from: String? = nil, limit: Int = 50, completionHandler: ((Result<FeedsItemsReponse>) -> Void)? = nil) -> Void {
+    public func get(from id: String? = nil, limit: Int? = 50, completionHandler: ((Result<FeedsItemsReponse>) -> Void)? = nil) {
         guard self.app != nil else {
             completionHandler?(.failure(ServiceHelperError.noAppObject))
             return
@@ -219,10 +241,10 @@ import Foundation
 
         let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
 
-        var queryItems = [URLQueryItem(name: "limit", value: "\(limit)")]
+        var queryItems = (limit != nil) ? [URLQueryItem(name: "limit", value: "\(limit!)")] : []
 
-        if from != nil {
-            queryItems.append(URLQueryItem(name: "from_id", value: from!))
+        if let id = id {
+            queryItems.append(URLQueryItem(name: "from_id", value: id))
         }
 
         let generalRequest = GeneralRequest(method: HttpMethod.GET.rawValue, path: path, queryItems: queryItems)
@@ -249,14 +271,16 @@ import Foundation
             }
 
             if let id = json["next_id"] as? String {
+                self.nextIdForFetchingOlderItems = id
                 completionHandler?(.success(FeedsItemsReponse(nextId: id, items: items)))
             } else {
+                self.moreItemsToFetch = false
                 completionHandler?(.success(FeedsItemsReponse(items: items)))
             }
         }
     }
 
-    public func append(items: [Any], completionHandler: ((Result<String>) -> Void)? = nil) -> Void {
+    public func append(items: [Any], completionHandler: ((Result<String>) -> Void)? = nil) {
         guard self.app != nil else {
             completionHandler?(.failure(ServiceHelperError.noAppObject))
             return
@@ -303,7 +327,7 @@ import Foundation
         }
     }
 
-    public func append(item: Any, completionHandler: ((Result<String>) -> Void)? = nil) -> Void {
+    public func append(item: Any, completionHandler: ((Result<String>) -> Void)? = nil) {
         self.append(items: [item], completionHandler: completionHandler)
     }
 
