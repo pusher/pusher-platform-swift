@@ -74,6 +74,10 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
                 break
             case Message.event(let eventId, let headers, let body):
                 subscription.onEvent?(eventId, headers, body)
+
+                for internalEventHandler in subscription.internalOnEventHandlers {
+                    internalEventHandler(eventId, headers, body)
+                }
             case Message.eos(let statusCode, let headers, let info):
                 subscription.onEnd?(statusCode, headers, info)
             }

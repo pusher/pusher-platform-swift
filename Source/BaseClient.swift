@@ -93,6 +93,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
+        internalOnEventHandlers: [(String, [String: String], Any) -> Void] = [],
         completionHandler: (Result<Subscription>) -> Void) -> Void {
             self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
@@ -131,7 +132,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 onOpen: onOpen,
                 onEvent: onEvent,
                 onEnd: onEnd,
-                onError: onError
+                onError: onError,
+                internalOnEventHandlers: internalOnEventHandlers
             )
 
             self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
@@ -148,6 +150,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        internalOnEventHandlers: [(String, [String: String], Any) -> Void] = [],
         completionHandler: (Result<ResumableSubscription>) -> Void) -> Void {
             self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
@@ -189,7 +192,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
             let subscription = Subscription(
                 path: subscribeRequest.path,
-                taskIdentifier: taskIdentifier
+                taskIdentifier: taskIdentifier,
+                internalOnEventHandlers: internalOnEventHandlers
             )
 
             // TODO: No no no there must be a better way

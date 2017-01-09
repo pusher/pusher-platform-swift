@@ -40,6 +40,7 @@ import Foundation
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
+        internalOnEventHandlers: [(String, [String: String], Any) -> Void] = [],
         completionHandler: @escaping (Result<Subscription>) -> Void) -> Void {
             let sanitisedPath = sanitise(path: subscribeRequest.path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
@@ -59,6 +60,7 @@ import Foundation
                             onEvent: onEvent,
                             onEnd: onEnd,
                             onError: onError,
+                            internalOnEventHandlers: internalOnEventHandlers,
                             completionHandler: completionHandler
                         )
                     }
@@ -70,6 +72,7 @@ import Foundation
                     onEvent: onEvent,
                     onEnd: onEnd,
                     onError: onError,
+                    internalOnEventHandlers: internalOnEventHandlers,
                     completionHandler: completionHandler
                 )
             }
@@ -82,6 +85,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil,
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
+        internalOnEventHandlers: [(String, [String: String], Any) -> Void] = [],
         completionHandler: @escaping (Result<ResumableSubscription>) -> Void) -> Void {
             let sanitisedPath = sanitise(path: subscribeRequest.path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
@@ -103,6 +107,7 @@ import Foundation
                             onEnd: onEnd,
                             onError: onError,
                             onStateChange: onStateChange,
+                            internalOnEventHandlers: internalOnEventHandlers,
                             completionHandler: completionHandler
                         )
                     }
@@ -116,6 +121,7 @@ import Foundation
                     onEnd: onEnd,
                     onError: onError,
                     onStateChange: onStateChange,
+                    internalOnEventHandlers: internalOnEventHandlers,
                     completionHandler: completionHandler
                 )
             }
