@@ -20,7 +20,7 @@
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
 		33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */; };
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
-		33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* FeedsHelper.swift */; };
+		33935EB41DA5523C00C5C064 /* Feeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* Feeds.swift */; };
 		33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB51DA5526F00C5C064 /* ServiceHelper.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33E2D3F51DE85759002BF75E /* ServiceAppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */; };
@@ -60,7 +60,7 @@
 		33935EA71DA5399A00C5C064 /* Authorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorizer.swift; sourceTree = "<group>"; };
 		33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
-		33935EB31DA5523C00C5C064 /* FeedsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsHelper.swift; sourceTree = "<group>"; };
+		33935EB31DA5523C00C5C064 /* Feeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feeds.swift; sourceTree = "<group>"; };
 		33935EB51DA5526F00C5C064 /* ServiceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceHelper.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAppExtensions.swift; sourceTree = "<group>"; };
@@ -108,7 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				33935EB21DA54F9400C5C064 /* Authorizers */,
-				33935EB11DA54F8700C5C064 /* Service Helpers */,
+				33935EB11DA54F8700C5C064 /* Services */,
 				338290711DF5CEC6008CDC8F /* App.swift */,
 				33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */,
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
@@ -137,12 +137,12 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		33935EB11DA54F8700C5C064 /* Service Helpers */ = {
+		33935EB11DA54F8700C5C064 /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				33935EB31DA5523C00C5C064 /* FeedsHelper.swift */,
+				33935EB31DA5523C00C5C064 /* Feeds.swift */,
 			);
-			name = "Service Helpers";
+			name = Services;
 			sourceTree = "<group>";
 		};
 		33935EB21DA54F9400C5C064 /* Authorizers */ = {
@@ -300,7 +300,7 @@
 				3329F4091DC0A035007B29FF /* SimpleTokenAuthorizer.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
-				33935EB41DA5523C00C5C064 /* FeedsHelper.swift in Sources */,
+				33935EB41DA5523C00C5C064 /* Feeds.swift in Sources */,
 				330DD21C1E0C433A00EC251F /* Logger.swift in Sources */,
 				33F37F781E0C20CC0048457F /* Request.swift in Sources */,
 				33E2D3F51DE85759002BF75E /* ServiceAppExtensions.swift in Sources */,

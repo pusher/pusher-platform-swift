@@ -1,6 +1,6 @@
 import Foundation
 
-@objc public class FeedsHelper: NSObject, ServiceHelper {
+@objc public class Feed: NSObject, Service {
     static public let namespace = "feeds"
 
     public weak var app: App? = nil
@@ -42,30 +42,30 @@ import Foundation
 
     public func unsubscribe(completionHandler: ((Result<Bool>) -> Void)? = nil) {
         guard self.app != nil else {
-            completionHandler?(.failure(ServiceHelperError.noAppObject))
+            completionHandler?(.failure(ServiceError.noAppObject))
             return
         }
 
         guard self.subscription != nil || self.resumableSubscription != nil else {
-            completionHandler?(.failure(FeedsHelperError.noSubscriptionOrResumableSubscription))
+            completionHandler?(.failure(FeedError.noSubscriptionOrResumableSubscription))
             return
         }
 
         if let subscription = self.subscription {
             guard let taskId = subscription.taskIdentifier else {
-                completionHandler?(.failure(FeedsHelperError.taskIdentifierForSubscriptionNotPresent(subscription)))
+                completionHandler?(.failure(FeedError.taskIdentifierForSubscriptionNotPresent(subscription)))
                 return
             }
 
             self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
         } else if let resumableSubscription = self.resumableSubscription {
             guard let subscription = self.resumableSubscription?.subscription else {
-                completionHandler?(.failure(FeedsHelperError.underlyingSubscriptionForResumableSubscriptionNotPresent(resumableSubscription)))
+                completionHandler?(.failure(FeedError.underlyingSubscriptionForResumableSubscriptionNotPresent(resumableSubscription)))
                 return
             }
 
             guard let taskId = subscription.taskIdentifier else {
-                completionHandler?(.failure(FeedsHelperError.taskIdentifierForSubscriptionNotPresent(subscription)))
+                completionHandler?(.failure(FeedError.taskIdentifierForSubscriptionNotPresent(subscription)))
                 return
             }
 
@@ -75,7 +75,7 @@ import Foundation
         }
     }
 
-    public func subscribeWithResume(
+    public func subscribe(
         lastEventId: String? = nil,
         onOpen: (() -> Void)? = nil,
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
@@ -84,11 +84,11 @@ import Foundation
         onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
         completionHandler: ((Result<ResumableSubscription>) -> Void)? = nil) {
             guard self.app != nil else {
-                completionHandler?(.failure(ServiceHelperError.noAppObject))
+                completionHandler?(.failure(ServiceError.noAppObject))
                 return
             }
 
-            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+            let path = "/\(Feed.namespace)/\(self.feedName)"
 
             if lastEventId != nil {
                 let headers = ["Last-Event-ID": lastEventId!]
@@ -155,91 +155,13 @@ import Foundation
             }
     }
 
-    public func subscribe(
-        lastEventId: String? = nil,
-        onOpen: (() -> Void)? = nil,
-        onAppend: ((String, [String: String], Any) -> Void)? = nil,
-        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil,
-        // TODO: should the completion handler be required?
-        completionHandler: ((Result<Subscription>) -> Void)? = nil) {
-            guard self.app != nil else {
-                completionHandler?(.failure(ServiceHelperError.noAppObject))
-                return
-            }
-
-            let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
-
-            if lastEventId != nil {
-                let headers = ["Last-Event-ID": lastEventId!]
-                let subscribeRequest = SubscribeRequest(path: path, headers: headers)
-
-                self.app!.subscribe(
-                    using: subscribeRequest,
-                    onOpen: onOpen,
-                    onEvent: onAppend,
-                    onEnd: onEnd,
-                    onError: onError
-                ) { result in
-                        guard let subscription = result.value else {
-                            completionHandler?(.failure(result.error!))
-                            return
-                        }
-
-                        self.subscription = subscription
-                        completionHandler?(.success(subscription))
-                }
-            } else {
-                self.get() { result in
-                    switch result {
-                    case .failure(let error):
-                        completionHandler?(.failure(error))
-                    case .success(let feedsGetRes):
-                        for item in feedsGetRes.items.reversed() {
-                            guard let itemId = item["id"] as? String else {
-                                DefaultLogger.Logger.log(message: "Item received without an id \(item)")
-                                continue
-                            }
-
-                            onAppend?(itemId, [:], item["data"] as Any)
-                        }
-
-                        var headers: [String: String] = [:]
-                        let mostRecentlyReceivedItemId = feedsGetRes.items.first?["id"] as? String
-
-                        if mostRecentlyReceivedItemId != nil {
-                            headers["Last-Event-ID"] = mostRecentlyReceivedItemId!
-                        }
-
-                        let subscribeRequest = SubscribeRequest(path: path, headers: headers)
-
-                        self.app!.subscribe(
-                            using: subscribeRequest,
-                            onOpen: onOpen,
-                            onEvent: onAppend,
-                            onEnd: onEnd,
-                            onError: onError
-                        ) { result in
-                                guard let subscription = result.value else {
-                                    completionHandler?(.failure(result.error!))
-                                    return
-                                }
-
-                                self.subscription = subscription
-                                completionHandler?(.success(subscription))
-                        }
-                    }
-                }
-            }
-    }
-
-    public func get(from id: String? = nil, limit: Int? = 50, completionHandler: ((Result<FeedsItemsReponse>) -> Void)? = nil) {
+    public func get(from id: String? = nil, limit: Int? = 50, completionHandler: ((Result<FeedItemsReponse>) -> Void)? = nil) {
         guard self.app != nil else {
-            completionHandler?(.failure(ServiceHelperError.noAppObject))
+            completionHandler?(.failure(ServiceError.noAppObject))
             return
         }
 
-        let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+        let path = "/\(Feed.namespace)/\(self.feedName)"
 
         var queryItems = (limit != nil) ? [URLQueryItem(name: "limit", value: "\(limit!)")] : []
 
@@ -256,49 +178,49 @@ import Foundation
             }
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                completionHandler?(.failure(FeedsHelperError.failedToDeserializeJSON(data)))
+                completionHandler?(.failure(FeedError.failedToDeserializeJSON(data)))
                 return
             }
 
             guard let json = jsonObject as? [String: Any] else {
-                completionHandler?(.failure(FeedsHelperError.failedToCastJSONObjectToDictionary(jsonObject)))
+                completionHandler?(.failure(FeedError.failedToCastJSONObjectToDictionary(jsonObject)))
                 return
             }
 
             guard let items = json["items"] as? [[String: Any]] else {
-                completionHandler?(.failure(FeedsHelperError.itemsMissingFromJSONResponse(json)))
+                completionHandler?(.failure(FeedError.itemsMissingFromJSONResponse(json)))
                 return
             }
 
             if let id = json["next_id"] as? String {
                 self.nextIdForFetchingOlderItems = id
-                completionHandler?(.success(FeedsItemsReponse(nextId: id, items: items)))
+                completionHandler?(.success(FeedItemsReponse(nextId: id, items: items)))
             } else {
                 self.moreItemsToFetch = false
-                completionHandler?(.success(FeedsItemsReponse(items: items)))
+                completionHandler?(.success(FeedItemsReponse(items: items)))
             }
         }
     }
 
     public func append(items: [Any], completionHandler: ((Result<String>) -> Void)? = nil) {
         guard self.app != nil else {
-            completionHandler?(.failure(ServiceHelperError.noAppObject))
+            completionHandler?(.failure(ServiceError.noAppObject))
             return
         }
 
         let wrappedItems: [String: Any] = ["items": items]
 
         guard JSONSerialization.isValidJSONObject(wrappedItems) else {
-            completionHandler?(.failure(ServiceHelperError.invalidJSONObjectAsData(wrappedItems)))
+            completionHandler?(.failure(ServiceError.invalidJSONObjectAsData(wrappedItems)))
             return
         }
 
         guard let data = try? JSONSerialization.data(withJSONObject: wrappedItems, options: []) else {
-            completionHandler?(.failure(ServiceHelperError.failedToJSONSerializeData(wrappedItems)))
+            completionHandler?(.failure(ServiceError.failedToJSONSerializeData(wrappedItems)))
             return
         }
 
-        let path = "/\(FeedsHelper.namespace)/\(self.feedName)"
+        let path = "/\(Feed.namespace)/\(self.feedName)"
 
         let generalRequest = GeneralRequest(method: HttpMethod.APPEND.rawValue, path: path, body: data)
 
@@ -309,17 +231,17 @@ import Foundation
             }
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                completionHandler?(.failure(FeedsHelperError.failedToDeserializeJSON(data)))
+                completionHandler?(.failure(FeedError.failedToDeserializeJSON(data)))
                 return
             }
 
             guard let json = jsonObject as? [String: Any] else {
-                completionHandler?(.failure(FeedsHelperError.failedToCastJSONObjectToDictionary(jsonObject)))
+                completionHandler?(.failure(FeedError.failedToCastJSONObjectToDictionary(jsonObject)))
                 return
             }
 
             guard let id = json["item_id"] as? String else {
-                completionHandler?(.failure(FeedsHelperError.itemIdNotFoundInResponseJSON(json)))
+                completionHandler?(.failure(FeedError.itemIdNotFoundInResponseJSON(json)))
                 return
             }
 
@@ -333,7 +255,7 @@ import Foundation
 
 }
 
-@objc public class FeedsItemsReponse: NSObject {
+@objc public class FeedItemsReponse: NSObject {
     public let nextId: String?
     public let items: [[String: Any]]
 
@@ -343,7 +265,7 @@ import Foundation
     }
 }
 
-public enum FeedsHelperError: Error {
+public enum FeedError: Error {
     case noSubscriptionOrResumableSubscription
     case failedToDeserializeJSON(Data)
     case failedToCastJSONObjectToDictionary(Any)
