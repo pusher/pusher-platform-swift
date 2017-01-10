@@ -146,15 +146,15 @@ myFeed.subscribeWithResume(
 
 ### Fetching older items in a feed
 
-If you need to fetch older items in a feed then you can do so by providing the id of the oldest item that the client is currently aware of. The response will then contain (up to) the next 50 oldest items in the feed as well as the id of the next oldest item in the feed.
+If you need to fetch older items in a feed then you can do so by providing the id of the oldest item that the client is currently aware of. The response will then contain (up to) the next 50 oldest items in the feed. The default number of items that will be returned is (a maximum of) 50, but you can control this limit by providing a value for the `limit` parameter.
 
 ```swift
-myFeed.get(from: "oldestReceivedId", limit: 10) { result in
+myFeed.fetchOlderItems(limit: 20) { result in
     switch result {
     case .failure(let error):
         // handle the error appropriately
-    case .success(let feedsGetResponse):
-        print(feedsGetResponse.items, feedsGetResponse.nextId)
+    case .success(let feedItems):
+        print(feedItems)
     }
 }
 ```
