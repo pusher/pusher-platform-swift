@@ -11,13 +11,13 @@ import ElementsSwift
 
 class ViewController: NSViewController {
     var app: App? = nil
-    var feed: FeedsHelper? = nil
+    var feed: Feed? = nil
     var feedItems: [[String: String]] = []
 
     @IBOutlet weak var feedTableView: NSTableView!
 
     @IBAction func subscribeButton(_ sender: Any) {
-        feed?.subscribeWithResume(
+        feed?.subscribe(
             onOpen: { Void in print("OPEN") },
             onAppend: { itemId, headers, item in
                 print("RECEIVED: ", itemId, headers, item)
@@ -70,7 +70,7 @@ class ViewController: NSViewController {
 
         let authorizer = SimpleTokenAuthorizer(jwt: "some.relevant.jwt")
         app = try! App(id: "yourAppId", authorizer: authorizer)
-        feed = app?.feeds("resumable-ham")
+        feed = app?.feed("resumable-ham")
     }
 
     override var representedObject: Any? {

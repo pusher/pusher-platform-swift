@@ -20,9 +20,9 @@ class FeedsViewController: UIViewController {
 
         delegate = UIApplication.shared.delegate as! AppDelegate
 
-        let feed = delegate.elements.feeds("resumable-ham")
+        let feed = delegate.elements.feed("resumable-ham")
 
-        feed.subscribeWithResume(
+        feed.subscribe(
             onOpen: { Void in print("OPEN") },
             onAppend: { itemId, headers, item in print("RECEIVED: ", itemId, headers, item) } ,
             onEnd: { statusCode, headers, info in print("END: ", statusCode, headers, info) },
