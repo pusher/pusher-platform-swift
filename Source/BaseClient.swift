@@ -45,9 +45,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var request = URLRequest(url: url)
         request.httpMethod = generalRequest.method
 
-        if let jwt = generalRequest.jwt {
-            request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
-        }
+//        if let jwt = generalRequest.jwt {
+//            request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
+//        }
 
         if let headers = generalRequest.headers {
             for (header, value) in headers {
@@ -89,17 +89,25 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
     public func subscribe(
         using subscribeRequest: SubscribeRequest,
+        onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil,
-        internalOnEventHandlers: [(String, [String: String], Any) -> Void] = [],
-        completionHandler: (Result<Subscription>) -> Void) -> Void {
+        onError: ((Error) -> Void)? = nil) -> Subscription {
+            let subscription = Subscription(
+                path: subscribeRequest.path,
+                onOpening: onOpening,
+                onOpen: onOpen,
+                onEvent: onEvent,
+                onEnd: onEnd,
+                onError: onError
+            )
+
             self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
             guard var url = self.baseUrlComponents.url else {
-                completionHandler(.failure(BaseClientError.invalidUrl(components: self.baseUrlComponents)))
-                return
+                onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+                return subscription
             }
 
             url = url.appendingPathComponent(subscribeRequest.path)
@@ -108,9 +116,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
             request.timeoutInterval = REALLY_LONG_TIME
 
-            if let jwt = subscribeRequest.jwt {
-                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
-            }
+//            if let jwt = subscribeRequest.jwt {
+//                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
+//            }
 
             if let headers = subscribeRequest.headers {
                 for (header, value) in headers {
@@ -122,47 +130,37 @@ let REALLY_LONG_TIME: Double = 252_460_800
             let taskIdentifier = task.taskIdentifier
 
             guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
-                completionHandler(.failure(BaseClientError.preExistingTaskIdentifierForSubscription))
-                return
+                onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+                return subscription
             }
 
-            let subscription = Subscription(
-                path: subscribeRequest.path,
-                taskIdentifier: taskIdentifier,
-                onOpen: onOpen,
-                onEvent: onEvent,
-                onEnd: onEnd,
-                onError: onError,
-                internalOnEventHandlers: internalOnEventHandlers
-            )
-
+            subscription.taskIdentifier = taskIdentifier
             self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
-            completionHandler(.success(subscription))
 
             task.resume()
+
+            return subscription
     }
 
     public func subscribeWithResume(
         using subscribeRequest: SubscribeRequest,
         app: App,
+        onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
+        onResuming: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        internalOnEventHandlers: [(String, [String: String], Any) -> Void] = [],
-        completionHandler: (Result<ResumableSubscription>) -> Void) -> Void {
-            self.baseUrlComponents.queryItems = subscribeRequest.queryItems
-
+        onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
             let resumableSubscription = ResumableSubscription(
                 app: app,
-                path: subscribeRequest.path,
-                onStateChange: onStateChange
+                path: subscribeRequest.path
             )
 
+            self.baseUrlComponents.queryItems = subscribeRequest.queryItems
+
             guard var url = self.baseUrlComponents.url else {
-                completionHandler(.failure(BaseClientError.invalidUrl(components: self.baseUrlComponents)))
-                return
+                onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+                return resumableSubscription
             }
 
             url = url.appendingPathComponent(subscribeRequest.path)
@@ -171,9 +169,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
             request.timeoutInterval = REALLY_LONG_TIME
 
-            if let jwt = subscribeRequest.jwt {
-                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
-            }
+//            if let jwt = subscribeRequest.jwt {
+//                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
+//            }
 
             if let headers = subscribeRequest.headers {
                 for (header, value) in headers {
@@ -186,27 +184,30 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
             // TODO: This dopesn't seem threadsafe
             guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
-                completionHandler(.failure(BaseClientError.preExistingTaskIdentifierForSubscription))
-                return
+                onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+                return resumableSubscription
             }
 
             let subscription = Subscription(
                 path: subscribeRequest.path,
-                taskIdentifier: taskIdentifier,
-                internalOnEventHandlers: internalOnEventHandlers
+                taskIdentifier: taskIdentifier
             )
 
             // TODO: No no no there must be a better way
             resumableSubscription.subscription = subscription
+
+            resumableSubscription.onOpening = onOpening
             resumableSubscription.onOpen = onOpen
+            resumableSubscription.onResuming = onResuming
             resumableSubscription.onEvent = onEvent
             resumableSubscription.onEnd = onEnd
             resumableSubscription.onError = onError
 
             self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
-            completionHandler(.success(resumableSubscription))
 
             task.resume()
+
+            return resumableSubscription
     }
 
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) -> Void {

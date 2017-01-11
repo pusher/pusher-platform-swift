@@ -18,7 +18,9 @@ class ViewController: NSViewController {
 
     @IBAction func subscribeButton(_ sender: Any) {
         feed?.subscribe(
+            onOpening: { Void in print("OPENING") },
             onOpen: { Void in print("OPEN") },
+            onResuming: { Void in print("RESUMING") },
             onAppend: { itemId, headers, item in
                 print("RECEIVED: ", itemId, headers, item)
                 if let item = item as? [String: String] {
@@ -29,8 +31,7 @@ class ViewController: NSViewController {
                 }
             },
             onEnd: { statusCode, headers, info in print("END: ", statusCode, headers, info) },
-            onError: { error in print("ERROR: ", error) },
-            onStateChange: { oldState, newState in print("was \(oldState) now \(newState)") }
+            onError: { error in print("ERROR: ", error) }
         )
     }
 

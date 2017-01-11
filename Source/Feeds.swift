@@ -69,22 +69,22 @@ import Foundation
                 return
             }
 
-            resumableSubscription.changeState(to: .closing)
             resumableSubscription.unsubscribed = true
+            resumableSubscription.changeState(to: .ended)
             self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
         }
     }
 
     public func subscribe(
         lastEventId: String? = nil,
+        onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
+        onResuming: (() -> Void)? = nil,
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        completionHandler: ((Result<ResumableSubscription>) -> Void)? = nil) {
+        onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
             guard self.app != nil else {
-                completionHandler?(.failure(ServiceError.noAppObject))
+                onError?(ServiceError.noAppObject)
                 return
             }
 
@@ -96,20 +96,16 @@ import Foundation
 
                 self.app!.subscribeWithResume(
                     using: subscribeRequest,
+                    onOpening: onOpening,
                     onOpen: onOpen,
+                    onResuming: onResuming,
                     onEvent: onAppend,
                     onEnd: onEnd,
-                    onError: onError,
-                    onStateChange: onStateChange
-                ) { result in
-                        guard let resumableSubscription = result.value else {
-                            completionHandler?(.failure(result.error!))
-                            return
-                        }
+                    onError: onError
+                )
 
-                        self.resumableSubscription = resumableSubscription
-                        completionHandler?(.success(resumableSubscription))
-                }
+                self.resumableSubscription = resumableSubscription
+
             } else {
                 self.get() { result in
                     switch result {
@@ -136,11 +132,12 @@ import Foundation
 
                         self.app!.subscribeWithResume(
                             using: subscribeRequest,
+                            onOpening: onOpening,
                             onOpen: onOpen,
+                            onResuming: onResuming,
                             onEvent: onAppend,
                             onEnd: onEnd,
-                            onError: onError,
-                            onStateChange: onStateChange
+                            onError: onError
                         ) { result in
                                 guard let resumableSubscription = result.value else {
                                     completionHandler?(.failure(result.error!))

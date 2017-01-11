@@ -15,6 +15,21 @@ import Foundation
         }
     }
 
+    public var onOpening: (() -> Void)? {
+        willSet {
+            self.subscription?.onOpening = {
+                self.handleOnOpening()
+                newValue?()
+            }
+        }
+    }
+
+    public var onResuming: (() -> Void)? {
+        willSet {
+            self.handleOnResuming()
+        }
+    }
+
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
             self.subscription?.onEvent = { eventId, headers, data in
@@ -45,7 +60,7 @@ import Foundation
     public var onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)?
     public internal(set) var subscription: Subscription? = nil
     public internal(set) var app: App
-    public internal(set) var state: ResumableSubscriptionState = .closed
+    public internal(set) var state: ResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
     internal var retrySubscriptionTimer: Timer? = nil
 
@@ -54,31 +69,41 @@ import Foundation
         app: App,
         path: String,
         onOpen: (() -> Void)? = nil,
+        onOpening: (() -> Void)? = nil,
+        // TODO: Do we need to pass anything to onResuming closure?
+        onResuming: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
-        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) {
+        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil) {
             self.path = path
             self.app = app
 
             // TODO: don't like having to do this
             super.init()
 
+            self.onOpening = onOpening
             self.onOpen = onOpen
+            self.onResuming = onResuming
             self.onEvent = onEvent
             self.onEnd = onEnd
-
-            self.onStateChange = onStateChange
     }
 
     internal func changeState(to newState: ResumableSubscriptionState) {
         let oldState = self.state
         self.state = newState
-        self.onStateChange?(oldState, newState)
+//        self.onStateChange?(oldState, newState)
+    }
+
+    public func handleOnOpening() {
+        self.changeState(to: .opening)
     }
 
     public func handleOnOpen() {
         // TODO: Not sure this ever gets called with the current setup
         self.changeState(to: .open)
+    }
+
+    public func handleOnResuming() {
+        self.changeState(to: .resuming)
     }
 
     public func handleOnEvent(eventId: String, headers: [String: String]?, data: Any) {
@@ -100,7 +125,7 @@ import Foundation
         // Then we'd set the state to closed and not try and create a new subscription.
 
         guard !self.unsubscribed else {
-            self.changeState(to: .closed)
+            self.changeState(to: .ended)
             return
         }
 
@@ -131,6 +156,7 @@ import Foundation
 
         self.app.subscribe(
             using: subscribeRequest,
+            onOpening: self.subscription?.onOpening,
             onOpen: self.subscription?.onOpen,
             onEvent: self.subscription?.onEvent,
             onEnd: self.subscription?.onEnd,
@@ -153,9 +179,9 @@ import Foundation
 }
 
 public enum ResumableSubscriptionState {
-    case closed
-    case closing
-    case open
     case opening
+    case open
     case resuming
+    case failed
+    case ended
 }
