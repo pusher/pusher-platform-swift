@@ -5,7 +5,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://github.com/pusher/pusher-platform-swift'
   s.license          = 'MIT'
   s.author           = { "Hamilton Chapman" => "hamchapman@gmail.com" }
-  s.source           = { git: "git@github.com:pusher/pusher-platform-swift.git", tag: s.version.to_s }
+  s.source           = { git: "https://github.com/pusher/pusher-platform-swift.git", tag: s.version.to_s }
   s.social_media_url = 'https://twitter.com/pusher'
 
   s.requires_arc = true
