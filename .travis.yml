@@ -1,0 +1,49 @@
+language: objective-c
+osx_image: xcode8
+sudo: false
+env:
+  - PLATFORM=Mac
+  - PLATFORM=iOS NAME='iPhone SE'
+  - PLATFORM=tvOS NAME='Apple TV 1080p'
+  - PLATFORM=watchOS
+
+before_install:
+  - if [ -n "$NAME" ]; then
+      export UUID=$(instruments -s | ruby -e "ARGF.each_line{ |ln| ln =~ /$NAME .* \[(.*)\]/; if \$1; puts(\$1); exit; end }");
+    fi
+  - brew update
+  - if brew list | grep -q carthage; then
+      echo Carthage installed. Proceed without installing;
+      carthage version;
+    else
+      echo Carthage not installed. Installing using homebrew;
+      brew install carthage;
+    fi
+  - gem install xcpretty --no-document
+before_deploy:
+  - carthage build --no-skip-current --project-directory PusherPlatform
+  - carthage archive PusherPlatform --project-directory PusherPlatform
+deploy:
+  provider: releases
+  api_key:
+    secure: cjodA0I5fTEU60M+W1NNCj18EpL7yt3uxLN1aeexN33HfRoo153oi4jV/FWlPtQ4QC5FhFF+Nbc69V2paOSrI4iht+UB2Hb0jYTuHWv8ecYa33GFksl7zD9BCf8D3RZqIagTzJC7Vf0FqKKlspZMwIMAL02Z5uwsp5h4Zjrq8lo=
+  file: PusherPlatform.framework.zip
+  skip_cleanup: true
+  on:
+    repo: pusher/pusher-platform-swift
+    tags: true
+script:
+  - xcodebuild -version
+  - set -o pipefail;
+    case $PLATFORM in
+    Mac)
+      xcodebuild -scheme PusherPlatform -enableCodeCoverage YES test | xcpretty;;
+    iOS|tvOS)
+      open -a "simulator" --args -CurrentDeviceUDID "$UUID"
+      xcodebuild -scheme PusherPlatform -destination "id=$UUID" -enableCodeCoverage YES test | xcpretty;;
+    watchOS)
+      xcodebuild -scheme PusherPlatform -destination "name=Apple Watch - 38mm" | xcpretty;;
+    esac
+
+after_success:
+  - sleep 5
