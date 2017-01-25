@@ -77,7 +77,7 @@ $ brew install carthage
 To integrate PusherPlatform into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
-github "pusher/elements-client-swift"
+github "pusher/pusher-platform-swift"
 ```
 
 ## Feeds
@@ -108,7 +108,7 @@ myFeed.subscribeWithResume(
 
 ### Getting started
 
-First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id` along with an `authorizer`. An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them. In our example we're going to use a `SimpleTokenAuthorizer`, which, as the name suggests, is an `authorizer` that accepts a token (a JSON web token or JWT to be precise) and uses that for authorization. You can find, or generate, tokens to test things out by visiting [the dashboard](https://elements-dashboard.herokuapp.com).
+First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id` along with an `authorizer`. An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them. In our example we're going to use a `SimpleTokenAuthorizer`, which, as the name suggests, is an `authorizer` that accepts a token (a JSON web token or JWT to be precise) and uses that for authorization. You can find, or generate, tokens to test things out by visiting [the dashboard](https://dash.pusher.com).
 
 ```swift
 let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
@@ -222,7 +222,7 @@ let authorizer = EndpointAuthorizer(url: "https://my.token.endpoint", requestMut
 
 There are a set of tests for the library that can be run using the standard method (Command-U in Xcode).
 
-The tests also get run on [Travis-CI](https://travis-ci.org/pusher/elements-client-swift). See [.travis.yml](https://github.com/pusher/elements-client-swift/blob/master/.travis.yml) for details on how the Travis tests are run.
+The tests also get run on [Travis-CI](https://travis-ci.org/pusher/pusher-platform-swift). See [.travis.yml](https://github.com/pusher/pusher-platform-swift/blob/master/.travis.yml) for details on how the Travis tests are run.
 
 
 ## Communication
@@ -239,4 +239,4 @@ PusherPlatform is owned and maintained by [Pusher](https://pusher.com). It was o
 
 ## License
 
-PusherPlatform is released under the MIT license. See [LICENSE](https://github.com/pusher/elements-client-swift/blob/master/LICENSE.md) for details.
+PusherPlatform is released under the MIT license. See [LICENSE](https://github.com/pusher/pusher-platform-swift/blob/master/LICENSE.md) for details.

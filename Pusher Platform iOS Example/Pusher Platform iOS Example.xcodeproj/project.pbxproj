@@ -9,22 +9,21 @@
 /* Begin PBXBuildFile section */
 		330263861DC2475E007D7317 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263841DC2475E007D7317 /* Main.storyboard */; };
 		3302638B1DC2475E007D7317 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263891DC2475E007D7317 /* LaunchScreen.storyboard */; };
-		338CC3131E0A8FCB002125C4 /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */; };
-		338CC3141E0A8FCB002125C4 /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		33CC931A1E38E48C003E6325 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93151E38E48C003E6325 /* AppDelegate.swift */; };
 		33CC931B1E38E48C003E6325 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC93161E38E48C003E6325 /* Assets.xcassets */; };
 		33CC931C1E38E48C003E6325 /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93181E38E48C003E6325 /* FeedsViewController.swift */; };
-		33CC931D1E38E48C003E6325 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 33CC93191E38E48C003E6325 /* Info.plist */; };
+		33CEFD9F1E38F6B800FC9F03 /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33CEFD9E1E38F6B800FC9F03 /* PusherPlatform.framework */; };
+		33CEFDA01E38F6B800FC9F03 /* PusherPlatform.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33CEFD9E1E38F6B800FC9F03 /* PusherPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		2D43321F1DF6FA67008696FD /* Embed Frameworks */ = {
+		33CEFDA11E38F6B900FC9F03 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				338CC3141E0A8FCB002125C4 /* ElementsSwift.framework in Embed Frameworks */,
+				33CEFDA01E38F6B800FC9F03 /* PusherPlatform.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -32,15 +31,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		3302637D1DC2475E007D7317 /* Elements iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3302637D1DC2475E007D7317 /* Pusher Platform iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pusher Platform iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		330263851DC2475E007D7317 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		3302638A1DC2475E007D7317 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33CC93151E38E48C003E6325 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Pusher Platform iOS Example/AppDelegate.swift"; sourceTree = SOURCE_ROOT; };
 		33CC93161E38E48C003E6325 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Pusher Platform iOS Example/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
-		33CC93171E38E48C003E6325 /* PusherPlatform iOS Example.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "PusherPlatform iOS Example.entitlements"; path = "Pusher Platform iOS Example/PusherPlatform iOS Example.entitlements"; sourceTree = SOURCE_ROOT; };
+		33CC93171E38E48C003E6325 /* Pusher Platform iOS Example.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "Pusher Platform iOS Example.entitlements"; path = "Pusher Platform iOS Example/Pusher Platform iOS Example.entitlements"; sourceTree = SOURCE_ROOT; };
 		33CC93181E38E48C003E6325 /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedsViewController.swift; path = "Pusher Platform iOS Example/FeedsViewController.swift"; sourceTree = SOURCE_ROOT; };
 		33CC93191E38E48C003E6325 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Pusher Platform iOS Example/Info.plist"; sourceTree = SOURCE_ROOT; };
+		33CEFD9E1E38F6B800FC9F03 /* PusherPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PusherPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,7 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				338CC3131E0A8FCB002125C4 /* ElementsSwift.framework in Frameworks */,
+				33CEFD9F1E38F6B800FC9F03 /* PusherPlatform.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,7 +57,7 @@
 		2D4332111DF6E0C9008696FD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */,
+				33CEFD9E1E38F6B800FC9F03 /* PusherPlatform.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -75,7 +74,7 @@
 		3302637E1DC2475E007D7317 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3302637D1DC2475E007D7317 /* Elements iOS Example.app */,
+				3302637D1DC2475E007D7317 /* Pusher Platform iOS Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -88,32 +87,32 @@
 				330263841DC2475E007D7317 /* Main.storyboard */,
 				330263891DC2475E007D7317 /* LaunchScreen.storyboard */,
 				33CC93161E38E48C003E6325 /* Assets.xcassets */,
-				33CC93171E38E48C003E6325 /* PusherPlatform iOS Example.entitlements */,
+				33CC93171E38E48C003E6325 /* Pusher Platform iOS Example.entitlements */,
 				33CC93191E38E48C003E6325 /* Info.plist */,
 			);
 			name = "PusherPlatform iOS Example";
-			path = "Elements iOS Example";
+			path = "Pusher Platform iOS Example";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3302637C1DC2475E007D7317 /* Elements iOS Example */ = {
+		3302637C1DC2475E007D7317 /* Pusher Platform iOS Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3302638F1DC2475E007D7317 /* Build configuration list for PBXNativeTarget "Elements iOS Example" */;
+			buildConfigurationList = 3302638F1DC2475E007D7317 /* Build configuration list for PBXNativeTarget "Pusher Platform iOS Example" */;
 			buildPhases = (
 				330263791DC2475E007D7317 /* Sources */,
 				3302637A1DC2475E007D7317 /* Frameworks */,
 				3302637B1DC2475E007D7317 /* Resources */,
-				2D43321F1DF6FA67008696FD /* Embed Frameworks */,
+				33CEFDA11E38F6B900FC9F03 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = "Elements iOS Example";
-			productName = "Elements iOS Example";
-			productReference = 3302637D1DC2475E007D7317 /* Elements iOS Example.app */;
+			name = "Pusher Platform iOS Example";
+			productName = "Pusher Platform iOS Example";
+			productReference = 3302637D1DC2475E007D7317 /* Pusher Platform iOS Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -151,7 +150,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3302637C1DC2475E007D7317 /* Elements iOS Example */,
+				3302637C1DC2475E007D7317 /* Pusher Platform iOS Example */,
 			);
 		};
 /* End PBXProject section */
@@ -163,7 +162,6 @@
 			files = (
 				3302638B1DC2475E007D7317 /* LaunchScreen.storyboard in Resources */,
 				33CC931B1E38E48C003E6325 /* Assets.xcassets in Resources */,
-				33CC931D1E38E48C003E6325 /* Info.plist in Resources */,
 				330263861DC2475E007D7317 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -299,15 +297,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Elements iOS Example/Elements iOS Example.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Pusher Platform iOS Example/Pusher Platform iOS Example.entitlements";
 				DEVELOPMENT_TEAM = H7FL434D9W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "Elements iOS Example/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Pusher Platform iOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-iOS-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Pusher-Platform-iOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_VERSION = 3.0;
@@ -318,15 +316,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Elements iOS Example/Elements iOS Example.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Pusher Platform iOS Example/Pusher Platform iOS Example.entitlements";
 				DEVELOPMENT_TEAM = H7FL434D9W;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "Elements iOS Example/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Pusher Platform iOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-iOS-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Pusher-Platform-iOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_VERSION = 3.0;
@@ -345,7 +343,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3302638F1DC2475E007D7317 /* Build configuration list for PBXNativeTarget "Elements iOS Example" */ = {
+		3302638F1DC2475E007D7317 /* Build configuration list for PBXNativeTarget "Pusher Platform iOS Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				330263901DC2475E007D7317 /* Debug */,

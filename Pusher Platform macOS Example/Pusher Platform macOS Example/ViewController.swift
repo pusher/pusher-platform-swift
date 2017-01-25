@@ -1,13 +1,13 @@
 //
 //  ViewController.swift
-//  Elements macOS Example
+//  Pusher Platform macOS Example
 //
 //  Created by Hamilton Chapman on 27/09/2016.
 //  Copyright © 2016 Pusher. All rights reserved.
 //
 
 import Cocoa
-import ElementsSwift
+import PusherPlatform
 
 class ViewController: NSViewController {
     var app: App? = nil

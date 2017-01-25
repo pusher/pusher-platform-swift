@@ -38,11 +38,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		2D004EA01DE30737008CE815 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = "../Elements macOS Example/PromiseKit.framework"; sourceTree = "<group>"; };
-		3302636C1DC24658007D7317 /* PromiseKit.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = PromiseKit.framework.dSYM; path = ../Carthage/Build/Mac/PromiseKit.framework.dSYM; sourceTree = "<group>"; };
-		3302636E1DC24681007D7317 /* PMKFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PMKFoundation.framework; path = ../Carthage/Build/Mac/PMKFoundation.framework; sourceTree = "<group>"; };
-		3302636F1DC24681007D7317 /* PromiseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromiseKit.framework; path = ../Carthage/Build/Mac/PromiseKit.framework; sourceTree = "<group>"; };
-		330263701DC24681007D7317 /* PMKFoundation.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = PMKFoundation.framework.dSYM; path = ../Carthage/Build/Mac/PMKFoundation.framework.dSYM; sourceTree = "<group>"; };
 		330DD21B1E0C433A00EC251F /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		330E59061DEDD38900C92897 /* ResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumableSubscription.swift; sourceTree = "<group>"; };
 		3329F4081DC0A035007B29FF /* SimpleTokenAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTokenAuthorizer.swift; sourceTree = "<group>"; };
@@ -51,7 +46,6 @@
 		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		337C551D1E02DC8100C5A317 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionSessionDelegate.swift; sourceTree = "<group>"; };
-		337C9EE01C38B708006CC757 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		338290711DF5CEC6008CDC8F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		33831C891A9CF61600B124F1 /* PusherPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PusherPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831C8D1A9CF61600B124F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -165,12 +159,6 @@
 		42D29A655054030A9B238900 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				2D004EA01DE30737008CE815 /* PromiseKit.framework */,
-				3302636E1DC24681007D7317 /* PMKFoundation.framework */,
-				3302636F1DC24681007D7317 /* PromiseKit.framework */,
-				330263701DC24681007D7317 /* PMKFoundation.framework.dSYM */,
-				3302636C1DC24658007D7317 /* PromiseKit.framework.dSYM */,
-				337C9EE01C38B708006CC757 /* UIKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

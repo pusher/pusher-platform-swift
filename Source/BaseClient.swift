@@ -1,7 +1,7 @@
 import Foundation
 
 let VERSION = "0.1.0"
-let CLIENT_NAME = "elements-client-swift"
+let CLIENT_NAME = "pusher-platform-swift"
 let REALLY_LONG_TIME: Double = 252_460_800
 
 @objc public class BaseClient: NSObject {

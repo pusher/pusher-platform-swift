@@ -1,6 +1,6 @@
 //
 //  FeedsViewController.swift
-//  Elements iOS Example
+//  Pusher Platform iOS Example
 //
 //  Created by Zan Markan on 06/12/2016.
 //  Copyright © 2016 Pusher. All rights reserved.
@@ -26,7 +26,7 @@ class FeedsViewController: UIViewController {
 
         delegate = UIApplication.shared.delegate as! AppDelegate
 
-        let feed = delegate.elements.feed("resumable-ham")
+        let feed = delegate.pusher.feed("resumable-ham")
 
         let resSub = feed.subscribe(
             onOpening: { print("OPENING") },

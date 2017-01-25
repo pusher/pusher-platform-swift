@@ -13,7 +13,7 @@
         <!--Feeds-->
         <scene sceneID="XeT-Ii-5JX">
             <objects>
-                <viewController id="q24-2i-bmd" customClass="FeedsViewController" customModule="Elements_iOS_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="q24-2i-bmd" customClass="FeedsViewController" customModule="Pusher_Platform_iOS_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="rsB-3N-lRi"/>
                         <viewControllerLayoutGuide type="bottom" id="BOK-xR-gs1"/>

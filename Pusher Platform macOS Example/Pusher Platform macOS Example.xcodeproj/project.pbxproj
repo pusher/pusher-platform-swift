@@ -10,10 +10,9 @@
 		332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */; };
 		33CC93231E38E4C0003E6325 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC931E1E38E4C0003E6325 /* AppDelegate.swift */; };
 		33CC93241E38E4C0003E6325 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC931F1E38E4C0003E6325 /* Assets.xcassets */; };
-		33CC93251E38E4C0003E6325 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 33CC93211E38E4C0003E6325 /* Info.plist */; };
 		33CC93261E38E4C0003E6325 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93221E38E4C0003E6325 /* ViewController.swift */; };
-		33F1F9731DC368900021056F /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; };
-		33F1F9741DC368900021056F /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		33D2A5AB1E38FA5C00EA7549 /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33D2A5AA1E38FA5C00EA7549 /* PusherPlatform.framework */; };
+		33D2A5AC1E38FA5C00EA7549 /* PusherPlatform.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33D2A5AA1E38FA5C00EA7549 /* PusherPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,7 +22,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				33F1F9741DC368900021056F /* ElementsSwift.framework in Embed Frameworks */,
+				33D2A5AC1E38FA5C00EA7549 /* PusherPlatform.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -31,14 +30,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		332B5A751D9ACA6A00E69AC8 /* Elements macOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements macOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		332B5A751D9ACA6A00E69AC8 /* Pusher Platform macOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pusher Platform macOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		332B5A7F1D9ACA6A00E69AC8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		33CC931E1E38E4C0003E6325 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Pusher Platform macOS Example/AppDelegate.swift"; sourceTree = SOURCE_ROOT; };
 		33CC931F1E38E4C0003E6325 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Pusher Platform macOS Example/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
-		33CC93201E38E4C0003E6325 /* PusherPlatform macOS Example.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "PusherPlatform macOS Example.entitlements"; path = "Pusher Platform macOS Example/PusherPlatform macOS Example.entitlements"; sourceTree = SOURCE_ROOT; };
+		33CC93201E38E4C0003E6325 /* Pusher Platform macOS Example.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "Pusher Platform macOS Example.entitlements"; path = "Pusher Platform macOS Example/Pusher Platform macOS Example.entitlements"; sourceTree = SOURCE_ROOT; };
 		33CC93211E38E4C0003E6325 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Pusher Platform macOS Example/Info.plist"; sourceTree = SOURCE_ROOT; };
 		33CC93221E38E4C0003E6325 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = "Pusher Platform macOS Example/ViewController.swift"; sourceTree = SOURCE_ROOT; };
-		33F1F9721DC368900021056F /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		33D2A5AA1E38FA5C00EA7549 /* PusherPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PusherPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +45,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33F1F9731DC368900021056F /* ElementsSwift.framework in Frameworks */,
+				33D2A5AB1E38FA5C00EA7549 /* PusherPlatform.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -56,7 +55,7 @@
 		330263FA1DC25EB3007D7317 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				33F1F9721DC368900021056F /* ElementsSwift.framework */,
+				33D2A5AA1E38FA5C00EA7549 /* PusherPlatform.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -73,7 +72,7 @@
 		332B5A761D9ACA6A00E69AC8 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				332B5A751D9ACA6A00E69AC8 /* Elements macOS Example.app */,
+				332B5A751D9ACA6A00E69AC8 /* Pusher Platform macOS Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -83,21 +82,21 @@
 			children = (
 				33CC931E1E38E4C0003E6325 /* AppDelegate.swift */,
 				33CC931F1E38E4C0003E6325 /* Assets.xcassets */,
-				33CC93201E38E4C0003E6325 /* PusherPlatform macOS Example.entitlements */,
+				33CC93201E38E4C0003E6325 /* Pusher Platform macOS Example.entitlements */,
 				33CC93211E38E4C0003E6325 /* Info.plist */,
 				33CC93221E38E4C0003E6325 /* ViewController.swift */,
 				332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */,
 			);
 			name = "PusherPlatform macOS Example";
-			path = "Elements macOS Example";
+			path = "Pusher Platform macOS Example";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		332B5A741D9ACA6A00E69AC8 /* Elements macOS Example */ = {
+		332B5A741D9ACA6A00E69AC8 /* Pusher Platform macOS Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 332B5A841D9ACA6A00E69AC8 /* Build configuration list for PBXNativeTarget "Elements macOS Example" */;
+			buildConfigurationList = 332B5A841D9ACA6A00E69AC8 /* Build configuration list for PBXNativeTarget "Pusher Platform macOS Example" */;
 			buildPhases = (
 				332B5A711D9ACA6A00E69AC8 /* Sources */,
 				332B5A721D9ACA6A00E69AC8 /* Frameworks */,
@@ -108,9 +107,9 @@
 			);
 			dependencies = (
 			);
-			name = "Elements macOS Example";
-			productName = "Elements macOS Example";
-			productReference = 332B5A751D9ACA6A00E69AC8 /* Elements macOS Example.app */;
+			name = "Pusher Platform macOS Example";
+			productName = "Pusher Platform macOS Example";
+			productReference = 332B5A751D9ACA6A00E69AC8 /* Pusher Platform macOS Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -157,7 +156,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				332B5A741D9ACA6A00E69AC8 /* Elements macOS Example */,
+				332B5A741D9ACA6A00E69AC8 /* Pusher Platform macOS Example */,
 			);
 		};
 /* End PBXProject section */
@@ -167,7 +166,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33CC93251E38E4C0003E6325 /* Info.plist in Resources */,
 				33CC93241E38E4C0003E6325 /* Assets.xcassets in Resources */,
 				332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */,
 			);
@@ -295,7 +293,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Elements macOS Example/Elements macOS Example.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Pusher Platform macOS Example/Pusher Platform macOS Example.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = H7FL434D9W;
@@ -303,9 +301,9 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "Elements macOS Example/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Pusher Platform macOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-macOS-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Pusher-Platform-macOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -315,7 +313,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = "Elements macOS Example/Elements macOS Example.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "Pusher Platform macOS Example/Pusher Platform macOS Example.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = H7FL434D9W;
@@ -323,9 +321,9 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)",
 				);
-				INFOPLIST_FILE = "Elements macOS Example/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Pusher Platform macOS Example/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Elements-macOS-Example";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.Pusher-Platform-macOS-Example";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -343,7 +341,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		332B5A841D9ACA6A00E69AC8 /* Build configuration list for PBXNativeTarget "Elements macOS Example" */ = {
+		332B5A841D9ACA6A00E69AC8 /* Build configuration list for PBXNativeTarget "Pusher Platform macOS Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				332B5A851D9ACA6A00E69AC8 /* Debug */,
