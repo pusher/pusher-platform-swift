@@ -9,7 +9,7 @@ import Foundation
     // TODO: Maybe need to sort out making sure that you can't subscribe if
     // subscription already exists, or make sure that you can't subscribeWithResume
     // if a Subscription already exists, and likewise with not being able to call
-    // subscribe if a ResumableSubscription alreading exists
+    // subscribe if a ResumableSubscription already exists
     public internal(set) var subscription: Subscription? = nil
     public internal(set) var resumableSubscription: ResumableSubscription? = nil
 
@@ -69,52 +69,58 @@ import Foundation
                 return
             }
 
-            resumableSubscription.changeState(to: .closing)
             resumableSubscription.unsubscribed = true
+            resumableSubscription.changeState(to: .ended)
             self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
         }
     }
 
     public func subscribe(
         lastEventId: String? = nil,
+        onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
+        onResuming: (() -> Void)? = nil,
         onAppend: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil,
-        completionHandler: ((Result<ResumableSubscription>) -> Void)? = nil) {
+        onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
             guard self.app != nil else {
-                completionHandler?(.failure(ServiceError.noAppObject))
-                return
+                // TODO: Is fatalError the correct behaviour here? Maybe we just call onError as usual?
+                fatalError("App object is nil. This likely means that you've not correctly retained it.")
             }
 
             let path = "/\(Feed.namespace)/\(self.feedName)"
+            var resumableSub = ResumableSubscription(
+                app: self.app!,
+                path: path,
+                onOpening: onOpening,
+                onOpen: onOpen,
+                onResuming: onResuming,
+                onEvent: onAppend,
+                onEnd: onEnd,
+                onError: onError
+            )
+
+            self.resumableSubscription = resumableSub
 
             if lastEventId != nil {
                 let headers = ["Last-Event-ID": lastEventId!]
                 let subscribeRequest = SubscribeRequest(path: path, headers: headers)
 
-                self.app!.subscribeWithResume(
+                self.app!.subscribeWithResumePassingSub(
+                    resumableSubscription: &resumableSub,
                     using: subscribeRequest,
+                    onOpening: onOpening,
                     onOpen: onOpen,
+                    onResuming: onResuming,
                     onEvent: onAppend,
                     onEnd: onEnd,
-                    onError: onError,
-                    onStateChange: onStateChange
-                ) { result in
-                        guard let resumableSubscription = result.value else {
-                            completionHandler?(.failure(result.error!))
-                            return
-                        }
-
-                        self.resumableSubscription = resumableSubscription
-                        completionHandler?(.success(resumableSubscription))
-                }
+                    onError: onError
+                )
             } else {
                 self.get() { result in
                     switch result {
                     case .failure(let error):
-                        completionHandler?(.failure(error))
+                        onError?(error)
                     case .success(let feedsGetRes):
                         for item in feedsGetRes.items.reversed() {
                             guard let itemId = item["id"] as? String else {
@@ -134,25 +140,21 @@ import Foundation
 
                         let subscribeRequest = SubscribeRequest(path: path, headers: headers)
 
-                        self.app!.subscribeWithResume(
+                        self.app!.subscribeWithResumePassingSub(
+                            resumableSubscription: &resumableSub,
                             using: subscribeRequest,
+                            onOpening: onOpening,
                             onOpen: onOpen,
+                            onResuming: onResuming,
                             onEvent: onAppend,
                             onEnd: onEnd,
-                            onError: onError,
-                            onStateChange: onStateChange
-                        ) { result in
-                                guard let resumableSubscription = result.value else {
-                                    completionHandler?(.failure(result.error!))
-                                    return
-                                }
-
-                                self.resumableSubscription = resumableSubscription
-                                completionHandler?(.success(resumableSubscription))
-                        }
+                            onError: onError
+                        )
                     }
                 }
             }
+
+            return resumableSub
     }
 
     public func get(from id: String? = nil, limit: Int? = 50, completionHandler: ((Result<FeedItemsReponse>) -> Void)? = nil) {
@@ -222,7 +224,7 @@ import Foundation
 
         let path = "/\(Feed.namespace)/\(self.feedName)"
 
-        let generalRequest = GeneralRequest(method: HttpMethod.APPEND.rawValue, path: path, body: data)
+        let generalRequest = GeneralRequest(method: HttpMethod.POST.rawValue, path: path, body: data)
 
         self.app!.request(using: generalRequest) { result in
             guard let data = result.value else {

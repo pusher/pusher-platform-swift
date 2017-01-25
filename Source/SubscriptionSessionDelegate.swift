@@ -2,9 +2,9 @@ import Foundation
 
 public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
     public var subscriptions: [Int: Subscription] = [:]
-    internal let handleDataQueue = DispatchQueue(label: "com.pusher.subscriptiondelegate.data")
-    internal let handleErrorQueue = DispatchQueue(label: "com.pusher.subscriptiondelegate.error")
-    internal let handleResponseQueue = DispatchQueue(label: "com.pusher.subscriptiondelegate.response")
+    internal let handleDataQueue = DispatchQueue(label: "com.pusherplatform.swift.subscriptiondelegate.data")
+    internal let handleErrorQueue = DispatchQueue(label: "com.pusherplatform.swift.subscriptiondelegate.error")
+    internal let handleResponseQueue = DispatchQueue(label: "com.pusherplatform.swift.subscriptiondelegate.response")
 
     // MARK: URLSessionDataDelegate
 
@@ -74,10 +74,6 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
                 break
             case Message.event(let eventId, let headers, let body):
                 subscription.onEvent?(eventId, headers, body)
-
-                for internalEventHandler in subscription.internalOnEventHandlers {
-                    internalEventHandler(eventId, headers, body)
-                }
             case Message.eos(let statusCode, let headers, let info):
                 subscription.onEnd?(statusCode, headers, info)
             }
@@ -90,6 +86,11 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
             return
         }
 
-        subscription.onEnd?(nil, nil, error)
+        guard error != nil else {
+            subscription.onError?(SubscriptionError.unexpectedError)
+            return
+        }
+
+        subscription.onError?(error!)
     }
 }

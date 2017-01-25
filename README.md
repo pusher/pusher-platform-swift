@@ -1,4 +1,4 @@
-# ElementsSwift (elements-client-swift) (also works with Objective-C!)
+# PusherPlatform (pusher-platform-swift) (also works with Objective-C!)
 
 ![Languages](https://img.shields.io/badge/languages-swift%20%7C%20objc-orange.svg)
 [![Twitter](https://img.shields.io/badge/twitter-@Pusher-blue.svg?style=flat)](http://twitter.com/Pusher)
@@ -7,7 +7,7 @@
 
 ## I just want to copy and paste some code to get me started
 
-What else would you want? Head over to the example app [ViewController.swift](https://github.com/pusher/elements-client-swift/blob/master/Elements%20macOS%20Example/Elements%20macOS%20Example/ViewController.swift) to get some code you can drop in to get started.
+What else would you want? Head over to the example app [ViewController.swift](https://github.com/pusher/pusher-platform-swift/blob/master/Pusher%20Platform%20macOS%20Example/Pusher%20Platform%20macOS%20Example/ViewController.swift) to get some code you can drop in to get started.
 
 
 ## Table of Contents
@@ -25,7 +25,7 @@ What else would you want? Head over to the example app [ViewController.swift](ht
 
 ### CocoaPods
 
-[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects and is our recommended method of installing ElementsSwift and its dependencies.
+[CocoaPods](http://cocoapods.org) is a dependency manager for Cocoa projects and is our recommended method of installing PusherPlatform and its dependencies.
 
 If you don't already have the Cocoapods gem installed, run the following command:
 
@@ -41,7 +41,7 @@ source 'git@github.com:pusher/PrivatePodSpecs.git'
 platform :ios, '10.0' # change this if you're not making an iOS app!
 
 target 'your-app-name' do
-  pod 'ElementsSwift'
+  pod 'PusherPlatform'
 end
 
 # the rest of the file...
@@ -57,11 +57,11 @@ If you find that you're not having the most recent version installed when you ru
 
 ```bash
 $ pod cache clean --all
-$ pod repo update ElementsSwift
+$ pod repo update PusherPlatform
 $ pod install
 ```
 
-Also you'll need to make sure that you've not got the version of ElementsSwift locked to an old version in your `Podfile.lock` file.
+Also you'll need to make sure that you've not got the version of PusherPlatform locked to an old version in your `Podfile.lock` file.
 
 ### ~~Carthage~~ - For Hackday use CocoaPods
 
@@ -74,7 +74,7 @@ $ brew update
 $ brew install carthage
 ```
 
-To integrate ElementsSwift into your Xcode project using Carthage, specify it in your `Cartfile`:
+To integrate PusherPlatform into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```ogdl
 github "pusher/elements-client-swift"
@@ -234,9 +234,9 @@ The tests also get run on [Travis-CI](https://travis-ci.org/pusher/elements-clie
 
 ## Credits
 
-ElementsSwift is owned and maintained by [Pusher](https://pusher.com). It was originally created by [Hamilton Chapman](https://github.com/hamchapman).
+PusherPlatform is owned and maintained by [Pusher](https://pusher.com). It was originally created by [Hamilton Chapman](https://github.com/hamchapman).
 
 
 ## License
 
-ElementsSwift is released under the MIT license. See [LICENSE](https://github.com/pusher/elements-client-swift/blob/master/LICENSE.md) for details.
+PusherPlatform is released under the MIT license. See [LICENSE](https://github.com/pusher/elements-client-swift/blob/master/LICENSE.md) for details.

@@ -694,7 +694,7 @@
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
                                 <connections>
-                                    <action selector="fetchOlderItemsButton:" target="XfG-lQ-9wD" id="ohu-PG-fYH"/>
+                                    <action selector="fetchOlderItemsButton:" target="XfG-lQ-9wD" id="SPI-Wd-wTN"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e84-wJ-a5N">
@@ -831,7 +831,6 @@
                     </view>
                     <connections>
                         <outlet property="feedTableView" destination="6SK-1V-zPx" id="hpa-bq-siS"/>
-                        <outlet property="fetchOlderItemsButton" destination="EBs-JZ-Qse" id="EAf-ci-9Io"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

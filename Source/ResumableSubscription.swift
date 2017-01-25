@@ -15,6 +15,17 @@ import Foundation
         }
     }
 
+    public var onOpening: (() -> Void)? {
+        willSet {
+            self.subscription?.onOpening = {
+                self.handleOnOpening()
+                newValue?()
+            }
+        }
+    }
+
+    public var onResuming: (() -> Void)?
+
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
             self.subscription?.onEvent = { eventId, headers, data in
@@ -42,38 +53,47 @@ import Foundation
         }
     }
 
-    public var onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)?
     public internal(set) var subscription: Subscription? = nil
     public internal(set) var app: App
-    public internal(set) var state: ResumableSubscriptionState = .closed
+    public internal(set) var state: ResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
+
+//    public var retryStrategy: RetryStrategy = DefaultRetryStrategy()
+
     internal var retrySubscriptionTimer: Timer? = nil
 
     public init(
         // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?
+        // Don't think so, as things like header will probably change depending on context
         app: App,
         path: String,
+        onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
+        onResuming: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onStateChange: ((ResumableSubscriptionState, ResumableSubscriptionState) -> Void)? = nil) {
+        onError: ((Error) -> Void)? = nil) {
             self.path = path
             self.app = app
 
-            // TODO: don't like having to do this
             super.init()
 
+            self.onOpening = onOpening
             self.onOpen = onOpen
+            self.onResuming = onResuming
             self.onEvent = onEvent
             self.onEnd = onEnd
-
-            self.onStateChange = onStateChange
+            self.onError = onError
     }
 
     internal func changeState(to newState: ResumableSubscriptionState) {
-        let oldState = self.state
+//        let oldState = self.state
         self.state = newState
-        self.onStateChange?(oldState, newState)
+//        self.onStateChange?(oldState, newState)
+    }
+
+    public func handleOnOpening() {
+        self.changeState(to: .opening)
     }
 
     public func handleOnOpen() {
@@ -81,18 +101,15 @@ import Foundation
         self.changeState(to: .open)
     }
 
+    public func handleOnResuming() {
+        self.changeState(to: .resuming)
+    }
+
     public func handleOnEvent(eventId: String, headers: [String: String]?, data: Any) {
         self.lastEventIdReceived = eventId
     }
 
     public func handleOnError(error: Error) {
-        // TODO: Fix this - it's a hack while I figure out what we need to do
-        // Perhaps just call the onError() closure and then attempt subscription again,
-        // provided we want to keep on retrying subscriptions at that point
-        handleOnEnd()
-    }
-
-    public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any? = nil) {
         // TODO: not always resuming - need to figure out what to do here.
         // We need to be able to differentiate between a recoverable error and
         // errors that mean we need to stop the subscription.
@@ -100,7 +117,7 @@ import Foundation
         // Then we'd set the state to closed and not try and create a new subscription.
 
         guard !self.unsubscribed else {
-            self.changeState(to: .closed)
+            self.changeState(to: .ended)
             return
         }
 
@@ -119,6 +136,15 @@ import Foundation
         }
     }
 
+    public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any? = nil) {
+        // TODO: Why do we need this check?
+//        guard !self.unsubscribed else {
+//            self.changeState(to: .ended)
+//            return
+//        }
+        self.changeState(to: .ended)
+    }
+
     internal func setupNewSubscription() {
         var headers: [String: String]? = nil
 
@@ -131,31 +157,33 @@ import Foundation
 
         self.app.subscribe(
             using: subscribeRequest,
+            onOpening: self.subscription?.onOpening,
             onOpen: self.subscription?.onOpen,
             onEvent: self.subscription?.onEvent,
             onEnd: self.subscription?.onEnd,
             onError: self.subscription?.onError
-        ) { result in
-            switch result {
-            case .failure(let error):
-                // TODO: does it make sense to handle this error like this?
-                // What sort of error would we even get here?
-                self.handleOnError(error: error)
-                DefaultLogger.Logger.log(message: "Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
-            case .success(let subscription):
-                self.subscription = subscription
+        )
+        // { result in
+        //     switch result {
+        //     case .failure(let error):
+        //         // TODO: does it make sense to handle this error like this?
+        //         // What sort of error would we even get here?
+        //         self.handleOnError(error: error)
+        //         DefaultLogger.Logger.log(message: "Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
+        //     case .success(let subscription):
+        //         self.subscription = subscription
 
-                self.retrySubscriptionTimer?.invalidate()
-                self.retrySubscriptionTimer = nil
-            }
-        }
+        //         self.retrySubscriptionTimer?.invalidate()
+        //         self.retrySubscriptionTimer = nil
+        //     }
+        // }
     }
 }
 
 public enum ResumableSubscriptionState {
-    case closed
-    case closing
-    case open
     case opening
+    case open
     case resuming
+    case failed
+    case ended
 }

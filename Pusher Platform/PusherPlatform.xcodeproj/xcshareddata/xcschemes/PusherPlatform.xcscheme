@@ -15,23 +15,23 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33831C881A9CF61600B124F1"
-               BuildableName = "ElementsSwift.framework"
-               BlueprintName = "ElementsSwift"
-               ReferencedContainer = "container:ElementsSwift.xcodeproj">
+               BuildableName = "PusherPlatform.framework"
+               BlueprintName = "PusherPlatform"
+               ReferencedContainer = "container:PusherPlatform.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "NO"
-            buildForProfiling = "NO"
-            buildForArchiving = "NO"
-            buildForAnalyzing = "NO">
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33831C931A9CF61600B124F1"
-               BuildableName = "ElementsSwiftTests.xctest"
-               BlueprintName = "ElementsSwiftTests"
-               ReferencedContainer = "container:ElementsSwift.xcodeproj">
+               BuildableName = "PusherPlatformTests.xctest"
+               BlueprintName = "PusherPlatformTests"
+               ReferencedContainer = "container:PusherPlatform.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -43,24 +43,14 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       codeCoverageEnabled = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "33831C931A9CF61600B124F1"
-               BuildableName = "ElementsSwiftTests.xctest"
-               BlueprintName = "ElementsSwiftTests"
-               ReferencedContainer = "container:ElementsSwift.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33831C881A9CF61600B124F1"
-            BuildableName = "ElementsSwift.framework"
-            BlueprintName = "ElementsSwift"
-            ReferencedContainer = "container:ElementsSwift.xcodeproj">
+            BuildableName = "PusherPlatform.framework"
+            BlueprintName = "PusherPlatform"
+            ReferencedContainer = "container:PusherPlatform.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -80,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33831C881A9CF61600B124F1"
-            BuildableName = "ElementsSwift.framework"
-            BlueprintName = "ElementsSwift"
-            ReferencedContainer = "container:ElementsSwift.xcodeproj">
+            BuildableName = "PusherPlatform.framework"
+            BlueprintName = "PusherPlatform"
+            ReferencedContainer = "container:PusherPlatform.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -98,9 +88,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33831C881A9CF61600B124F1"
-            BuildableName = "ElementsSwift.framework"
-            BlueprintName = "ElementsSwift"
-            ReferencedContainer = "container:ElementsSwift.xcodeproj">
+            BuildableName = "PusherPlatform.framework"
+            BlueprintName = "PusherPlatform"
+            ReferencedContainer = "container:PusherPlatform.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

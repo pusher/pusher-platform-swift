@@ -17,8 +17,10 @@ class ViewController: NSViewController {
     @IBOutlet weak var feedTableView: NSTableView!
 
     @IBAction func subscribeButton(_ sender: Any) {
-        feed?.subscribe(
+        let _ = feed?.subscribe(
+            onOpening: { Void in print("OPENING") },
             onOpen: { Void in print("OPEN") },
+            onResuming: { Void in print("RESUMING") },
             onAppend: { itemId, headers, item in
                 print("RECEIVED: ", itemId, headers, item)
                 if let item = item as? [String: String] {
@@ -29,8 +31,7 @@ class ViewController: NSViewController {
                 }
             },
             onEnd: { statusCode, headers, info in print("END: ", statusCode, headers, info) },
-            onError: { error in print("ERROR: ", error) },
-            onStateChange: { oldState, newState in print("was \(oldState) now \(newState)") }
+            onError: { error in print("ERROR: ", error) }
         )
     }
 
@@ -69,7 +70,7 @@ class ViewController: NSViewController {
         self.feedTableView.delegate = self
 
         let authorizer = SimpleTokenAuthorizer(jwt: "some.relevant.jwt")
-        app = try! App(id: "yourAppId", authorizer: authorizer)
+        app = try! App(id: "4ff02853-bfed-4590-80c7-40c09f25d113", authorizer: authorizer)
         feed = app?.feed("resumable-ham")
     }
 
