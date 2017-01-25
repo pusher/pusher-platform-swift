@@ -75,7 +75,7 @@ import Foundation
 //            }
     }
 
-    public func subscribeWithResumePassingSub(
+    public func subscribeWithResume(
         resumableSubscription: inout ResumableSubscription,
         using subscribeRequest: SubscribeRequest,
         onOpening: (() -> Void)? = nil,
@@ -102,7 +102,7 @@ import Foundation
                             mutableBaseClientRequest.headers = ["Authorization": authHeaderValue]
                         }
 
-                        self.client.subscribeWithResumePassingSub(
+                        self.client.subscribeWithResume(
                             resumableSubscription: &resumableSubscription!,
                             using: mutableBaseClientRequest,
                             app: self,
@@ -116,7 +116,7 @@ import Foundation
                     }
                 }
             } else {
-                self.client.subscribeWithResumePassingSub(
+                self.client.subscribeWithResume(
                     resumableSubscription: &resumableSubscription,
                     using: mutableBaseClientRequest,
                     app: self,

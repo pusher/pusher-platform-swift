@@ -26,7 +26,7 @@ class FeedsViewController: UIViewController {
 
         delegate = UIApplication.shared.delegate as! AppDelegate
 
-        let feed = delegate.pusher.feed("resumable-ham")
+        let feed = delegate.app.feed("resumable-ham")
 
         let resSub = feed.subscribe(
             onOpening: { print("OPENING") },

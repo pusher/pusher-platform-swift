@@ -45,7 +45,6 @@ class ViewController: NSViewController {
             case .failure(let error):
                 print("Error when fetching older items: \(error)")
             case .success(let items):
-                print("***********************")
                 print(items)
                 let castItems = items.reversed().flatMap { $0["data"] as? [String: String] }
                 self.feedItems = castItems + self.feedItems
@@ -69,8 +68,7 @@ class ViewController: NSViewController {
         self.feedTableView.dataSource = self
         self.feedTableView.delegate = self
 
-        let authorizer = SimpleTokenAuthorizer(jwt: "some.relevant.jwt")
-        app = try! App(id: "4ff02853-bfed-4590-80c7-40c09f25d113", authorizer: authorizer)
+        app = try! App(id: "4ff02853-bfed-4590-80c7-40c09f25d113")
         feed = app?.feed("resumable-ham")
     }
 

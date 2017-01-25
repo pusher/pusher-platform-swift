@@ -106,7 +106,7 @@ import Foundation
                 let headers = ["Last-Event-ID": lastEventId!]
                 let subscribeRequest = SubscribeRequest(path: path, headers: headers)
 
-                self.app!.subscribeWithResumePassingSub(
+                self.app!.subscribeWithResume(
                     resumableSubscription: &resumableSub,
                     using: subscribeRequest,
                     onOpening: onOpening,
@@ -140,7 +140,7 @@ import Foundation
 
                         let subscribeRequest = SubscribeRequest(path: path, headers: headers)
 
-                        self.app!.subscribeWithResumePassingSub(
+                        self.app!.subscribeWithResume(
                             resumableSubscription: &resumableSub,
                             using: subscribeRequest,
                             onOpening: onOpening,

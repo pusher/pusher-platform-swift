@@ -81,10 +81,10 @@
 			isa = PBXGroup;
 			children = (
 				33CC931E1E38E4C0003E6325 /* AppDelegate.swift */,
+				33CC93221E38E4C0003E6325 /* ViewController.swift */,
 				33CC931F1E38E4C0003E6325 /* Assets.xcassets */,
 				33CC93201E38E4C0003E6325 /* Pusher Platform macOS Example.entitlements */,
 				33CC93211E38E4C0003E6325 /* Info.plist */,
-				33CC93221E38E4C0003E6325 /* ViewController.swift */,
 				332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */,
 			);
 			name = "PusherPlatform macOS Example";
