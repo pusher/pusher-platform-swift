@@ -23,6 +23,7 @@
 		33935EB41DA5523C00C5C064 /* Feeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* Feeds.swift */; };
 		33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB51DA5526F00C5C064 /* ServiceHelper.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		33D2A5AF1E39075100EA7549 /* DummyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2A5AD1E39074800EA7549 /* DummyTests.swift */; };
 		33E2D3F51DE85759002BF75E /* ServiceAppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */; };
 		33F37F781E0C20CC0048457F /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* Request.swift */; };
 /* End PBXBuildFile section */
@@ -57,6 +58,7 @@
 		33935EB31DA5523C00C5C064 /* Feeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feeds.swift; sourceTree = "<group>"; };
 		33935EB51DA5526F00C5C064 /* ServiceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceHelper.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
+		33D2A5AD1E39074800EA7549 /* DummyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DummyTests.swift; path = ../Tests/DummyTests.swift; sourceTree = "<group>"; };
 		33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceAppExtensions.swift; sourceTree = "<group>"; };
 		33F37F771E0C20CC0048457F /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -151,6 +153,7 @@
 		33BB995C1D21225B00B25C2A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				33D2A5AD1E39074800EA7549 /* DummyTests.swift */,
 				33BB99671D21226C00B25C2A /* Info.plist */,
 			);
 			name = Tests;
@@ -305,6 +308,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				33D2A5AF1E39075100EA7549 /* DummyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
