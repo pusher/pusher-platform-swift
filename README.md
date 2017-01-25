@@ -33,11 +33,11 @@ If you don't already have the Cocoapods gem installed, run the following command
 $ gem install cocoapods
 ```
 
-Then run `pod init` to create your `Podfile`, and add the following lines to it:
+Then run `pod init` to create your `Podfile` (if you don't already have one), and add the following lines to it:
 
 ```ruby
 source 'https://github.com/CocoaPods/Specs.git'
-source 'git@github.com:pusher/PrivatePodSpecs.git'
+
 platform :ios, '10.0' # change this if you're not making an iOS app!
 
 target 'your-app-name' do
@@ -61,9 +61,15 @@ $ pod repo update PusherPlatform
 $ pod install
 ```
 
+If the `pod repo update PusherPlatform` command fails then run:
+
+```bash
+$ pod repo update
+```
+
 Also you'll need to make sure that you've not got the version of PusherPlatform locked to an old version in your `Podfile.lock` file.
 
-### ~~Carthage~~ - For Hackday use CocoaPods
+### Carthage
 
 [Carthage](https://github.com/Carthage/Carthage) is a decentralized dependency manager that automates the process of adding frameworks to your Cocoa application.
 
@@ -80,6 +86,12 @@ To integrate PusherPlatform into your Xcode project using Carthage, specify it i
 github "pusher/pusher-platform-swift"
 ```
 
+### Directly using a framework
+
+```
+TODO
+```
+
 ## Feeds
 
 ### TL;DR (let me copy paste something)
@@ -88,22 +100,14 @@ github "pusher/pusher-platform-swift"
 let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
 let app = try! App(id: "yourAppId", authorizer: authorizer)
 
-let myFeed = app.feeds("myFeed")
+let myFeed = app.feed("myFeed")
 
-myFeed.subscribeWithResume(
+let subscription = myFeed.subscribe(
     onOpen: { Void in print("We're subscribed to myFeed") },
     onAppend: { itemId, headers, item in print("Received new item", item) } ,
     onEnd: { statusCode, headers, info in print("Subscription ended", info) },
-    onError: { error in print("Error: ", error) },
-    onStateChange: { oldState, newState in print("State of subscription changed from \(oldState) to \(newState)") }
-) { result in
-    switch result {
-    case .failure(let error):
-        // handle the error appropriately
-    case .success(let sub):
-        // you now have access to the subscription if you want to dig into internal-y things
-    }
-}
+    onError: { error in print("Error: ", error) }
+)
 ```
 
 ### Getting started
@@ -120,7 +124,7 @@ let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
 When we've got an `App` then we can create a `FeedsHelper` object, which is where we specify the name of our feed:
 
 ```swift
-let myFeed = app.feeds("myFeed")
+let myFeed = app.feed("myFeed")
 ```
 
 ### Subscribing to receive new items
@@ -128,20 +132,12 @@ let myFeed = app.feeds("myFeed")
 Now that we've got a `FeedsHelper` we can subscribe to that feed to start receiving new items. When you subscribe to a feed you also receive (up to) the 50 most recently added items in the feed. For each of these items the `onAppend` function that you provide will be called.
 
 ```swift
-myFeed.subscribeWithResume(
+myFeed.subscribe(
     onOpen: { Void in print("We're subscribed to myFeed") },
     onAppend: { itemId, headers, item in print("Received new item", item) } ,
     onEnd: { statusCode, headers, info in print("Subscription ended", info) },
-    onError: { error in print("Error: ", error) },
-    onStateChange: { oldState, newState in print("State of subscription changed from \(oldState) to \(newState)") }
-) { result in
-    switch result {
-    case .failure(let error):
-        // handle the error appropriately
-    case .success(let sub):
-        // you now have access to the subscription if you want to dig into internal-y things
-    }
-}
+    onError: { error in print("Error: ", error) }
+)
 ```
 
 ### Fetching older items in a feed
