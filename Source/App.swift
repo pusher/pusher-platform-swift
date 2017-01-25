@@ -20,51 +20,64 @@ import Foundation
         let mutableBaseClientRequest = generalRequest
         mutableBaseClientRequest.path = namespacedPath
 
-//        if generalRequest.jwt == nil && self.authorizer != nil {
-//            self.authorizer!.authorize { result in
-//                switch result {
-//                case .failure(let error): completionHandler(.failure(error))
-//                case .success(let jwtFromAuthorizer):
-//                    mutableBaseClientRequest.jwt = jwtFromAuthorizer
-//                    self.client.request(using: mutableBaseClientRequest, completionHandler: completionHandler)
-//                }
-//            }
-//        } else {
+        if self.authorizer != nil {
+            self.authorizer!.authorize { result in
+                switch result {
+                case .failure(let error): completionHandler(.failure(error))
+                case .success(let jwtFromAuthorizer):
+                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                    if mutableBaseClientRequest.headers != nil {
+                        mutableBaseClientRequest.headers!["Authorization"] = authHeaderValue
+                    } else {
+                        mutableBaseClientRequest.headers = ["Authorization": authHeaderValue]
+                    }
+
+                    self.client.request(using: mutableBaseClientRequest, completionHandler: completionHandler)
+                }
+            }
+        } else {
             self.client.request(using: mutableBaseClientRequest, completionHandler: completionHandler)
-//        }
+        }
     }
 
+    // TODO: This should return a Subscription
     public func subscribe(
         using subscribeRequest: SubscribeRequest,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil) -> Subscription {
+        onError: ((Error) -> Void)? = nil) {
             let sanitisedPath = sanitise(path: subscribeRequest.path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
             let mutableBaseClientRequest = subscribeRequest
             mutableBaseClientRequest.path = namespacedPath
 
-//            if subscribeRequest.jwt == nil && self.authorizer != nil {
-//                self.authorizer!.authorize { result in
-//                    switch result {
-//                    case .failure(let error): completionHandler(.failure(error))
-//                    case .success(let jwtFromAuthorizer):
-//                        mutableBaseClientRequest.jwt = jwtFromAuthorizer
-//                        return self.client.subscribe(
-//                            using: mutableBaseClientRequest,
-//                            onOpening: onOpening,
-//                            onOpen: onOpen,
-//                            onEvent: onEvent,
-//                            onEnd: onEnd,
-//                            onError: onError
-//                        )
-//                    }
-//                }
-//            } else {
-                return self.client.subscribe(
+            if self.authorizer != nil {
+                self.authorizer!.authorize { result in
+                    switch result {
+                    case .failure(let error): onError?(error)
+                    case .success(let jwtFromAuthorizer):
+                        let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                        if mutableBaseClientRequest.headers != nil {
+                            mutableBaseClientRequest.headers!["Authorization"] = authHeaderValue
+                        } else {
+                            mutableBaseClientRequest.headers = ["Authorization": authHeaderValue]
+                        }
+
+                        self.client.subscribe(
+                            using: mutableBaseClientRequest,
+                            onOpening: onOpening,
+                            onOpen: onOpen,
+                            onEvent: onEvent,
+                            onEnd: onEnd,
+                            onError: onError
+                        )
+                    }
+                }
+            } else {
+                self.client.subscribe(
                     using: mutableBaseClientRequest,
                     onOpening: onOpening,
                     onOpen: onOpen,
@@ -72,9 +85,10 @@ import Foundation
                     onEnd: onEnd,
                     onError: onError
                 )
-//            }
+            }
     }
 
+    // TODO: This should return a ResumableSubscription
     public func subscribeWithResume(
         resumableSubscription: inout ResumableSubscription,
         using subscribeRequest: SubscribeRequest,
@@ -129,52 +143,6 @@ import Foundation
                 )
             }
     }
-
-//    public func subscribeWithResume(
-//        using subscribeRequest: SubscribeRequest,
-//        onOpening: (() -> Void)? = nil,
-//        onOpen: (() -> Void)? = nil,
-//        onResuming: (() -> Void)? = nil,
-//        onEvent: ((String, [String: String], Any) -> Void)? = nil,
-//        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-//        onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
-//            let sanitisedPath = sanitise(path: subscribeRequest.path)
-//            let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
-//
-//            let mutableBaseClientRequest = subscribeRequest
-//            mutableBaseClientRequest.path = namespacedPath
-//
-////            if subscribeRequest.jwt == nil && self.authorizer != nil {
-////                self.authorizer!.authorize { result in
-////                    switch result {
-////                    case .failure(let error): completionHandler(.failure(error))
-////                    case .success(let jwtFromAuthorizer):
-////                        mutableBaseClientRequest.jwt = jwtFromAuthorizer
-////                        return self.client.subscribeWithResume(
-////                            using: mutableBaseClientRequest,
-////                            app: self,
-////                            onOpening: onOpening,
-////                            onOpen: onOpen,
-////                            onResuming: onResuming,
-////                            onEvent: onEvent,
-////                            onEnd: onEnd,
-////                            onError: onError
-////                        )
-////                    }
-////                }
-////            } else {
-//                return self.client.subscribeWithResume(
-//                    using: mutableBaseClientRequest,
-//                    app: self,
-//                    onOpening: onOpening,
-//                    onOpen: onOpen,
-//                    onResuming: onResuming,
-//                    onEvent: onEvent,
-//                    onEnd: onEnd,
-//                    onError: onError
-//                )
-////            }
-//    }
 
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) {
         self.client.unsubscribe(taskIdentifier: taskIdentifier, completionHandler: completionHandler)

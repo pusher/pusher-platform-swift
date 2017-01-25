@@ -4,7 +4,8 @@ import Foundation
     public let method: String
     public var path: String
     public let queryItems: [URLQueryItem]?
-    public let headers: [String: String]?
+    // TODO: Should headers be mutable?
+    public var headers: [String: String]?
     public let body: Data?
 
     public init(method: String, path: String, queryItems: [URLQueryItem]? = nil, headers: [String: String]? = nil, body: Data? = nil) {
@@ -20,6 +21,7 @@ import Foundation
     // TODO: Doesn't seem to be scoped to app - is that desired? 
     public var path: String
     public let queryItems: [URLQueryItem]?
+    // TODO: Should headers be mutable?
     public var headers: [String: String]?
 
     public init(path: String, queryItems: [URLQueryItem]? = nil, headers: [String: String]? = nil) {
