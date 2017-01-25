@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D43321A1DF6F897008696FD /* FeedsViewController.swift */; };
-		330263811DC2475E007D7317 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330263801DC2475E007D7317 /* AppDelegate.swift */; };
 		330263861DC2475E007D7317 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263841DC2475E007D7317 /* Main.storyboard */; };
-		330263881DC2475E007D7317 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 330263871DC2475E007D7317 /* Assets.xcassets */; };
 		3302638B1DC2475E007D7317 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263891DC2475E007D7317 /* LaunchScreen.storyboard */; };
 		338CC3131E0A8FCB002125C4 /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */; };
 		338CC3141E0A8FCB002125C4 /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		33CC931A1E38E48C003E6325 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93151E38E48C003E6325 /* AppDelegate.swift */; };
+		33CC931B1E38E48C003E6325 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC93161E38E48C003E6325 /* Assets.xcassets */; };
+		33CC931C1E38E48C003E6325 /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93181E38E48C003E6325 /* FeedsViewController.swift */; };
+		33CC931D1E38E48C003E6325 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 33CC93191E38E48C003E6325 /* Info.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,15 +32,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2D2B83271DF821B200357772 /* Elements iOS Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Elements iOS Example.entitlements"; sourceTree = "<group>"; };
-		2D43321A1DF6F897008696FD /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedsViewController.swift; sourceTree = "<group>"; };
 		3302637D1DC2475E007D7317 /* Elements iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		330263801DC2475E007D7317 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		330263851DC2475E007D7317 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		330263871DC2475E007D7317 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3302638A1DC2475E007D7317 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		3302638C1DC2475E007D7317 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		338CC3121E0A8FCB002125C4 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		33CC93151E38E48C003E6325 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Pusher Platform iOS Example/AppDelegate.swift"; sourceTree = SOURCE_ROOT; };
+		33CC93161E38E48C003E6325 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Pusher Platform iOS Example/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
+		33CC93171E38E48C003E6325 /* PusherPlatform iOS Example.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "PusherPlatform iOS Example.entitlements"; path = "Pusher Platform iOS Example/PusherPlatform iOS Example.entitlements"; sourceTree = SOURCE_ROOT; };
+		33CC93181E38E48C003E6325 /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedsViewController.swift; path = "Pusher Platform iOS Example/FeedsViewController.swift"; sourceTree = SOURCE_ROOT; };
+		33CC93191E38E48C003E6325 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Pusher Platform iOS Example/Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,9 +66,9 @@
 		330263741DC2475D007D7317 = {
 			isa = PBXGroup;
 			children = (
-				3302637F1DC2475E007D7317 /* Elements iOS Example */,
-				3302637E1DC2475E007D7317 /* Products */,
+				3302637F1DC2475E007D7317 /* PusherPlatform iOS Example */,
 				2D4332111DF6E0C9008696FD /* Frameworks */,
+				3302637E1DC2475E007D7317 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -79,17 +80,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3302637F1DC2475E007D7317 /* Elements iOS Example */ = {
+		3302637F1DC2475E007D7317 /* PusherPlatform iOS Example */ = {
 			isa = PBXGroup;
 			children = (
-				2D2B83271DF821B200357772 /* Elements iOS Example.entitlements */,
-				330263801DC2475E007D7317 /* AppDelegate.swift */,
-				2D43321A1DF6F897008696FD /* FeedsViewController.swift */,
+				33CC93151E38E48C003E6325 /* AppDelegate.swift */,
+				33CC93181E38E48C003E6325 /* FeedsViewController.swift */,
 				330263841DC2475E007D7317 /* Main.storyboard */,
-				330263871DC2475E007D7317 /* Assets.xcassets */,
 				330263891DC2475E007D7317 /* LaunchScreen.storyboard */,
-				3302638C1DC2475E007D7317 /* Info.plist */,
+				33CC93161E38E48C003E6325 /* Assets.xcassets */,
+				33CC93171E38E48C003E6325 /* PusherPlatform iOS Example.entitlements */,
+				33CC93191E38E48C003E6325 /* Info.plist */,
 			);
+			name = "PusherPlatform iOS Example";
 			path = "Elements iOS Example";
 			sourceTree = "<group>";
 		};
@@ -136,7 +138,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 330263781DC2475D007D7317 /* Build configuration list for PBXProject "Elements iOS Example" */;
+			buildConfigurationList = 330263781DC2475D007D7317 /* Build configuration list for PBXProject "Pusher Platform iOS Example" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -160,7 +162,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3302638B1DC2475E007D7317 /* LaunchScreen.storyboard in Resources */,
-				330263881DC2475E007D7317 /* Assets.xcassets in Resources */,
+				33CC931B1E38E48C003E6325 /* Assets.xcassets in Resources */,
+				33CC931D1E38E48C003E6325 /* Info.plist in Resources */,
 				330263861DC2475E007D7317 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -172,8 +175,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2D43321B1DF6F897008696FD /* FeedsViewController.swift in Sources */,
-				330263811DC2475E007D7317 /* AppDelegate.swift in Sources */,
+				33CC931A1E38E48C003E6325 /* AppDelegate.swift in Sources */,
+				33CC931C1E38E48C003E6325 /* FeedsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -333,7 +336,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		330263781DC2475D007D7317 /* Build configuration list for PBXProject "Elements iOS Example" */ = {
+		330263781DC2475D007D7317 /* Build configuration list for PBXProject "Pusher Platform iOS Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3302638D1DC2475E007D7317 /* Debug */,

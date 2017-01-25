@@ -13,7 +13,7 @@
 		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
 		332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* MessageParser.swift */; };
 		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
-		335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		335BCA0D1C38ABF000B47A66 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		337C551E1E02DC8100C5A317 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551D1E02DC8100C5A317 /* Result.swift */; };
 		337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */; };
 		338290721DF5CEC6008CDC8F /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* App.swift */; };
@@ -22,7 +22,7 @@
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33935EB41DA5523C00C5C064 /* Feeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* Feeds.swift */; };
 		33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB51DA5526F00C5C064 /* ServiceHelper.swift */; };
-		33C40CB91C1DFC9C008A54E3 /* ElementsSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* ElementsSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		33C40CB91C1DFC9C008A54E3 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33E2D3F51DE85759002BF75E /* ServiceAppExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33E2D3F41DE85759002BF75E /* ServiceAppExtensions.swift */; };
 		33F37F781E0C20CC0048457F /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* Request.swift */; };
 /* End PBXBuildFile section */
@@ -53,10 +53,10 @@
 		337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionSessionDelegate.swift; sourceTree = "<group>"; };
 		337C9EE01C38B708006CC757 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		338290711DF5CEC6008CDC8F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
-		33831C891A9CF61600B124F1 /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		33831C891A9CF61600B124F1 /* PusherPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PusherPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831C8D1A9CF61600B124F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		33831C941A9CF61600B124F1 /* ElementsSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ElementsSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		33831CD61A9CFFF200B124F1 /* ElementsSwift.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ElementsSwift.h; path = ../Source/ElementsSwift.h; sourceTree = SOURCE_ROOT; };
+		33831C941A9CF61600B124F1 /* PusherPlatformTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PusherPlatformTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		33831CD61A9CFFF200B124F1 /* PusherPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PusherPlatform.h; path = ../Source/PusherPlatform.h; sourceTree = SOURCE_ROOT; };
 		33935EA71DA5399A00C5C064 /* Authorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorizer.swift; sourceTree = "<group>"; };
 		33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
@@ -98,8 +98,8 @@
 		33831C8A1A9CF61600B124F1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				33831C891A9CF61600B124F1 /* ElementsSwift.framework */,
-				33831C941A9CF61600B124F1 /* ElementsSwiftTests.xctest */,
+				33831C891A9CF61600B124F1 /* PusherPlatform.framework */,
+				33831C941A9CF61600B124F1 /* PusherPlatformTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -123,7 +123,7 @@
 				33F37F771E0C20CC0048457F /* Request.swift */,
 				330DD21B1E0C433A00EC251F /* Logger.swift */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
-				33831CD61A9CFFF200B124F1 /* ElementsSwift.h */,
+				33831CD61A9CFFF200B124F1 /* PusherPlatform.h */,
 			);
 			name = Source;
 			path = ../Source;
@@ -182,7 +182,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				335BCA0D1C38ABF000B47A66 /* ElementsSwift.h in Headers */,
+				335BCA0D1C38ABF000B47A66 /* PusherPlatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -190,16 +190,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33C40CB91C1DFC9C008A54E3 /* ElementsSwift.h in Headers */,
+				33C40CB91C1DFC9C008A54E3 /* PusherPlatform.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		33831C881A9CF61600B124F1 /* ElementsSwift */ = {
+		33831C881A9CF61600B124F1 /* PusherPlatform */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "ElementsSwift" */;
+			buildConfigurationList = 33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatform" */;
 			buildPhases = (
 				33831C841A9CF61600B124F1 /* Sources */,
 				50355EA8A07B4B8038A4DDF1 /* Frameworks */,
@@ -210,14 +210,14 @@
 			);
 			dependencies = (
 			);
-			name = ElementsSwift;
+			name = PusherPlatform;
 			productName = PusherSwift;
-			productReference = 33831C891A9CF61600B124F1 /* ElementsSwift.framework */;
+			productReference = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		33831C931A9CF61600B124F1 /* ElementsSwiftTests */ = {
+		33831C931A9CF61600B124F1 /* PusherPlatformTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "ElementsSwiftTests" */;
+			buildConfigurationList = 33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatformTests" */;
 			buildPhases = (
 				33831C911A9CF61600B124F1 /* Frameworks */,
 				33831C901A9CF61600B124F1 /* Sources */,
@@ -229,9 +229,9 @@
 			dependencies = (
 				33831C971A9CF61600B124F1 /* PBXTargetDependency */,
 			);
-			name = ElementsSwiftTests;
+			name = PusherPlatformTests;
 			productName = PusherSwiftTests;
-			productReference = 33831C941A9CF61600B124F1 /* ElementsSwiftTests.xctest */;
+			productReference = 33831C941A9CF61600B124F1 /* PusherPlatformTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -254,7 +254,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "ElementsSwift" */;
+			buildConfigurationList = 33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "PusherPlatform" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -266,8 +266,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				33831C881A9CF61600B124F1 /* ElementsSwift */,
-				33831C931A9CF61600B124F1 /* ElementsSwiftTests */,
+				33831C881A9CF61600B124F1 /* PusherPlatform */,
+				33831C931A9CF61600B124F1 /* PusherPlatformTests */,
 			);
 		};
 /* End PBXProject section */
@@ -325,7 +325,7 @@
 /* Begin PBXTargetDependency section */
 		33831C971A9CF61600B124F1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 33831C881A9CF61600B124F1 /* ElementsSwift */;
+			target = 33831C881A9CF61600B124F1 /* PusherPlatform */;
 			targetProxy = 33831C961A9CF61600B124F1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -449,8 +449,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pusher.ElementsSwift;
-				PRODUCT_NAME = ElementsSwift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pusher.PusherPlatform;
+				PRODUCT_NAME = PusherPlatform;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = "";
 				SKIP_INSTALL = YES;
@@ -506,8 +506,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_BUNDLE_IDENTIFIER = com.pusher.ElementsSwift;
-				PRODUCT_NAME = ElementsSwift;
+				PRODUCT_BUNDLE_IDENTIFIER = com.pusher.PusherPlatform;
+				PRODUCT_NAME = PusherPlatform;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = "";
 				SKIP_INSTALL = YES;
@@ -567,7 +567,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = ElementsSwiftTests;
+				PRODUCT_NAME = PusherPlatformTests;
 				SDKROOT = "";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvsimulator appletvos watchsimulator watchos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -615,7 +615,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = ElementsSwiftTests;
+				PRODUCT_NAME = PusherPlatformTests;
 				SDKROOT = "";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvsimulator appletvos watchsimulator watchos";
 				SWIFT_VERSION = 3.0;
@@ -628,7 +628,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "ElementsSwift" */ = {
+		33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "PusherPlatform" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33831C4E1A9CEDF800B124F1 /* Debug */,
@@ -637,7 +637,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "ElementsSwift" */ = {
+		33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatform" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33831C9E1A9CF61600B124F1 /* Debug */,
@@ -646,7 +646,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "ElementsSwiftTests" */ = {
+		33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatformTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33831CA11A9CF61600B124F1 /* Debug */,

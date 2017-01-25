@@ -17,9 +17,10 @@ import Foundation
 }
 
 @objc public class SubscribeRequest: NSObject {
+    // TODO: Doesn't seem to be scoped to app - is that desired? 
     public var path: String
     public let queryItems: [URLQueryItem]?
-    public let headers: [String: String]?
+    public var headers: [String: String]?
 
     public init(path: String, queryItems: [URLQueryItem]? = nil, headers: [String: String]? = nil) {
         self.path = path

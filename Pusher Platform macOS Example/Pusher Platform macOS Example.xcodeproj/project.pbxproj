@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		332B5A791D9ACA6A00E69AC8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332B5A781D9ACA6A00E69AC8 /* AppDelegate.swift */; };
-		332B5A7B1D9ACA6A00E69AC8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */; };
-		332B5A7D1D9ACA6A00E69AC8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */; };
 		332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */; };
+		33CC93231E38E4C0003E6325 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC931E1E38E4C0003E6325 /* AppDelegate.swift */; };
+		33CC93241E38E4C0003E6325 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC931F1E38E4C0003E6325 /* Assets.xcassets */; };
+		33CC93251E38E4C0003E6325 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 33CC93211E38E4C0003E6325 /* Info.plist */; };
+		33CC93261E38E4C0003E6325 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93221E38E4C0003E6325 /* ViewController.swift */; };
 		33F1F9731DC368900021056F /* ElementsSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; };
 		33F1F9741DC368900021056F /* ElementsSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33F1F9721DC368900021056F /* ElementsSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -30,13 +31,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2D6524571DE5F3B300590938 /* Elements macOS Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Elements macOS Example.entitlements"; sourceTree = "<group>"; };
 		332B5A751D9ACA6A00E69AC8 /* Elements macOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Elements macOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		332B5A781D9ACA6A00E69AC8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		332B5A7F1D9ACA6A00E69AC8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		332B5A811D9ACA6A00E69AC8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		33CC931E1E38E4C0003E6325 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Pusher Platform macOS Example/AppDelegate.swift"; sourceTree = SOURCE_ROOT; };
+		33CC931F1E38E4C0003E6325 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Pusher Platform macOS Example/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
+		33CC93201E38E4C0003E6325 /* PusherPlatform macOS Example.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "PusherPlatform macOS Example.entitlements"; path = "Pusher Platform macOS Example/PusherPlatform macOS Example.entitlements"; sourceTree = SOURCE_ROOT; };
+		33CC93211E38E4C0003E6325 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Pusher Platform macOS Example/Info.plist"; sourceTree = SOURCE_ROOT; };
+		33CC93221E38E4C0003E6325 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = "Pusher Platform macOS Example/ViewController.swift"; sourceTree = SOURCE_ROOT; };
 		33F1F9721DC368900021056F /* ElementsSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ElementsSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -63,8 +64,8 @@
 		332B5A6C1D9ACA6A00E69AC8 = {
 			isa = PBXGroup;
 			children = (
+				332B5A771D9ACA6A00E69AC8 /* PusherPlatform macOS Example */,
 				330263FA1DC25EB3007D7317 /* Frameworks */,
-				332B5A771D9ACA6A00E69AC8 /* Elements macOS Example */,
 				332B5A761D9ACA6A00E69AC8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,16 +78,17 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		332B5A771D9ACA6A00E69AC8 /* Elements macOS Example */ = {
+		332B5A771D9ACA6A00E69AC8 /* PusherPlatform macOS Example */ = {
 			isa = PBXGroup;
 			children = (
-				2D6524571DE5F3B300590938 /* Elements macOS Example.entitlements */,
-				332B5A781D9ACA6A00E69AC8 /* AppDelegate.swift */,
-				332B5A7A1D9ACA6A00E69AC8 /* ViewController.swift */,
-				332B5A7C1D9ACA6A00E69AC8 /* Assets.xcassets */,
+				33CC931E1E38E4C0003E6325 /* AppDelegate.swift */,
+				33CC931F1E38E4C0003E6325 /* Assets.xcassets */,
+				33CC93201E38E4C0003E6325 /* PusherPlatform macOS Example.entitlements */,
+				33CC93211E38E4C0003E6325 /* Info.plist */,
+				33CC93221E38E4C0003E6325 /* ViewController.swift */,
 				332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */,
-				332B5A811D9ACA6A00E69AC8 /* Info.plist */,
 			);
+			name = "PusherPlatform macOS Example";
 			path = "Elements macOS Example";
 			sourceTree = "<group>";
 		};
@@ -142,7 +144,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 332B5A701D9ACA6A00E69AC8 /* Build configuration list for PBXProject "Elements macOS Example" */;
+			buildConfigurationList = 332B5A701D9ACA6A00E69AC8 /* Build configuration list for PBXProject "Pusher Platform macOS Example" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -165,7 +167,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				332B5A7D1D9ACA6A00E69AC8 /* Assets.xcassets in Resources */,
+				33CC93251E38E4C0003E6325 /* Info.plist in Resources */,
+				33CC93241E38E4C0003E6325 /* Assets.xcassets in Resources */,
 				332B5A801D9ACA6A00E69AC8 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -177,8 +180,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				332B5A7B1D9ACA6A00E69AC8 /* ViewController.swift in Sources */,
-				332B5A791D9ACA6A00E69AC8 /* AppDelegate.swift in Sources */,
+				33CC93231E38E4C0003E6325 /* AppDelegate.swift in Sources */,
+				33CC93261E38E4C0003E6325 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -331,7 +334,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		332B5A701D9ACA6A00E69AC8 /* Build configuration list for PBXProject "Elements macOS Example" */ = {
+		332B5A701D9ACA6A00E69AC8 /* Build configuration list for PBXProject "Pusher Platform macOS Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				332B5A821D9ACA6A00E69AC8 /* Debug */,

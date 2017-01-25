@@ -12,7 +12,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
     public init(cluster: String? = nil, port: Int? = nil) throws {
-        let cluster = cluster ?? "beta.buildelements.com"
+        let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
 
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
@@ -116,10 +116,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
             request.timeoutInterval = REALLY_LONG_TIME
 
-//            if let jwt = subscribeRequest.jwt {
-//                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
-//            }
-
             if let headers = subscribeRequest.headers {
                 for (header, value) in headers {
                     request.addValue(value, forHTTPHeaderField: header)
@@ -142,7 +138,76 @@ let REALLY_LONG_TIME: Double = 252_460_800
             return subscription
     }
 
-    public func subscribeWithResume(
+//    public func subscribeWithResume(
+//        using subscribeRequest: SubscribeRequest,
+//        app: App,
+//        onOpening: (() -> Void)? = nil,
+//        onOpen: (() -> Void)? = nil,
+//        onResuming: (() -> Void)? = nil,
+//        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+//        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+//        onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
+//            let resumableSubscription = ResumableSubscription(
+//                app: app,
+//                path: subscribeRequest.path
+//            )
+//
+//            self.baseUrlComponents.queryItems = subscribeRequest.queryItems
+//
+//            guard var url = self.baseUrlComponents.url else {
+//                onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+//                return resumableSubscription
+//            }
+//
+//            url = url.appendingPathComponent(subscribeRequest.path)
+//
+//            var request = URLRequest(url: url)
+//            request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
+//            request.timeoutInterval = REALLY_LONG_TIME
+//
+////            if let jwt = subscribeRequest.jwt {
+////                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
+////            }
+//
+//            if let headers = subscribeRequest.headers {
+//                for (header, value) in headers {
+//                    request.addValue(value, forHTTPHeaderField: header)
+//                }
+//            }
+//
+//            let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
+//            let taskIdentifier = task.taskIdentifier
+//
+//            // TODO: This dopesn't seem threadsafe
+//            guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
+//                onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+//                return resumableSubscription
+//            }
+//
+//            let subscription = Subscription(
+//                path: subscribeRequest.path,
+//                taskIdentifier: taskIdentifier
+//            )
+//
+//            // TODO: No no no there must be a better way
+//            resumableSubscription.subscription = subscription
+//
+//            resumableSubscription.onOpening = onOpening
+//            resumableSubscription.onOpen = onOpen
+//            resumableSubscription.onResuming = onResuming
+//            resumableSubscription.onEvent = onEvent
+//            resumableSubscription.onEnd = onEnd
+//            resumableSubscription.onError = onError
+//
+//            self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
+//
+//            task.resume()
+//
+//            return resumableSubscription
+//    }
+
+    public func subscribeWithResumePassingSub(
+        resumableSubscription: inout ResumableSubscription,
         using subscribeRequest: SubscribeRequest,
         app: App,
         onOpening: (() -> Void)? = nil,
@@ -151,11 +216,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
-            let resumableSubscription = ResumableSubscription(
-                app: app,
-                path: subscribeRequest.path
-            )
-
             self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
             guard var url = self.baseUrlComponents.url else {
@@ -168,10 +228,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
             var request = URLRequest(url: url)
             request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
             request.timeoutInterval = REALLY_LONG_TIME
-
-//            if let jwt = subscribeRequest.jwt {
-//                request.addValue("JWT \(jwt)", forHTTPHeaderField: "Authorization")
-//            }
 
             if let headers = subscribeRequest.headers {
                 for (header, value) in headers {
@@ -243,6 +299,10 @@ public enum RequestError: Error {
     case noDataPresent
 }
 
+public enum SubscriptionError: Error {
+    case unexpectedError
+}
+
 public enum HttpMethod: String {
     case POST
     case GET
@@ -252,5 +312,4 @@ public enum HttpMethod: String {
     case PATCH
     case HEAD
     case SUBSCRIBE
-    case APPEND
 }

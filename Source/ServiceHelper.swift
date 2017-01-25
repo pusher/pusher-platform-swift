@@ -1,3 +1,5 @@
+import Foundation
+
 @objc public protocol Service: class {
     var app: App? { get set }
     static var namespace: String { get }

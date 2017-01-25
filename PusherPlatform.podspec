@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
-  s.name             = 'ElementsSwift'
-  s.version          = '0.2.0'
-  s.summary          = 'An Elements client library in Swift'
-  s.homepage         = 'https://github.com/pusher/elements-client-swift'
+  s.name             = 'PusherPlatform'
+  s.version          = '0.1.0'
+  s.summary          = 'Pusher Platform SDK in Swift'
+  s.homepage         = 'https://github.com/pusher/pusher-platform-swift'
   s.license          = 'MIT'
   s.author           = { "Hamilton Chapman" => "hamchapman@gmail.com" }
-  s.source           = { git: "git@github.com:pusher/elements-client-swift.git", tag: s.version.to_s }
+  s.source           = { git: "git@github.com:pusher/pusher-platform-swift.git", tag: s.version.to_s }
   s.social_media_url = 'https://twitter.com/pusher'
 
   s.requires_arc = true

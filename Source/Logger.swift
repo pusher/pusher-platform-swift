@@ -6,7 +6,7 @@ import Foundation
 
 @objc class DefaultLogger: NSObject, Logger {
     static public var Logger: Logger = DefaultLogger()
-    internal let logQueue = DispatchQueue(label: "com.pusher.elements-client-swift.logger")
+    internal let logQueue = DispatchQueue(label: "com.pusherplatform.swift.logger")
 
     public func log(message: String) {
         logQueue.async {

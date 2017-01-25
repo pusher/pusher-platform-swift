@@ -17,7 +17,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var feedTableView: NSTableView!
 
     @IBAction func subscribeButton(_ sender: Any) {
-        feed?.subscribe(
+        let _ = feed?.subscribe(
             onOpening: { Void in print("OPENING") },
             onOpen: { Void in print("OPEN") },
             onResuming: { Void in print("RESUMING") },
@@ -70,7 +70,7 @@ class ViewController: NSViewController {
         self.feedTableView.delegate = self
 
         let authorizer = SimpleTokenAuthorizer(jwt: "some.relevant.jwt")
-        app = try! App(id: "yourAppId", authorizer: authorizer)
+        app = try! App(id: "4ff02853-bfed-4590-80c7-40c09f25d113", authorizer: authorizer)
         feed = app?.feed("resumable-ham")
     }
 

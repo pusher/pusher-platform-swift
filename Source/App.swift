@@ -75,40 +75,49 @@ import Foundation
 //            }
     }
 
-    public func subscribeWithResume(
+    public func subscribeWithResumePassingSub(
+        resumableSubscription: inout ResumableSubscription,
         using subscribeRequest: SubscribeRequest,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
+        onError: ((Error) -> Void)? = nil) {
             let sanitisedPath = sanitise(path: subscribeRequest.path)
             let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
             let mutableBaseClientRequest = subscribeRequest
             mutableBaseClientRequest.path = namespacedPath
 
-//            if subscribeRequest.jwt == nil && self.authorizer != nil {
-//                self.authorizer!.authorize { result in
-//                    switch result {
-//                    case .failure(let error): completionHandler(.failure(error))
-//                    case .success(let jwtFromAuthorizer):
-//                        mutableBaseClientRequest.jwt = jwtFromAuthorizer
-//                        return self.client.subscribeWithResume(
-//                            using: mutableBaseClientRequest,
-//                            app: self,
-//                            onOpening: onOpening,
-//                            onOpen: onOpen,
-//                            onResuming: onResuming,
-//                            onEvent: onEvent,
-//                            onEnd: onEnd,
-//                            onError: onError
-//                        )
-//                    }
-//                }
-//            } else {
-                return self.client.subscribeWithResume(
+            if self.authorizer != nil {
+                self.authorizer!.authorize { [weak resumableSubscription] result in
+                    switch result {
+                    case .failure(let error): onError?(error)
+                    case .success(let jwtFromAuthorizer):
+                        let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                        if mutableBaseClientRequest.headers != nil {
+                            mutableBaseClientRequest.headers!["Authorization"] = authHeaderValue
+                        } else {
+                            mutableBaseClientRequest.headers = ["Authorization": authHeaderValue]
+                        }
+
+                        self.client.subscribeWithResumePassingSub(
+                            resumableSubscription: &resumableSubscription!,
+                            using: mutableBaseClientRequest,
+                            app: self,
+                            onOpening: onOpening,
+                            onOpen: onOpen,
+                            onResuming: onResuming,
+                            onEvent: onEvent,
+                            onEnd: onEnd,
+                            onError: onError
+                        )
+                    }
+                }
+            } else {
+                self.client.subscribeWithResumePassingSub(
+                    resumableSubscription: &resumableSubscription,
                     using: mutableBaseClientRequest,
                     app: self,
                     onOpening: onOpening,
@@ -118,8 +127,54 @@ import Foundation
                     onEnd: onEnd,
                     onError: onError
                 )
-//            }
+            }
     }
+
+//    public func subscribeWithResume(
+//        using subscribeRequest: SubscribeRequest,
+//        onOpening: (() -> Void)? = nil,
+//        onOpen: (() -> Void)? = nil,
+//        onResuming: (() -> Void)? = nil,
+//        onEvent: ((String, [String: String], Any) -> Void)? = nil,
+//        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
+//        onError: ((Error) -> Void)? = nil) -> ResumableSubscription {
+//            let sanitisedPath = sanitise(path: subscribeRequest.path)
+//            let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+//
+//            let mutableBaseClientRequest = subscribeRequest
+//            mutableBaseClientRequest.path = namespacedPath
+//
+////            if subscribeRequest.jwt == nil && self.authorizer != nil {
+////                self.authorizer!.authorize { result in
+////                    switch result {
+////                    case .failure(let error): completionHandler(.failure(error))
+////                    case .success(let jwtFromAuthorizer):
+////                        mutableBaseClientRequest.jwt = jwtFromAuthorizer
+////                        return self.client.subscribeWithResume(
+////                            using: mutableBaseClientRequest,
+////                            app: self,
+////                            onOpening: onOpening,
+////                            onOpen: onOpen,
+////                            onResuming: onResuming,
+////                            onEvent: onEvent,
+////                            onEnd: onEnd,
+////                            onError: onError
+////                        )
+////                    }
+////                }
+////            } else {
+//                return self.client.subscribeWithResume(
+//                    using: mutableBaseClientRequest,
+//                    app: self,
+//                    onOpening: onOpening,
+//                    onOpen: onOpen,
+//                    onResuming: onResuming,
+//                    onEvent: onEvent,
+//                    onEnd: onEnd,
+//                    onError: onError
+//                )
+////            }
+//    }
 
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) {
         self.client.unsubscribe(taskIdentifier: taskIdentifier, completionHandler: completionHandler)
