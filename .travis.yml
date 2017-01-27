@@ -20,18 +20,6 @@ before_install:
       brew install carthage;
     fi
   - gem install xcpretty --no-document
-before_deploy:
-  - carthage build --no-skip-current --project-directory PusherPlatform
-  - carthage archive PusherPlatform --project-directory PusherPlatform
-deploy:
-  provider: releases
-  api_key:
-    secure: cjodA0I5fTEU60M+W1NNCj18EpL7yt3uxLN1aeexN33HfRoo153oi4jV/FWlPtQ4QC5FhFF+Nbc69V2paOSrI4iht+UB2Hb0jYTuHWv8ecYa33GFksl7zD9BCf8D3RZqIagTzJC7Vf0FqKKlspZMwIMAL02Z5uwsp5h4Zjrq8lo=
-  file: PusherPlatform.framework.zip
-  skip_cleanup: true
-  on:
-    repo: pusher/pusher-platform-swift
-    tags: true
 script:
   - xcodebuild -version
   - set -o pipefail;
@@ -44,6 +32,17 @@ script:
     watchOS)
       xcodebuild -scheme PusherPlatform -destination "name=Apple Watch - 38mm" | xcpretty;;
     esac
-
+before_deploy:
+  - carthage build --no-skip-current --project-directory PusherPlatform
+  - carthage archive PusherPlatform --project-directory PusherPlatform
+deploy:
+  provider: releases
+  api_key:
+    secure: Ks0s+QxWr/PpUTSpQPXDsw7KKNWUrdhLG8qs1t9CGEry7j+tFaFIHACkNyxMqISnClsFAWCIhAqqAYS6k0z656j0gn08i87QU7s5Tsr8Zj2nrjAGQ/oOx/T+MVL+1q2poTPKLf18RGTC9ADxlpaXSO2Uk+OyFfhMMlRTdguX5oSpGyoIoL1VrIIy/flEujIOEIN0fACaMhgJ5eHK+dRv9UVtfc37nNLJkN617NSvSHCccydfsom9sdLGiuhReE/DQhWMUf3caYne6ywfGSKEBZWvTJK5ukch+5n3UqnzCaIl1cmbu9HQIufDuYSxYrYmV2FSeC+nR1/C5lXNhpYBT0BOSYySH+XmB5taK5KcBYBRo9MYCG6XUQRxJZ3N+b8WlFrHrNDjyFzvQ/1sa+t6j34Cba7Jj+N683nltUOJhW8gmIbDw9qu4F4PzNtOzKPcaY1tkRPBFlzDOIHxpjxqva2IBpW9woUGuzh7/FcbWxv915EMo3variFhGPhwkjNza3wIkiNrDQHWShzHJSeveHi5OhbVvVMqFkC/jN7z5ftyWzveM2r7vAtVjdpkFZovZ3tTuQfA8WBwmD0BE2vCl58F1r8xtg97Y0l2ZEF3BJyttK0y6eITpMR41GAVp8Ngna/UvlXmbXY5g71vst99uNcdA9eXq0Fase2HfUObfdA=
+  file: PusherPlatform.framework.zip
+  skip_cleanup: true
+  on:
+    repo: pusher/pusher-platform-swift
+    tags: true
 after_success:
   - sleep 5

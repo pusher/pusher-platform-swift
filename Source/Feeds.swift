@@ -75,6 +75,7 @@ import Foundation
         }
     }
 
+    @discardableResult
     public func subscribe(
         lastEventId: String? = nil,
         onOpening: (() -> Void)? = nil,

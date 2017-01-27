@@ -11,7 +11,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public let subscriptionUrlSession: Foundation.URLSession
     public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
-    public init(cluster: String? = nil, port: Int? = nil) throws {
+    public init(cluster: String? = nil, port: Int? = nil) {
         let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
 
         var urlComponents = URLComponents()

@@ -6,11 +6,11 @@ import Foundation
     public var authorizer: Authorizer?
     public var client: BaseClient
 
-    public init(id: String, cluster: String? = nil, authorizer: Authorizer? = nil, client: BaseClient? = nil) throws {
+    public init(id: String, cluster: String? = nil, authorizer: Authorizer? = nil, client: BaseClient? = nil) {
         self.id = id
         self.cluster = cluster
         self.authorizer = authorizer
-        try self.client = client ?? BaseClient(cluster: cluster)
+        self.client = client ?? BaseClient(cluster: cluster)
     }
 
     public func request(using generalRequest: GeneralRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {

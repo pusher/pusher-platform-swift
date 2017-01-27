@@ -26,13 +26,13 @@ class FeedsViewController: UIViewController {
 
         delegate = UIApplication.shared.delegate as! AppDelegate
 
-        let feed = delegate.app.feed("resumable-ham")
+        let feed = delegate.app.feed("gg")
 
-        let resSub = feed.subscribe(
+        feed.subscribe(
             onOpening: { print("OPENING") },
             onOpen: { print("OPEN") },
             onResuming: { print("RESUMING") },
-            onAppend: { itemId, headers, item in print("RECEIVED: ", itemId, headers, item) } ,
+            onAppend: { itemId, headers, item in print("RECEIVED: ", itemId, headers, item) },
             onEnd: { statusCode, headers, info in print("END: ", statusCode, headers, info) },
             onError: { error in print("ERROR: ", error) }
         )

@@ -16,9 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public var app: App!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-
-        app = try! App(id: "4ff02853-bfed-4590-80c7-40c09f25d113")
+        let authorizer = EndpointAuthorizer(url: "https://your.auth/endpoint")
+        app = App(id: "your-app-id", authorizer: authorizer)
         return true
     }
 }
-
