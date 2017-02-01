@@ -56,15 +56,8 @@ $ pod install
 If you find that you're not having the most recent version installed when you run `pod install` then try running:
 
 ```bash
-$ pod cache clean --all
-$ pod repo update PusherPlatform
-$ pod install
-```
-
-If the `pod repo update PusherPlatform` command fails then run:
-
-```bash
 $ pod repo update
+$ pod install
 ```
 
 Also you'll need to make sure that you've not got the version of PusherPlatform locked to an old version in your `Podfile.lock` file.

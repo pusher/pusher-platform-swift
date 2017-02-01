@@ -87,9 +87,7 @@ import Foundation
     }
 
     internal func changeState(to newState: ResumableSubscriptionState) {
-//        let oldState = self.state
         self.state = newState
-//        self.onStateChange?(oldState, newState)
     }
 
     public func handleOnOpening() {
@@ -97,7 +95,6 @@ import Foundation
     }
 
     public func handleOnOpen() {
-        // TODO: Not sure this ever gets called with the current setup
         self.changeState(to: .open)
     }
 

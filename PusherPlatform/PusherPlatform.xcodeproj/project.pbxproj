@@ -17,7 +17,7 @@
 		337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */; };
 		338290721DF5CEC6008CDC8F /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* App.swift */; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
-		33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */; };
+		33935EAC1DA539BD00C5C064 /* HTTPEndpointAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* HTTPEndpointAuthorizer.swift */; };
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33935EB41DA5523C00C5C064 /* Feeds.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB31DA5523C00C5C064 /* Feeds.swift */; };
 		33935EB61DA5526F00C5C064 /* ServiceHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EB51DA5526F00C5C064 /* ServiceHelper.swift */; };
@@ -51,7 +51,7 @@
 		33831C941A9CF61600B124F1 /* PusherPlatformTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PusherPlatformTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831CD61A9CFFF200B124F1 /* PusherPlatform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PusherPlatform.h; path = ../Source/PusherPlatform.h; sourceTree = SOURCE_ROOT; };
 		33935EA71DA5399A00C5C064 /* Authorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Authorizer.swift; sourceTree = "<group>"; };
-		33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EndpointAuthorizer.swift; sourceTree = "<group>"; };
+		33935EAB1DA539BD00C5C064 /* HTTPEndpointAuthorizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPEndpointAuthorizer.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
 		33935EB31DA5523C00C5C064 /* Feeds.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Feeds.swift; sourceTree = "<group>"; };
 		33935EB51DA5526F00C5C064 /* ServiceHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ServiceHelper.swift; sourceTree = "<group>"; };
@@ -142,7 +142,7 @@
 		33935EB21DA54F9400C5C064 /* Authorizers */ = {
 			isa = PBXGroup;
 			children = (
-				33935EAB1DA539BD00C5C064 /* EndpointAuthorizer.swift */,
+				33935EAB1DA539BD00C5C064 /* HTTPEndpointAuthorizer.swift */,
 			);
 			name = Authorizers;
 			sourceTree = "<group>";
@@ -295,7 +295,7 @@
 				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */,
 				332E05E81DDCA919007A55FB /* Message.swift in Sources */,
-				33935EAC1DA539BD00C5C064 /* EndpointAuthorizer.swift in Sources */,
+				33935EAC1DA539BD00C5C064 /* HTTPEndpointAuthorizer.swift in Sources */,
 				33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

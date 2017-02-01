@@ -58,6 +58,9 @@ import Foundation
             }
 
             self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
+
+            // TODO: where do we set this to nil?
+            self.subscription = nil
         } else if let resumableSubscription = self.resumableSubscription {
             guard let subscription = self.resumableSubscription?.subscription else {
                 completionHandler?(.failure(FeedError.underlyingSubscriptionForResumableSubscriptionNotPresent(resumableSubscription)))
@@ -72,6 +75,9 @@ import Foundation
             resumableSubscription.unsubscribed = true
             resumableSubscription.changeState(to: .ended)
             self.app!.unsubscribe(taskIdentifier: taskId, completionHandler: completionHandler)
+
+            // TODO: where do we set this to nil?
+            self.resumableSubscription = nil
         }
     }
 
