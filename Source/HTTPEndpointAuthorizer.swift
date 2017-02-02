@@ -26,26 +26,26 @@ public class HTTPEndpointAuthorizer: Authorizer {
             case .failure(let err):
                 self.numberOfAttempts += 1
 
-                if self.maxNumberOfAttempts == nil || self.numberOfAttempts < self.maxNumberOfAttempts! {
-                    let timeIntervalBeforeNextAttempt = TimeInterval(self.numberOfAttempts * self.numberOfAttempts)
-                    let timeBeforeNextAttempt = self.maxGapInSecondsBetweenAttempts != nil ? min(timeIntervalBeforeNextAttempt, self.maxGapInSecondsBetweenAttempts!)
-                                                                                           : timeIntervalBeforeNextAttempt
-
-                    if self.maxNumberOfAttempts != nil {
-                        DefaultLogger.Logger.log(message: "HTTPEndpointAuthorizer error occurred. Making attempt \(self.numberOfAttempts + 1) of \(self.maxNumberOfAttempts!) in \(timeBeforeNextAttempt)s. Error was: \(err)")
-                    } else {
-                        DefaultLogger.Logger.log(message: "HTTPEndpointAuthorizer error occurred. Making attempt \(self.numberOfAttempts + 1) in \(timeBeforeNextAttempt)s. Error was: \(err)")
-                    }
-
-                    // TODO: Finish all this logic
-                    // TODO: [unowned self] here as well?
-                    DispatchQueue.main.asyncAfter(deadline: .now() + timeBeforeNextAttempt, execute: { [unowned self] in
-                        self.authorize(completionHandler: completionHandler)
-                    })
-                } else {
-                    DefaultLogger.Logger.log(message: "Maximum number of auth attempts (\(self.maxNumberOfAttempts)) made by HTTPEndpointAuthorizer. Latest error: \(err)")
+                guard self.maxNumberOfAttempts != nil && self.numberOfAttempts < self.maxNumberOfAttempts! else {
+                    DefaultLogger.Logger.log(message: "Maximum number of auth attempts (\(self.maxNumberOfAttempts!)) made by HTTPEndpointAuthorizer. Latest error: \(err)")
                     completionHandler(.failure(err))
+                    return
                 }
+
+                let timeIntervalBeforeNextAttempt = TimeInterval(self.numberOfAttempts * self.numberOfAttempts)
+                let timeBeforeNextAttempt = self.maxGapInSecondsBetweenAttempts != nil ? min(timeIntervalBeforeNextAttempt, self.maxGapInSecondsBetweenAttempts!)
+                                                                                       : timeIntervalBeforeNextAttempt
+
+                if self.maxNumberOfAttempts != nil {
+                    DefaultLogger.Logger.log(message: "HTTPEndpointAuthorizer error occurred. Making attempt \(self.numberOfAttempts + 1) of \(self.maxNumberOfAttempts!) in \(timeBeforeNextAttempt)s. Error was: \(err)")
+                } else {
+                    DefaultLogger.Logger.log(message: "HTTPEndpointAuthorizer error occurred. Making attempt \(self.numberOfAttempts + 1) in \(timeBeforeNextAttempt)s. Error was: \(err)")
+                }
+
+                // TODO: [unowned self] here as well?
+                DispatchQueue.main.asyncAfter(deadline: .now() + timeBeforeNextAttempt, execute: { [unowned self] in
+                    self.authorize(completionHandler: completionHandler)
+                })
             }
         }
 
