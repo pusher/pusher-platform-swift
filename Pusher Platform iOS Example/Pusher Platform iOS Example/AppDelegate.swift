@@ -16,7 +16,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     public var app: App!
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        let authorizer = EndpointAuthorizer(url: "https://your.auth/endpoint")
+        let authorizer = HTTPEndpointAuthorizer(url: "https://your-endpoint.com/auth") { authRequest in
+            // these are all optional and just examples of what you can do
+            authRequest.body = ["something": "you want"]
+            authRequest.headers = ["SomeHeader": "HeaderValue"]
+            authRequest.queryItems = [URLQueryItem(name: "querykey", value: "some_value")]
+            return authRequest
+        }
+
         app = App(id: "your-app-id", authorizer: authorizer)
         return true
     }

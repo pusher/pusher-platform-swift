@@ -30,11 +30,11 @@ class FeedsViewController: UIViewController {
 
         feed.subscribe(
             onOpening: { print("OPENING") },
-            onOpen: { print("OPEN") },
+            onOpen: { print("OPEN \(self.getTimeNow())") },
             onResuming: { print("RESUMING") },
             onAppend: { itemId, headers, item in print("RECEIVED: ", itemId, headers, item) },
-            onEnd: { statusCode, headers, info in print("END: ", statusCode, headers, info) },
-            onError: { error in print("ERROR: ", error) }
+            onEnd: { statusCode, headers, info in print("END \(self.getTimeNow()): ", statusCode, headers, info) },
+            onError: { error in print("ERROR \(self.getTimeNow()): ", error) }
         )
     }
 }
@@ -56,5 +56,15 @@ extension FeedsViewController: UITableViewDelegate {
 
         cell.textLabel?.text = item["testing"]
         return cell
+    }
+}
+
+extension FeedsViewController {
+    func getTimeNow() -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .none
+        formatter.timeStyle = .long
+
+        return formatter.string(from: Date())
     }
 }
