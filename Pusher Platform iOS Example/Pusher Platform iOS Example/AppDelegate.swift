@@ -25,6 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         app = App(id: "your-app-id", authorizer: authorizer)
+
         return true
     }
 }

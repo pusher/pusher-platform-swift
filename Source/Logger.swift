@@ -4,7 +4,7 @@ import Foundation
     func log(message: String)
 }
 
-@objc class DefaultLogger: NSObject, Logger {
+@objc public class DefaultLogger: NSObject, Logger {
     static public var Logger: Logger = DefaultLogger()
     internal let logQueue = DispatchQueue(label: "com.pusherplatform.swift.logger")
 

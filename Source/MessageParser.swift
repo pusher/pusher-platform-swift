@@ -92,6 +92,17 @@ internal struct MessageParser {
 
 }
 
+// TODO: Conform to LocalizedError, as example below:
+//
+//extension MyError: LocalizedError {
+//    public var errorDescription: String? {
+//        switch self {
+//        case .customError:
+//            return NSLocalizedString("A user-friendly description of the error.", comment: "My error")
+//        }
+//    }
+//}
+
 internal enum MessageParseError: Error {
     case failedToConvertDataToString(Data)
     case failedToDeserializeJson(Data)

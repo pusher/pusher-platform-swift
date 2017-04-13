@@ -19,7 +19,6 @@ class FeedsViewController: UIViewController {
         super.viewDidLoad()
         print("Feeds ViewController")
 
-
         feedTableView.delegate = self
         feedTableView.dataSource = self
         feedTableView.register(UITableViewCell.self, forCellReuseIdentifier: "FeedItemCell")
