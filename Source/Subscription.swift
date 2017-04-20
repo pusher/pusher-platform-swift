@@ -10,6 +10,10 @@ import Foundation
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)?
     public var onError: ((Error) -> Void)?
 
+    public var badResponseCodeError: RequestError? = nil
+
+    public var error: Error? = nil
+
     public init(
         path: String,
         taskIdentifier: Int? = nil,

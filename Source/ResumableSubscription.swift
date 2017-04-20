@@ -87,6 +87,9 @@ import Foundation
     }
 
     internal func changeState(to newState: ResumableSubscriptionState) {
+        // TODO: Potentially add an onStateChange handlers property
+//        let oldState = self.state
+//        self.onStateChangeHandlers.
         self.state = newState
     }
 

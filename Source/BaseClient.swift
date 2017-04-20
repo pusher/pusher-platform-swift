@@ -11,7 +11,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public let subscriptionUrlSession: Foundation.URLSession
     public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
-    public init(cluster: String? = nil, port: Int? = nil) {
+    public let insecure: Bool
+
+    public init(cluster: String? = nil, port: Int? = nil, insecure: Bool = false) {
         let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
 
         var urlComponents = URLComponents()
@@ -23,12 +25,13 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         self.baseUrlComponents = urlComponents
+        self.insecure = insecure
 
         let sessionConfiguration = URLSessionConfiguration.ephemeral
         sessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
         sessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
 
-        self.subscriptionSessionDelegate = SubscriptionSessionDelegate()
+        self.subscriptionSessionDelegate = SubscriptionSessionDelegate(insecure: insecure)
         self.subscriptionUrlSession = Foundation.URLSession(configuration: sessionConfiguration, delegate: subscriptionSessionDelegate, delegateQueue: nil)
     }
 
@@ -56,7 +59,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         let sessionConfiguration = URLSessionConfiguration.ephemeral
-        let session = URLSession(configuration: sessionConfiguration)
+        let session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: nil)
 
         session.dataTask(with: request, completionHandler: { data, response, sessionError in
             if let error = sessionError {
@@ -75,6 +78,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
             }
 
             guard 200..<300 ~= httpResponse.statusCode else {
+                // TODO: Why can't I access the data in the error I get returned?
+                // Should the logger be called with the data as a string, if possible?
                 completionHandler(.failure(RequestError.badResponseStatusCode(response: httpResponse, data: data)))
                 return
             }
@@ -166,6 +171,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
             let taskIdentifier = task.taskIdentifier
 
+
             // TODO: This dopesn't seem threadsafe
             guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
                 onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
@@ -210,6 +216,27 @@ let REALLY_LONG_TIME: Double = 252_460_800
             completionHandler?(.success(true))
         }
     }
+}
+
+// TODO: Check this is legit and dry up repetition with subscription delegate
+
+extension BaseClient: URLSessionDelegate {
+
+    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard challenge.previousFailureCount == 0 else {
+            challenge.sender?.cancel(challenge)
+            completionHandler(.cancelAuthenticationChallenge, nil)
+            return
+        }
+
+        if self.insecure {
+            let allowAllCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
+            completionHandler(.useCredential, allowAllCredential)
+        } else {
+            completionHandler(.performDefaultHandling, nil)
+        }
+    }
+
 }
 
 public enum BaseClientError: Error {
