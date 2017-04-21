@@ -3,10 +3,12 @@ import Foundation
 @objc public class GeneralRequest: NSObject {
     public let method: String
     public var path: String
-    public let queryItems: [URLQueryItem]?
-
-    // TODO: Should headers be mutable?
+    public var queryItems: [URLQueryItem]?
     public var headers: [String: String]?
+
+    // TODO: Which things should be mutable?
+    // TODO: Initialise queryItems and headers so that you can always just append to them
+    // and probably provide methods for them. Check consequences though!
 
     public let body: Data?
 
@@ -25,7 +27,7 @@ import Foundation
 
     public var path: String
 
-    public let queryItems: [URLQueryItem]?
+    public var queryItems: [URLQueryItem]?
 
     // TODO: Should headers be mutable?
 
