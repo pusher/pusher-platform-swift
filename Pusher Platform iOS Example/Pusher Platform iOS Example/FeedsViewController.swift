@@ -10,31 +10,12 @@ import UIKit
 
 class FeedsViewController: UIViewController {
     @IBOutlet var feedLabel: UILabel!
-    var delegate: AppDelegate!
     var feedItems: [[String: String]] = []
 
     @IBOutlet weak var feedTableView: UITableView!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Feeds ViewController")
-
-        feedTableView.delegate = self
-        feedTableView.dataSource = self
-        feedTableView.register(UITableViewCell.self, forCellReuseIdentifier: "FeedItemCell")
-
-        delegate = UIApplication.shared.delegate as! AppDelegate
-
-        let feed = delegate.app.feed("gg")
-
-        feed.subscribe(
-            onOpening: { print("OPENING") },
-            onOpen: { print("OPEN \(self.getTimeNow())") },
-            onResuming: { print("RESUMING") },
-            onAppend: { itemId, headers, item in print("RECEIVED: ", itemId, headers, item) },
-            onEnd: { statusCode, headers, info in print("END \(self.getTimeNow()): ", statusCode, headers, info) },
-            onError: { error in print("ERROR \(self.getTimeNow()): ", error) }
-        )
     }
 }
 
