@@ -73,7 +73,7 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
 
                     // TODO: This is a shortcut for now, more useful to make it human-readable, surely
 
-                    responseDataTuple.data =  data
+                    responseDataTuple.data = data
                 default:
                     // TODO: Decide what to do here, probs just let it go and ignore
                     print("NAH")
@@ -214,7 +214,7 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
             return
         }
 
-        if insecure {
+        if self.insecure {
             let allowAllCredential = URLCredential(trust: challenge.protectionSpace.serverTrust!)
             completionHandler(.useCredential, allowAllCredential)
         } else {

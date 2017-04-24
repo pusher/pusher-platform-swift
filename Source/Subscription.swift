@@ -21,13 +21,14 @@ import Foundation
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil) {
-            self.path = path
-            self.taskIdentifier = taskIdentifier
-            self.onOpening = onOpening
-            self.onOpen = onOpen
-            self.onEvent = onEvent
-            self.onEnd = onEnd
-            self.onError = onError
+        onError: ((Error) -> Void)? = nil
+    ) {
+        self.path = path
+        self.taskIdentifier = taskIdentifier
+        self.onOpening = onOpening
+        self.onOpen = onOpen
+        self.onEvent = onEvent
+        self.onEnd = onEnd
+        self.onError = onError
     }
 }

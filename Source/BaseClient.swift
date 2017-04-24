@@ -1,31 +1,38 @@
 import Foundation
 
-let VERSION = "0.1.3"
-let CLIENT_NAME = "pusher-platform-swift"
 let REALLY_LONG_TIME: Double = 252_460_800
 
 @objc public class BaseClient: NSObject {
     public var port: Int?
     internal var baseUrlComponents: URLComponents
 
+    // TODO: Need to actually use these
+    public var clientName: String
+    public var clientVersion: String
+
     public let subscriptionUrlSession: Foundation.URLSession
     public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
     public let insecure: Bool
 
-    public init(cluster: String? = nil, port: Int? = nil, insecure: Bool = false) {
+    public init(
+        cluster: String? = nil,
+        port: Int? = nil,
+        insecure: Bool = false,
+        clientName: String = "pusher-platform-swift",
+        clientVersion: String = "0.1.4"
+    ) {
         let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
 
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = cluster
-
-        if let port = port {
-            urlComponents.port = port
-        }
+        urlComponents.port = port
 
         self.baseUrlComponents = urlComponents
         self.insecure = insecure
+        self.clientName = clientName
+        self.clientVersion = clientVersion
 
         let sessionConfiguration = URLSessionConfiguration.ephemeral
         sessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
@@ -48,10 +55,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var request = URLRequest(url: url)
         request.httpMethod = generalRequest.method
 
-        if let headers = generalRequest.headers {
-            for (header, value) in headers {
-                request.addValue(value, forHTTPHeaderField: header)
-            }
+        for (header, value) in generalRequest.headers {
+            request.addValue(value, forHTTPHeaderField: header)
         }
 
         if let body = generalRequest.body {
@@ -94,49 +99,48 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil) -> Subscription {
-            let subscription = Subscription(
-                path: subscribeRequest.path,
-                onOpening: onOpening,
-                onOpen: onOpen,
-                onEvent: onEvent,
-                onEnd: onEnd,
-                onError: onError
-            )
+        onError: ((Error) -> Void)? = nil
+    ) -> Subscription {
+        let subscription = Subscription(
+            path: subscribeRequest.path,
+            onOpening: onOpening,
+            onOpen: onOpen,
+            onEvent: onEvent,
+            onEnd: onEnd,
+            onError: onError
+        )
 
-            self.baseUrlComponents.queryItems = subscribeRequest.queryItems
+        self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
-            guard var url = self.baseUrlComponents.url else {
-                onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
-                return subscription
-            }
-
-            url = url.appendingPathComponent(subscribeRequest.path)
-
-            var request = URLRequest(url: url)
-            request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
-            request.timeoutInterval = REALLY_LONG_TIME
-
-            if let headers = subscribeRequest.headers {
-                for (header, value) in headers {
-                    request.addValue(value, forHTTPHeaderField: header)
-                }
-            }
-
-            let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
-            let taskIdentifier = task.taskIdentifier
-
-            guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
-                onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
-                return subscription
-            }
-
-            subscription.taskIdentifier = taskIdentifier
-            self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
-
-            task.resume()
-
+        guard var url = self.baseUrlComponents.url else {
+            onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
             return subscription
+        }
+
+        url = url.appendingPathComponent(subscribeRequest.path)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
+        request.timeoutInterval = REALLY_LONG_TIME
+
+        for (header, value) in subscribeRequest.headers {
+            request.addValue(value, forHTTPHeaderField: header)
+        }
+
+        let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
+        let taskIdentifier = task.taskIdentifier
+
+        guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
+            onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+            return subscription
+        }
+
+        subscription.taskIdentifier = taskIdentifier
+        self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
+
+        task.resume()
+
+        return subscription
     }
 
     public func subscribeWithResume(
@@ -148,54 +152,52 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onResuming: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil) {
-            self.baseUrlComponents.queryItems = subscribeRequest.queryItems
+        onError: ((Error) -> Void)? = nil
+    ) {
+        self.baseUrlComponents.queryItems = subscribeRequest.queryItems
 
-            guard var url = self.baseUrlComponents.url else {
-                onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
-                return
-            }
+        guard var url = self.baseUrlComponents.url else {
+            onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+            return
+        }
 
-            url = url.appendingPathComponent(subscribeRequest.path)
+        url = url.appendingPathComponent(subscribeRequest.path)
 
-            var request = URLRequest(url: url)
-            request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
-            request.timeoutInterval = REALLY_LONG_TIME
+        var request = URLRequest(url: url)
+        request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
+        request.timeoutInterval = REALLY_LONG_TIME
 
-            if let headers = subscribeRequest.headers {
-                for (header, value) in headers {
-                    request.addValue(value, forHTTPHeaderField: header)
-                }
-            }
+        for (header, value) in subscribeRequest.headers {
+            request.addValue(value, forHTTPHeaderField: header)
+        }
 
-            let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
-            let taskIdentifier = task.taskIdentifier
+        let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
+        let taskIdentifier = task.taskIdentifier
 
+        // TODO: This dopesn't seem threadsafe
+        guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
+            onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+            return
+        }
 
-            // TODO: This dopesn't seem threadsafe
-            guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
-                onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
-                return
-            }
+        let subscription = Subscription(
+            path: subscribeRequest.path,
+            taskIdentifier: taskIdentifier
+        )
 
-            let subscription = Subscription(
-                path: subscribeRequest.path,
-                taskIdentifier: taskIdentifier
-            )
+        // TODO: No no no there must be a better way
+        resumableSubscription.subscription = subscription
 
-            // TODO: No no no there must be a better way
-            resumableSubscription.subscription = subscription
+        resumableSubscription.onOpening = onOpening
+        resumableSubscription.onOpen = onOpen
+        resumableSubscription.onResuming = onResuming
+        resumableSubscription.onEvent = onEvent
+        resumableSubscription.onEnd = onEnd
+        resumableSubscription.onError = onError
 
-            resumableSubscription.onOpening = onOpening
-            resumableSubscription.onOpen = onOpen
-            resumableSubscription.onResuming = onResuming
-            resumableSubscription.onEvent = onEvent
-            resumableSubscription.onEnd = onEnd
-            resumableSubscription.onError = onError
+        self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
 
-            self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
-
-            task.resume()
+        task.resume()
     }
 
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) -> Void {

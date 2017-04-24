@@ -11,7 +11,7 @@
 		3302638B1DC2475E007D7317 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 330263891DC2475E007D7317 /* LaunchScreen.storyboard */; };
 		33CC931A1E38E48C003E6325 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93151E38E48C003E6325 /* AppDelegate.swift */; };
 		33CC931B1E38E48C003E6325 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC93161E38E48C003E6325 /* Assets.xcassets */; };
-		33CC931C1E38E48C003E6325 /* FeedsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93181E38E48C003E6325 /* FeedsViewController.swift */; };
+		33CC931C1E38E48C003E6325 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC93181E38E48C003E6325 /* ViewController.swift */; };
 		33CEFD9F1E38F6B800FC9F03 /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33CEFD9E1E38F6B800FC9F03 /* PusherPlatform.framework */; };
 		33CEFDA01E38F6B800FC9F03 /* PusherPlatform.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 33CEFD9E1E38F6B800FC9F03 /* PusherPlatform.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -37,7 +37,7 @@
 		33CC93151E38E48C003E6325 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = "Pusher Platform iOS Example/AppDelegate.swift"; sourceTree = SOURCE_ROOT; };
 		33CC93161E38E48C003E6325 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "Pusher Platform iOS Example/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
 		33CC93171E38E48C003E6325 /* Pusher Platform iOS Example.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "Pusher Platform iOS Example.entitlements"; path = "Pusher Platform iOS Example/Pusher Platform iOS Example.entitlements"; sourceTree = SOURCE_ROOT; };
-		33CC93181E38E48C003E6325 /* FeedsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedsViewController.swift; path = "Pusher Platform iOS Example/FeedsViewController.swift"; sourceTree = SOURCE_ROOT; };
+		33CC93181E38E48C003E6325 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = "Pusher Platform iOS Example/ViewController.swift"; sourceTree = SOURCE_ROOT; };
 		33CC93191E38E48C003E6325 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = "Pusher Platform iOS Example/Info.plist"; sourceTree = SOURCE_ROOT; };
 		33CEFD9E1E38F6B800FC9F03 /* PusherPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = PusherPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -83,15 +83,23 @@
 			isa = PBXGroup;
 			children = (
 				33CC93151E38E48C003E6325 /* AppDelegate.swift */,
-				33CC93181E38E48C003E6325 /* FeedsViewController.swift */,
+				33CC93181E38E48C003E6325 /* ViewController.swift */,
 				330263841DC2475E007D7317 /* Main.storyboard */,
 				330263891DC2475E007D7317 /* LaunchScreen.storyboard */,
 				33CC93161E38E48C003E6325 /* Assets.xcassets */,
-				33CC93171E38E48C003E6325 /* Pusher Platform iOS Example.entitlements */,
-				33CC93191E38E48C003E6325 /* Info.plist */,
+				3388D5FE1EAE67020072A742 /* Supporting Files */,
 			);
 			name = "PusherPlatform iOS Example";
 			path = "Pusher Platform iOS Example";
+			sourceTree = "<group>";
+		};
+		3388D5FE1EAE67020072A742 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				33CC93171E38E48C003E6325 /* Pusher Platform iOS Example.entitlements */,
+				33CC93191E38E48C003E6325 /* Info.plist */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -174,7 +182,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33CC931A1E38E48C003E6325 /* AppDelegate.swift in Sources */,
-				33CC931C1E38E48C003E6325 /* FeedsViewController.swift in Sources */,
+				33CC931C1E38E48C003E6325 /* ViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,65 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="16D32" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="rIz-bf-ulW">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="1Ks-6c-4dh">
     <device id="retina5_5" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Feeds-->
-        <scene sceneID="XeT-Ii-5JX">
+        <!--View Controller-->
+        <scene sceneID="yUj-7s-25T">
             <objects>
-                <viewController id="q24-2i-bmd" customClass="FeedsViewController" customModule="Pusher_Platform_iOS_Example" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="1Ks-6c-4dh" customClass="ViewController" customModule="Pusher_Platform_iOS_Example" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="rsB-3N-lRi"/>
-                        <viewControllerLayoutGuide type="bottom" id="BOK-xR-gs1"/>
+                        <viewControllerLayoutGuide type="top" id="7CQ-8q-DaY"/>
+                        <viewControllerLayoutGuide type="bottom" id="NFq-JM-CMv"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="fCr-Mf-LFa">
+                    <view key="view" contentMode="scaleToFill" id="fLn-LR-r4w">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="736"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="On1-6j-Ace">
-                                <rect key="frame" x="0.0" y="61" width="414" height="626"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            </tableView>
-                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <constraints>
-                            <constraint firstItem="On1-6j-Ace" firstAttribute="top" secondItem="rsB-3N-lRi" secondAttribute="bottom" constant="41" id="2S3-Cx-6T7"/>
-                            <constraint firstItem="On1-6j-Ace" firstAttribute="leading" secondItem="fCr-Mf-LFa" secondAttribute="leadingMargin" constant="-20" id="9oE-mo-zeN"/>
-                            <constraint firstItem="BOK-xR-gs1" firstAttribute="top" secondItem="On1-6j-Ace" secondAttribute="bottom" id="BmN-iW-4rZ"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="On1-6j-Ace" secondAttribute="trailing" constant="-20" id="c8x-kP-y8p"/>
-                        </constraints>
                     </view>
-                    <tabBarItem key="tabBarItem" title="Feeds" id="3wm-As-BnJ" userLabel="Feeds"/>
-                    <connections>
-                        <outlet property="feedTableView" destination="On1-6j-Ace" id="B4Q-gZ-lXI"/>
-                    </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="5Vw-aH-Fli" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Xwy-LM-q7G" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="389.85507246376812" y="336.68478260869568"/>
-        </scene>
-        <!--Tab Bar Controller-->
-        <scene sceneID="H2z-n5-xeN">
-            <objects>
-                <tabBarController id="rIz-bf-ulW" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" id="Gi6-9p-GXA">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </tabBar>
-                    <connections>
-                        <segue destination="q24-2i-bmd" kind="relationship" relationship="viewControllers" id="QAK-hs-nqx"/>
-                    </connections>
-                </tabBarController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="pbQ-Qz-o7v" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-562" y="10"/>
+            <point key="canvasLocation" x="-516" y="-255"/>
         </scene>
     </scenes>
 </document>

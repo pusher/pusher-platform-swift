@@ -146,7 +146,7 @@ import Foundation
     }
 
     internal func setupNewSubscription() {
-        var headers: [String: String]? = nil
+        var headers: [String: String] = [:]
 
         if let eventId = self.lastEventIdReceived {
             DefaultLogger.Logger.log(message: "Creating new Subscription with Last-Event-ID \(eventId)")
@@ -163,20 +163,6 @@ import Foundation
             onEnd: self.subscription?.onEnd,
             onError: self.subscription?.onError
         )
-        // { result in
-        //     switch result {
-        //     case .failure(let error):
-        //         // TODO: does it make sense to handle this error like this?
-        //         // What sort of error would we even get here?
-        //         self.handleOnError(error: error)
-        //         DefaultLogger.Logger.log(message: "Error in setting up new subscription for resumable subscription at path \(self.path): \(error)")
-        //     case .success(let subscription):
-        //         self.subscription = subscription
-
-        //         self.retrySubscriptionTimer?.invalidate()
-        //         self.retrySubscriptionTimer = nil
-        //     }
-        // }
     }
 }
 

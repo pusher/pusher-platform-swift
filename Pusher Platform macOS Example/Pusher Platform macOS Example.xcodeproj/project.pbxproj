@@ -82,13 +82,21 @@
 			children = (
 				33CC931E1E38E4C0003E6325 /* AppDelegate.swift */,
 				33CC93221E38E4C0003E6325 /* ViewController.swift */,
-				33CC931F1E38E4C0003E6325 /* Assets.xcassets */,
-				33CC93201E38E4C0003E6325 /* Pusher Platform macOS Example.entitlements */,
-				33CC93211E38E4C0003E6325 /* Info.plist */,
 				332B5A7E1D9ACA6A00E69AC8 /* Main.storyboard */,
+				33CC931F1E38E4C0003E6325 /* Assets.xcassets */,
+				3388D5FF1EAE67140072A742 /* Supporting Files */,
 			);
 			name = "PusherPlatform macOS Example";
 			path = "Pusher Platform macOS Example";
+			sourceTree = "<group>";
+		};
+		3388D5FF1EAE67140072A742 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				33CC93201E38E4C0003E6325 /* Pusher Platform macOS Example.entitlements */,
+				33CC93211E38E4C0003E6325 /* Info.plist */,
+			);
+			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
