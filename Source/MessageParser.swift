@@ -11,18 +11,10 @@ internal struct MessageParser {
     }
 
     // Parse errors are truly unexpected here - we trust the server to give us good data
-    static internal func parse(data: Data) throws -> [Message] {
-        guard let dataString = String(data: data, encoding: .utf8) else {
-            throw MessageParseError.failedToConvertDataToString(data)
-        }
-
-        let stringMessages = dataString.components(separatedBy: "\n")
-
-        var messages: [Message] = []
-
-        for stringMessage in stringMessages {
+    static internal func parse(stringMessages: [String]) throws -> [Message] {
+        return try stringMessages.flatMap { stringMessage -> Message? in
             guard stringMessage != "" else {
-                continue
+                return nil
             }
 
             guard let stringMessageData = stringMessage.data(using: .utf8) else {
@@ -30,7 +22,7 @@ internal struct MessageParser {
             }
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: stringMessageData, options: []) else {
-                throw MessageParseError.failedToDeserializeJson(stringMessageData)
+                throw MessageParseError.failedToDeserializeJSON(stringMessage)
             }
 
             guard let jsonArray = jsonObject as? [Any] else {
@@ -38,11 +30,11 @@ internal struct MessageParser {
             }
 
             guard jsonArray.count != 0 else {
-                throw MessageParseError.emptyJsonArray
+                throw MessageParseError.emptyJSONArray
             }
 
             guard let messageTypeCode = jsonArray[0] as? Int else {
-                throw MessageParseError.invalidMessageTypeCode
+                throw MessageParseError.invalidMessageTypeCode(jsonArray[0])
             }
 
             let messageType = try parseMessageTypeCode(messageTypeCode: messageTypeCode)
@@ -57,7 +49,7 @@ internal struct MessageParser {
                     throw MessageParseError.invalidKeepAliveData(jsonArray[1])
                 }
 
-                messages.append(Message.keepAlive)
+                return Message.keepAlive
 
             case .event:
                 guard let eventId = jsonArray[1] as? String else {
@@ -70,7 +62,7 @@ internal struct MessageParser {
 
                 let body = jsonArray[3]
 
-                messages.append(Message.event(eventId: eventId, headers: headers, body: body))
+                return Message.event(eventId: eventId, headers: headers, body: body)
 
             case .eos:
                 guard let statusCode = jsonArray[1] as? Int else {
@@ -83,43 +75,57 @@ internal struct MessageParser {
 
                 let errorBody = jsonArray[3]
 
-                messages.append(Message.eos(statusCode: statusCode, headers: headers, errorBody: errorBody))
+                return Message.eos(statusCode: statusCode, headers: headers, errorBody: errorBody)
             }
         }
-
-        return messages
     }
 
 }
 
-// TODO: Conform to LocalizedError, as example below:
-//
-//extension MyError: LocalizedError {
-//    public var errorDescription: String? {
-//        switch self {
-//        case .customError:
-//            return NSLocalizedString("A user-friendly description of the error.", comment: "My error")
-//        }
-//    }
-//}
-
 internal enum MessageParseError: Error {
-    case failedToConvertDataToString(Data)
-    case failedToDeserializeJson(Data)
+    case failedToDeserializeJSON(String)
     case failedToCastJSONObjectToDictionary(Any)
     case failedToConvertStringToData(String)
-    case emptyJsonArray
+    case emptyJSONArray
     case jsonArrayWrongLengthForMessageType(MessageType, Int)
     case unknownMessageTypeCode(Int)
-    case unknownError
-    case invalidMessageTypeCode
+    case invalidMessageTypeCode(Any)
     case invalidEventId(Any)
     case invalidHeaders(Any)
     case invalidKeepAliveData(Any)
     case invalidStatusCode(Any)
 }
 
-internal enum MessageType {
+extension MessageParseError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .failedToDeserializeJSON(let stringMessage):
+            return "Failed to deserialize received string to JSON object: \(stringMessage)"
+        case .failedToCastJSONObjectToDictionary(let jsonObject):
+            return "Failed to cast JSON object to Dictionary: \(jsonObject)"
+        case .failedToConvertStringToData(let stringMessage):
+            return "Failed to convert message String to Data: \(stringMessage)"
+        case .emptyJSONArray:
+            return "Empty JSON array received"
+        case .jsonArrayWrongLengthForMessageType(let messageType, let countOfElements):
+            return "Expected \(messageType.numberOfElements()) elements in message of type \(messageType.rawValue) but received \(countOfElements)"
+        case .unknownMessageTypeCode(let messageTypeCode):
+            return "Unknown message type code received: \(messageTypeCode)"
+        case .invalidMessageTypeCode(let messageTypeCode):
+            return "Received invalid message type code: \(messageTypeCode)"
+        case .invalidEventId(let eventId):
+            return "Received invalid event ID: \(eventId)"
+        case .invalidHeaders(let headers):
+            return "Received invalid headers: \(headers)"
+        case .invalidKeepAliveData(let keepAliveData):
+            return "Received invalid keep-alive data: \(keepAliveData)"
+        case .invalidStatusCode(let statusCode):
+            return "Received invalid status code: \(statusCode)"
+        }
+    }
+}
+
+internal enum MessageType: String {
     case keepAlive
     case event
     case eos

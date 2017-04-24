@@ -11,6 +11,10 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
         self.subscriptionQueue = DispatchQueue(label: "com.pusherplatform.swift.subscriptiondelegate.\(NSUUID().uuidString)")
     }
 
+    // TODO: Each subscription should probably have its own delegate to avoid having
+    // to do things like this
+    public var tempDataStore: [Int: Data] = [:]
+
     // MARK: URLSessionDataDelegate
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
@@ -34,9 +38,13 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
             let taskIdentifier = dataTask.taskIdentifier
 
             guard let subscription = self.subscriptions[taskIdentifier] else {
-                DefaultLogger.Logger.log(message: "No subscription found paired with taskIdentifier \(taskIdentifier)")
+                DefaultLogger.Logger.log(message: "No subscription found paired with taskIdentifier \(taskIdentifier), which received some data")
                 return
             }
+
+            // TODO: This is designed to capture more context about an error that occurs
+            // in conjunction with a unacceptable status code. It needs to be made more
+            // robust though.
 
             guard subscription.badResponseCodeError == nil else {
                 let error = subscription.badResponseCodeError!
@@ -67,22 +75,46 @@ public class SubscriptionSessionDelegate: NSObject, URLSessionDataDelegate {
 
                     responseDataTuple.data =  data
                 default:
-
-                    // TODO: Decide what to do here
-
+                    // TODO: Decide what to do here, probs just let it go and ignore
                     print("NAH")
                 }
 
                 return
             }
 
+            if self.tempDataStore[taskIdentifier] != nil {
+                self.tempDataStore[taskIdentifier]!.append(data)
+            }
+
+            let dataToParse = self.tempDataStore[taskIdentifier] ?? data
+
+            guard let dataString = String(data: dataToParse, encoding: .utf8) else {
+                DefaultLogger.Logger.log(message: "Failed to convert received Data to String for task id \(dataTask.taskIdentifier)")
+                return
+            }
+
+            let stringMessages = dataString.components(separatedBy: "\n")
+
+            // No newline character in data received so the received data should be stored, ready
+            // for the next data to be received
+            guard stringMessages.count > 1 else {
+                var mutableData = self.tempDataStore[taskIdentifier]
+
+                if mutableData != nil {
+                    mutableData!.append(data)
+                    self.tempDataStore[taskIdentifier] = mutableData!
+                } else {
+                    self.tempDataStore[taskIdentifier] = data
+                }
+                return
+            }
+
             do {
-                let messages = try MessageParser.parse(data: data)
+                let messages = try MessageParser.parse(stringMessages: stringMessages)
                 self.handle(messages: messages, subscription: subscription)
-            } catch let error as MessageParseError {
-                DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
+                self.tempDataStore.removeValue(forKey: taskIdentifier)
             } catch let error {
-                DefaultLogger.Logger.log(message: "Error parsing messages received for task with id \(dataTask.taskIdentifier): \(error.localizedDescription)")
+                DefaultLogger.Logger.log(message: "Error parsing messages received for task id \(dataTask.taskIdentifier): \(error.localizedDescription)")
             }
         }
     }
