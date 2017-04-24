@@ -1,6 +1,6 @@
 import Foundation
 
-let VERSION = "0.1.1"
+let VERSION = "0.1.2"
 let CLIENT_NAME = "pusher-platform-swift"
 let REALLY_LONG_TIME: Double = 252_460_800
 
