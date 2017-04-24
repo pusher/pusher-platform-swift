@@ -2,7 +2,7 @@ import Foundation
 
 @objc public class ResumableSubscription: NSObject {
     public let path: String
-    public internal(set) var unsubscribed: Bool = false
+    public var unsubscribed: Bool = false
 
     // TODO: Check memory mangement stuff here - capture list etc
 
@@ -86,8 +86,8 @@ import Foundation
             self.onError = onError
     }
 
-    internal func changeState(to newState: ResumableSubscriptionState) {
-        // TODO: Potentially add an onStateChange handlers property
+    public func changeState(to newState: ResumableSubscriptionState) {
+//        TODO: Potentially add an onStateChange handlers property
 //        let oldState = self.state
 //        self.onStateChangeHandlers.
         self.state = newState
