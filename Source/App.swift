@@ -252,9 +252,7 @@ import Foundation
     internal func sanitise(path: String) -> String {
         var sanitisedPath = ""
 
-        // TODO: Is .enumerated() correct?
-
-        for (_, char) in path.characters.enumerated() {
+        for char in path.characters {
             // only append a slash if last character isn't already a slash
             if char == "/" {
                 if !sanitisedPath.hasSuffix("/") {

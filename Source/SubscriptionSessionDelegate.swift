@@ -39,17 +39,6 @@ extension SubscriptionSessionDelegate: URLSessionDataDelegate {
                 return
             }
 
-            switch task.state {
-            case .canceling:
-                print("Task \(task.taskIdentifier) cancelling")
-            case .completed:
-                print("Task \(task.taskIdentifier) completed")
-            case .running:
-                print("Task \(task.taskIdentifier) running")
-            case .suspended:
-                print("Task \(task.taskIdentifier) suspended")
-            }
-
             subscription.delegate.handle(error)
         }
     }
@@ -91,4 +80,5 @@ extension SubscriptionSessionDelegate: URLSessionDataDelegate {
             completionHandler(.performDefaultHandling, nil)
         }
     }
+    
 }

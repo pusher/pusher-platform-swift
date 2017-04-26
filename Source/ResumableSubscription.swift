@@ -1,10 +1,7 @@
 import Foundation
 
 @objc public class ResumableSubscription: NSObject {
-    public let path: String
-
     public let subscribeRequest: SubscribeRequest
-
     public var unsubscribed: Bool = false
 
     // TODO: Check memory mangement stuff here - capture list etc
@@ -69,28 +66,16 @@ import Foundation
         // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?
         // Don't think so, as things like header will probably change depending on context
         app: App,
-        path: String = "some/dummy/path/FUCKER",
         request: SubscribeRequest,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil) {
-            self.path = path
-            self.app = app
-            self.subscribeRequest = request
-
-            // TODO: These can probably all go vvvv
-
-            super.init()
-
-            self.onOpening = onOpening
-            self.onOpen = onOpen
-            self.onResuming = onResuming
-            self.onEvent = onEvent
-            self.onEnd = onEnd
-            self.onError = onError
+        onError: ((Error) -> Void)? = nil
+    ) {
+        self.app = app
+        self.subscribeRequest = request
     }
 
     public func changeState(to newState: ResumableSubscriptionState) {
@@ -150,20 +135,14 @@ import Foundation
 //            return
 //        }
 
-        // TODO: Probs need to make sure subscription is nil-ed and that the assocaited task is cancel / invalidated
-
         self.changeState(to: .ended)
     }
-
-    // TODO: This is where the old subscription should be removed / cleaned up
 
     internal func setupNewSubscription() {
         if let eventId = self.lastEventIdReceived {
             DefaultLogger.Logger.log(message: "Creating new Subscription with Last-Event-ID \(eventId)")
             self.subscribeRequest.addHeaders(["Last-Event-ID": eventId])
         }
-
-//        let subscribeRequest = SubscribeRequest(path: self.path, headers: headers)
 
         let newSubscription = self.app.subscribe(
             using: self.subscribeRequest,

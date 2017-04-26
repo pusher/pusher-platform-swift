@@ -100,7 +100,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 // check how this works with block based requests as opposed to delegate
                 // pattern
 
-                completionHandler(.failure(RequestError.badResponseStatusCode(response: httpResponse, errorMessage: nil)))
+                completionHandler(.failure(RequestError.badResponseStatusCode(response: httpResponse)))
                 return
             }
 
@@ -173,8 +173,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         mutableURLComponents.queryItems = subscribeRequest.queryItems
 
         guard var url = mutableURLComponents.url else {
-            // TODO: Maybe defer calling onError so we can return first?
-
             onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
             return
         }
@@ -266,7 +264,8 @@ public enum BaseClientError: Error {
 
 public enum RequestError: Error {
     case invalidHttpResponse(response: URLResponse?, data: Data?)
-    case badResponseStatusCode(response: HTTPURLResponse, errorMessage: String?)
+    case badResponseStatusCode(response: HTTPURLResponse)
+    case badResponseStatusCodeWithMessage(response: HTTPURLResponse, errorMessage: String)
     case noDataPresent
 }
 
