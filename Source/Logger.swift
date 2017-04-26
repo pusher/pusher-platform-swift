@@ -14,3 +14,25 @@ import Foundation
         }
     }
 }
+
+
+
+//public protocol PPLogger {
+//    func log(message: String)
+//}
+//
+//public struct PPDefaultLogger: PPLogger {
+//    public static let sharedInstance = PPDefaultLogger()
+//    internal let logQueue = DispatchQueue(label: "com.pusherplatform.swift.logger")
+//
+//    public func log(message: String) {
+//        logQueue.async {
+//            print(message)
+//        }
+//    }
+//}
+//
+//public enum PPLoggerType {
+//    case `default`
+//    case provided(PPLogger)
+//}

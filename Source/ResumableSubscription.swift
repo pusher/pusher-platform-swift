@@ -2,13 +2,16 @@ import Foundation
 
 @objc public class ResumableSubscription: NSObject {
     public let path: String
+
+    public let subscribeRequest: SubscribeRequest
+
     public var unsubscribed: Bool = false
 
     // TODO: Check memory mangement stuff here - capture list etc
 
     public var onOpen: (() -> Void)? {
         willSet {
-            self.subscription?.onOpen = {
+            self.subscription?.delegate.onOpen = {
                 self.handleOnOpen()
                 newValue?()
             }
@@ -17,7 +20,7 @@ import Foundation
 
     public var onOpening: (() -> Void)? {
         willSet {
-            self.subscription?.onOpening = {
+            self.subscription?.delegate.onOpening = {
                 self.handleOnOpening()
                 newValue?()
             }
@@ -28,7 +31,7 @@ import Foundation
 
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
-            self.subscription?.onEvent = { eventId, headers, data in
+            self.subscription?.delegate.onEvent = { eventId, headers, data in
                 self.handleOnEvent(eventId: eventId, headers: headers, data: data)
                 newValue?(eventId, headers, data)
             }
@@ -37,7 +40,7 @@ import Foundation
 
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
         willSet {
-            self.subscription?.onEnd = { statusCode, headers, info in
+            self.subscription?.delegate.onEnd = { statusCode, headers, info in
                 self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
                 newValue?(statusCode, headers, info)
             }
@@ -46,7 +49,7 @@ import Foundation
 
     public var onError: ((Error) -> Void)? {
         willSet {
-            self.subscription?.onError = { error in
+            self.subscription?.delegate.onError = { error in
                 self.handleOnError(error: error)
                 newValue?(error)
             }
@@ -66,7 +69,8 @@ import Foundation
         // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?
         // Don't think so, as things like header will probably change depending on context
         app: App,
-        path: String,
+        path: String = "some/dummy/path/FUCKER",
+        request: SubscribeRequest,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
@@ -75,6 +79,9 @@ import Foundation
         onError: ((Error) -> Void)? = nil) {
             self.path = path
             self.app = app
+            self.subscribeRequest = request
+
+            // TODO: These can probably all go vvvv
 
             super.init()
 
@@ -142,27 +149,32 @@ import Foundation
 //            self.changeState(to: .ended)
 //            return
 //        }
+
+        // TODO: Probs need to make sure subscription is nil-ed and that the assocaited task is cancel / invalidated
+
         self.changeState(to: .ended)
     }
 
-    internal func setupNewSubscription() {
-        var headers: [String: String] = [:]
+    // TODO: This is where the old subscription should be removed / cleaned up
 
+    internal func setupNewSubscription() {
         if let eventId = self.lastEventIdReceived {
             DefaultLogger.Logger.log(message: "Creating new Subscription with Last-Event-ID \(eventId)")
-            headers = ["Last-Event-ID": eventId]
+            self.subscribeRequest.addHeaders(["Last-Event-ID": eventId])
         }
 
-        let subscribeRequest = SubscribeRequest(path: self.path, headers: headers)
+//        let subscribeRequest = SubscribeRequest(path: self.path, headers: headers)
 
-        self.app.subscribe(
-            using: subscribeRequest,
-            onOpening: self.subscription?.onOpening,
-            onOpen: self.subscription?.onOpen,
-            onEvent: self.subscription?.onEvent,
-            onEnd: self.subscription?.onEnd,
-            onError: self.subscription?.onError
+        let newSubscription = self.app.subscribe(
+            using: self.subscribeRequest,
+            onOpening: self.subscription?.delegate.onOpening,
+            onOpen: self.subscription?.delegate.onOpen,
+            onEvent: self.subscription?.delegate.onEvent,
+            onEnd: self.subscription?.delegate.onEnd,
+            onError: self.subscription?.delegate.onError
         )
+
+        self.subscription = newSubscription
     }
 }
 

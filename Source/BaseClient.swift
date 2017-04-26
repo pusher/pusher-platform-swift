@@ -10,7 +10,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public var clientName: String
     public var clientVersion: String
 
-    public let subscriptionUrlSession: Foundation.URLSession
+    public let subscriptionUrlSession: URLSession
     public let subscriptionSessionDelegate: SubscriptionSessionDelegate
 
     public let insecure: Bool
@@ -39,14 +39,23 @@ let REALLY_LONG_TIME: Double = 252_460_800
         sessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
 
         self.subscriptionSessionDelegate = SubscriptionSessionDelegate(insecure: insecure)
-        self.subscriptionUrlSession = Foundation.URLSession(configuration: sessionConfiguration, delegate: subscriptionSessionDelegate, delegateQueue: nil)
+        self.subscriptionUrlSession = URLSession(
+            configuration: sessionConfiguration,
+            delegate: subscriptionSessionDelegate,
+            delegateQueue: nil
+        )
+    }
+
+    deinit {
+        self.subscriptionUrlSession.invalidateAndCancel()
     }
 
     public func request(using generalRequest: GeneralRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
-        self.baseUrlComponents.queryItems = generalRequest.queryItems
+        var mutableURLComponents = self.baseUrlComponents
+        mutableURLComponents.queryItems = generalRequest.queryItems
 
-        guard var url = self.baseUrlComponents.url else {
-            completionHandler(.failure(BaseClientError.invalidUrl(components: self.baseUrlComponents)))
+        guard var url = mutableURLComponents.url else {
+            completionHandler(.failure(BaseClientError.invalidUrl(components: mutableURLComponents)))
             return
         }
 
@@ -83,9 +92,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
             }
 
             guard 200..<300 ~= httpResponse.statusCode else {
+
                 // TODO: Why can't I access the data in the error I get returned?
                 // Should the logger be called with the data as a string, if possible?
-                completionHandler(.failure(RequestError.badResponseStatusCode(response: httpResponse, data: data)))
+
+                // TODO: This error should be provided a proper error message if possible -
+                // check how this works with block based requests as opposed to delegate
+                // pattern
+
+                completionHandler(.failure(RequestError.badResponseStatusCode(response: httpResponse, errorMessage: nil)))
                 return
             }
 
@@ -93,34 +108,31 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }).resume()
     }
 
+    // TODO Some useful TODOs down below
+
     public func subscribe(
+        with subscription: inout Subscription,
         using subscribeRequest: SubscribeRequest,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-    ) -> Subscription {
-        let subscription = Subscription(
-            path: subscribeRequest.path,
-            onOpening: onOpening,
-            onOpen: onOpen,
-            onEvent: onEvent,
-            onEnd: onEnd,
-            onError: onError
-        )
+    ) {
+        var mutableURLComponents = self.baseUrlComponents
+        mutableURLComponents.queryItems = subscribeRequest.queryItems
 
-        self.baseUrlComponents.queryItems = subscribeRequest.queryItems
+        guard var url = mutableURLComponents.url else {
+            // TODO: Maybe defer calling onError until after returning?
 
-        guard var url = self.baseUrlComponents.url else {
-            onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
-            return subscription
+            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
+            return
         }
 
         url = url.appendingPathComponent(subscribeRequest.path)
 
         var request = URLRequest(url: url)
-        request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
+        request.httpMethod = HTTPMethod.SUBSCRIBE.rawValue
         request.timeoutInterval = REALLY_LONG_TIME
 
         for (header, value) in subscribeRequest.headers {
@@ -128,23 +140,26 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
-        let taskIdentifier = task.taskIdentifier
 
-        guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
+        guard self.subscriptionSessionDelegate[task] == nil else {
             onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
-            return subscription
+            return
         }
 
-        subscription.taskIdentifier = taskIdentifier
-        self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
+        self.subscriptionSessionDelegate[task] = subscription
+
+        subscription.delegate.task = task
+        subscription.delegate.onOpening = onOpening
+        subscription.delegate.onOpen = onOpen
+        subscription.delegate.onEvent = onEvent
+        subscription.delegate.onEnd = onEnd
+        subscription.delegate.onError = onError
 
         task.resume()
-
-        return subscription
     }
 
     public func subscribeWithResume(
-        resumableSubscription: inout ResumableSubscription,
+        with resumableSubscription: inout ResumableSubscription,
         using subscribeRequest: SubscribeRequest,
         app: App,
         onOpening: (() -> Void)? = nil,
@@ -154,17 +169,20 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        self.baseUrlComponents.queryItems = subscribeRequest.queryItems
+        var mutableURLComponents = self.baseUrlComponents
+        mutableURLComponents.queryItems = subscribeRequest.queryItems
 
-        guard var url = self.baseUrlComponents.url else {
-            onError?(BaseClientError.invalidUrl(components: self.baseUrlComponents))
+        guard var url = mutableURLComponents.url else {
+            // TODO: Maybe defer calling onError so we can return first?
+
+            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
             return
         }
 
         url = url.appendingPathComponent(subscribeRequest.path)
 
         var request = URLRequest(url: url)
-        request.httpMethod = HttpMethod.SUBSCRIBE.rawValue
+        request.httpMethod = HTTPMethod.SUBSCRIBE.rawValue
         request.timeoutInterval = REALLY_LONG_TIME
 
         for (header, value) in subscribeRequest.headers {
@@ -172,20 +190,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         let task: URLSessionDataTask = self.subscriptionUrlSession.dataTask(with: request)
-        let taskIdentifier = task.taskIdentifier
 
-        // TODO: This dopesn't seem threadsafe
-        guard self.subscriptionSessionDelegate.subscriptions[taskIdentifier] == nil else {
+        guard self.subscriptionSessionDelegate[task] == nil else {
             onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
             return
         }
 
-        let subscription = Subscription(
-            path: subscribeRequest.path,
-            taskIdentifier: taskIdentifier
-        )
+        let subscription = Subscription()
+        self.subscriptionSessionDelegate[task] = subscription
+        subscription.delegate.task = task
 
-        // TODO: No no no there must be a better way
         resumableSubscription.subscription = subscription
 
         resumableSubscription.onOpening = onOpening
@@ -194,8 +208,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         resumableSubscription.onEvent = onEvent
         resumableSubscription.onEnd = onEnd
         resumableSubscription.onError = onError
-
-        self.subscriptionSessionDelegate.subscriptions[taskIdentifier] = subscription
 
         task.resume()
     }
@@ -220,11 +232,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 }
 
-// TODO: Check this is legit and dry up repetition with subscription delegate
+// TODO: Dry up repetition with subscription delegate
 
 extension BaseClient: URLSessionDelegate {
 
-    public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+    public func urlSession(
+        _ session: URLSession,
+        didReceive challenge: URLAuthenticationChallenge,
+        completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void
+    ) {
         guard challenge.previousFailureCount == 0 else {
             challenge.sender?.cancel(challenge)
             completionHandler(.cancelAuthenticationChallenge, nil)
@@ -250,7 +266,7 @@ public enum BaseClientError: Error {
 
 public enum RequestError: Error {
     case invalidHttpResponse(response: URLResponse?, data: Data?)
-    case badResponseStatusCode(response: HTTPURLResponse, data: Data?)
+    case badResponseStatusCode(response: HTTPURLResponse, errorMessage: String?)
     case noDataPresent
 }
 
@@ -258,7 +274,7 @@ public enum SubscriptionError: Error {
     case unexpectedError
 }
 
-public enum HttpMethod: String {
+public enum HTTPMethod: String {
     case POST
     case GET
     case PUT
