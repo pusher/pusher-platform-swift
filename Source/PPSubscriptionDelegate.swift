@@ -18,6 +18,9 @@ public class PPSubscriptionDelegate: NSObject, URLSessionDataDelegate {
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)?
     public var onError: ((Error) -> Void)?
 
+    internal var heartbeatTimeout: Double = 60.0
+    internal var heartbeatTimeoutTimer: Timer? = nil
+
     internal var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? = nil
 
     public init(task: URLSessionDataTask? = nil) {
@@ -26,10 +29,11 @@ public class PPSubscriptionDelegate: NSObject, URLSessionDataDelegate {
     }
 
     deinit {
-        // TODO: Remove me
+        // TODO: Remove me - although it doesn't seem to currently be called (see notes in notebook)
 
         DefaultLogger.Logger.log(message: "About to cancel task: \(String(describing: self.task?.taskIdentifier))")
 
+        self.heartbeatTimeoutTimer?.invalidate()
         self.task?.cancel()
     }
 
@@ -142,12 +146,33 @@ public class PPSubscriptionDelegate: NSObject, URLSessionDataDelegate {
         for message in messages {
             switch message {
             case Message.keepAlive:
+                print("Reset the heartbeat timeout timer")
+                self.resetHeartbeatTimeoutTimer()
                 break
             case Message.event(let eventId, let headers, let body):
                 self.onEvent?(eventId, headers, body)
             case Message.eos(let statusCode, let headers, let info):
                 self.onEnd?(statusCode, headers, info)
             }
+        }
+    }
+
+    @objc fileprivate func endSubscription() {
+        self.handle(SubscriptionError.heartbeatTimeoutReached)
+    }
+
+    fileprivate func resetHeartbeatTimeoutTimer() {
+        self.heartbeatTimeoutTimer?.invalidate()
+        self.heartbeatTimeoutTimer = nil
+
+        DispatchQueue.main.async {
+            self.heartbeatTimeoutTimer = Timer.scheduledTimer(
+                timeInterval: self.heartbeatTimeout + 2,  // Give the timeout a small amount of leeway
+                target: self,
+                selector: #selector(self.endSubscription),
+                userInfo: nil,
+                repeats: false
+            )
         }
     }
 }

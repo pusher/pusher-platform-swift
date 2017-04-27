@@ -5,22 +5,31 @@ let REALLY_LONG_TIME: Double = 252_460_800
 @objc public class BaseClient: NSObject {
     public var port: Int?
     internal var baseUrlComponents: URLComponents
+    public let subscriptionUrlSession: URLSession
+    public let subscriptionSessionDelegate: SubscriptionSessionDelegate
+
+    // Should be between 30 and 300
+    public let heartbeatTimeout: Int
+
+    // Should be between 0 and 10240 (to avoid 422 response) but URLSession
+    // seems to need 512+ bytes to ensure that it calls didReceiveResponse
+    public let heartbeatInitialSize: Int
+
+    // Set to true if you want to trust all certificates
+    public let insecure: Bool
 
     // TODO: Need to actually use these
     public var clientName: String
     public var clientVersion: String
-
-    public let subscriptionUrlSession: URLSession
-    public let subscriptionSessionDelegate: SubscriptionSessionDelegate
-
-    public let insecure: Bool
 
     public init(
         cluster: String? = nil,
         port: Int? = nil,
         insecure: Bool = false,
         clientName: String = "pusher-platform-swift",
-        clientVersion: String = "0.1.4"
+        clientVersion: String = "0.1.4",
+        heartbeatTimeoutInterval: Int = 60,
+        heartbeatInitialSize: Int = 512
     ) {
         let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
 
@@ -33,14 +42,20 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.insecure = insecure
         self.clientName = clientName
         self.clientVersion = clientVersion
+        self.heartbeatTimeout = heartbeatTimeoutInterval
+        self.heartbeatInitialSize = heartbeatInitialSize
 
-        let sessionConfiguration = URLSessionConfiguration.ephemeral
-        sessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
-        sessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
+        let subscriptionSessionConfiguration = URLSessionConfiguration.default
+        subscriptionSessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
+        subscriptionSessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
+        subscriptionSessionConfiguration.httpAdditionalHeaders = [
+            "X-Heartbeat-Interval": String(self.heartbeatTimeout),
+            "X-Initial-Heartbeat-Size": String(self.heartbeatInitialSize)
+        ]
 
         self.subscriptionSessionDelegate = SubscriptionSessionDelegate(insecure: insecure)
         self.subscriptionUrlSession = URLSession(
-            configuration: sessionConfiguration,
+            configuration: subscriptionSessionConfiguration,
             delegate: subscriptionSessionDelegate,
             delegateQueue: nil
         )
@@ -149,6 +164,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.subscriptionSessionDelegate[task] = subscription
 
         subscription.delegate.task = task
+        subscription.delegate.heartbeatTimeout = Double(self.heartbeatTimeout)
         subscription.delegate.onOpening = onOpening
         subscription.delegate.onOpen = onOpen
         subscription.delegate.onEvent = onEvent
@@ -197,6 +213,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         let subscription = Subscription()
         self.subscriptionSessionDelegate[task] = subscription
         subscription.delegate.task = task
+        subscription.delegate.heartbeatTimeout = Double(self.heartbeatTimeout)
 
         resumableSubscription.subscription = subscription
 
@@ -271,6 +288,7 @@ public enum RequestError: Error {
 
 public enum SubscriptionError: Error {
     case unexpectedError
+    case heartbeatTimeoutReached
 }
 
 public enum HTTPMethod: String {
