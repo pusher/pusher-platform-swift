@@ -9,12 +9,15 @@
 /* Begin PBXBuildFile section */
 		330DD21C1E0C433A00EC251F /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330DD21B1E0C433A00EC251F /* Logger.swift */; };
 		330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E59061DEDD38900C92897 /* ResumableSubscription.swift */; };
-		3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3329F40A1DC0B4C0007B29FF /* Subscription.swift */; };
 		332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* MessageParser.swift */; };
 		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
 		335BCA0D1C38ABF000B47A66 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		337C551E1E02DC8100C5A317 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551D1E02DC8100C5A317 /* Result.swift */; };
-		337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */; };
+		33816B001EB3446900E5A169 /* RetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816AFF1EB3446900E5A169 /* RetryStrategy.swift */; };
+		33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */; };
+		33816B061EB375AA00E5A169 /* PPRequestTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */; };
+		33816B081EB379F800E5A169 /* PPGeneralRequestDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */; };
+		33816B0A1EB37C6F00E5A169 /* PPSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B091EB37C6F00E5A169 /* PPSessionDelegate.swift */; };
 		338290721DF5CEC6008CDC8F /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* App.swift */; };
 		3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */; };
 		33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* Authorizer.swift */; };
@@ -22,7 +25,7 @@
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D2A5AF1E39075100EA7549 /* DummyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2A5AD1E39074800EA7549 /* DummyTests.swift */; };
-		33F37F781E0C20CC0048457F /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* Request.swift */; };
+		33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* PPRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,11 +41,14 @@
 /* Begin PBXFileReference section */
 		330DD21B1E0C433A00EC251F /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		330E59061DEDD38900C92897 /* ResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumableSubscription.swift; sourceTree = "<group>"; };
-		3329F40A1DC0B4C0007B29FF /* Subscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
 		332E05E51DDCA3DB007A55FB /* MessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
 		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		337C551D1E02DC8100C5A317 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SubscriptionSessionDelegate.swift; sourceTree = "<group>"; };
+		33816AFF1EB3446900E5A169 /* RetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetryStrategy.swift; sourceTree = "<group>"; };
+		33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequestOptions.swift; sourceTree = "<group>"; };
+		33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequestTaskDelegate.swift; sourceTree = "<group>"; };
+		33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPGeneralRequestDelegate.swift; sourceTree = "<group>"; };
+		33816B091EB37C6F00E5A169 /* PPSessionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSessionDelegate.swift; sourceTree = "<group>"; };
 		338290711DF5CEC6008CDC8F /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		33831C891A9CF61600B124F1 /* PusherPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PusherPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831C8D1A9CF61600B124F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -54,7 +60,7 @@
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33D2A5AD1E39074800EA7549 /* DummyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DummyTests.swift; path = ../Tests/DummyTests.swift; sourceTree = "<group>"; };
-		33F37F771E0C20CC0048457F /* Request.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		33F37F771E0C20CC0048457F /* PPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +85,6 @@
 			isa = PBXGroup;
 			children = (
 				33831C8B1A9CF61600B124F1 /* Source */,
-				33BB995C1D21225B00B25C2A /* Tests */,
 				33831C8A1A9CF61600B124F1 /* Products */,
 				42D29A655054030A9B238900 /* Frameworks */,
 			);
@@ -100,16 +105,20 @@
 				33935EB21DA54F9400C5C064 /* Authorizers */,
 				338290711DF5CEC6008CDC8F /* App.swift */,
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
-				337C551F1E08341400C5A317 /* SubscriptionSessionDelegate.swift */,
-				3329F40A1DC0B4C0007B29FF /* Subscription.swift */,
+				33816B091EB37C6F00E5A169 /* PPSessionDelegate.swift */,
+				33F37F771E0C20CC0048457F /* PPRequest.swift */,
 				3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */,
-				330E59061DEDD38900C92897 /* ResumableSubscription.swift */,
+				33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */,
+				33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */,
+				33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */,
 				332E05E51DDCA3DB007A55FB /* MessageParser.swift */,
 				332E05E71DDCA919007A55FB /* Message.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
+				330E59061DEDD38900C92897 /* ResumableSubscription.swift */,
 				337C551D1E02DC8100C5A317 /* Result.swift */,
-				33F37F771E0C20CC0048457F /* Request.swift */,
 				330DD21B1E0C433A00EC251F /* Logger.swift */,
+				33816AFF1EB3446900E5A169 /* RetryStrategy.swift */,
+				33BB995C1D21225B00B25C2A /* Tests */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* PusherPlatform.h */,
 			);
@@ -140,6 +149,7 @@
 				33BB99671D21226C00B25C2A /* Info.plist */,
 			);
 			name = Tests;
+			path = ../PusherPlatform;
 			sourceTree = "<group>";
 		};
 		42D29A655054030A9B238900 /* Frameworks */ = {
@@ -269,18 +279,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */,
-				337C55201E08341400C5A317 /* SubscriptionSessionDelegate.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
 				330DD21C1E0C433A00EC251F /* Logger.swift in Sources */,
-				33F37F781E0C20CC0048457F /* Request.swift in Sources */,
+				33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */,
 				337C551E1E02DC8100C5A317 /* Result.swift in Sources */,
-				3329F40B1DC0B4C0007B29FF /* Subscription.swift in Sources */,
+				33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */,
+				33816B0A1EB37C6F00E5A169 /* PPSessionDelegate.swift in Sources */,
 				332E05E81DDCA919007A55FB /* Message.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* HTTPEndpointAuthorizer.swift in Sources */,
+				33816B081EB379F800E5A169 /* PPGeneralRequestDelegate.swift in Sources */,
+				33816B061EB375AA00E5A169 /* PPRequestTaskDelegate.swift in Sources */,
 				33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */,
+				33816B001EB3446900E5A169 /* RetryStrategy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

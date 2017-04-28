@@ -59,6 +59,8 @@ internal struct MessageParser {
                     return nil
                 }
 
+                print("Keep alive received at \(Date().timeIntervalSince1970)")
+
                 return Message.keepAlive
 
             case .event:

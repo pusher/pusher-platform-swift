@@ -13,11 +13,11 @@ import Foundation
         self.client = client ?? BaseClient(cluster: cluster)
     }
 
-    public func request(using generalRequest: GeneralRequest, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
-        let sanitisedPath = sanitise(path: generalRequest.path)
+    public func request(using requestOptions: PPRequestOptions, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
+        let sanitisedPath = sanitise(path: requestOptions.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-        let mutableBaseClientRequest = generalRequest
+        let mutableBaseClientRequest = requestOptions
         mutableBaseClientRequest.path = namespacedPath
 
         if self.authorizer != nil {
@@ -36,18 +36,18 @@ import Foundation
     }
 
     public func subscribe(
-        with subscription: inout Subscription,
-        using subscribeRequest: SubscribeRequest,
+        with subscription: inout PPRequest,
+        using requestOptions: PPRequestOptions,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let sanitisedPath = sanitise(path: subscribeRequest.path)
+        let sanitisedPath = sanitise(path: requestOptions.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-        let mutableBaseClientRequest = subscribeRequest
+        let mutableBaseClientRequest = requestOptions
         mutableBaseClientRequest.path = namespacedPath
 
         if self.authorizer != nil {
@@ -86,7 +86,7 @@ import Foundation
 
     public func subscribeWithResume(
         with resumableSubscription: inout ResumableSubscription,
-        using subscribeRequest: SubscribeRequest,
+        using requestOptions: PPRequestOptions,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
@@ -94,10 +94,10 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let sanitisedPath = sanitise(path: subscribeRequest.path)
+        let sanitisedPath = sanitise(path: requestOptions.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-        let mutableBaseClientRequest = subscribeRequest
+        let mutableBaseClientRequest = requestOptions
         mutableBaseClientRequest.path = namespacedPath
 
         if self.authorizer != nil {
@@ -137,22 +137,22 @@ import Foundation
     }
 
     public func subscribe(
-        using subscribeRequest: SubscribeRequest,
+        using requestOptions: PPRequestOptions,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-    ) -> Subscription {
-        let sanitisedPath = sanitise(path: subscribeRequest.path)
+    ) -> PPRequest {
+        let sanitisedPath = sanitise(path: requestOptions.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-        let mutableBaseClientRequest = subscribeRequest
+        let mutableBaseClientRequest = requestOptions
         mutableBaseClientRequest.path = namespacedPath
 
         // TODO: Maybe Subscription should take the whole request object?
 
-        var subscription = Subscription()
+        var subscription = PPRequest(type: .subscription)
 
         if self.authorizer != nil {
             self.authorizer!.authorize { result in
@@ -189,7 +189,7 @@ import Foundation
     }
 
     public func subscribeWithResume(
-        using subscribeRequest: SubscribeRequest,
+        using requestOptions: PPRequestOptions,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
@@ -197,13 +197,13 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> ResumableSubscription {
-        let sanitisedPath = sanitise(path: subscribeRequest.path)
+        let sanitisedPath = sanitise(path: requestOptions.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
-        let mutableBaseClientRequest = subscribeRequest
+        let mutableBaseClientRequest = requestOptions
         mutableBaseClientRequest.path = namespacedPath
 
-        var resumableSubscription = ResumableSubscription(app: self, request: subscribeRequest)
+        var resumableSubscription = ResumableSubscription(app: self, requestOptions: requestOptions)
 
         if self.authorizer != nil {
             // TODO: Does resumableSubscription need to be weak here?

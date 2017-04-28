@@ -1,25 +1,33 @@
 import Foundation
 
 @objc public class ResumableSubscription: NSObject {
-    public let subscribeRequest: SubscribeRequest
+    public let subscribeRequestOptions: PPRequestOptions
     public var unsubscribed: Bool = false
 
     // TODO: Check memory mangement stuff here - capture list etc
 
     public var onOpen: (() -> Void)? {
         willSet {
-            self.subscription?.delegate.onOpen = {
-                self.handleOnOpen()
-                newValue?()
+            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
+                subDelegate.onOpen = {
+                    self.handleOnOpen()
+                    newValue?()
+                }
+            } else {
+                // TODO: What to do?
             }
         }
     }
 
     public var onOpening: (() -> Void)? {
         willSet {
-            self.subscription?.delegate.onOpening = {
-                self.handleOnOpening()
-                newValue?()
+            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
+                subDelegate.onOpening = {
+                    self.handleOnOpening()
+                    newValue?()
+                }
+            } else {
+                // TODO: What to do?
             }
         }
     }
@@ -28,32 +36,44 @@ import Foundation
 
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
-            self.subscription?.delegate.onEvent = { eventId, headers, data in
-                self.handleOnEvent(eventId: eventId, headers: headers, data: data)
-                newValue?(eventId, headers, data)
+            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
+                subDelegate.onEvent = { eventId, headers, data in
+                    self.handleOnEvent(eventId: eventId, headers: headers, data: data)
+                    newValue?(eventId, headers, data)
+                }
+            } else {
+                // TODO: What to do?
             }
         }
     }
 
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
         willSet {
-            self.subscription?.delegate.onEnd = { statusCode, headers, info in
-                self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
-                newValue?(statusCode, headers, info)
+            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
+                subDelegate.onEnd = { statusCode, headers, info in
+                    self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
+                    newValue?(statusCode, headers, info)
+                }
+            } else {
+                // TODO: What to do?
             }
         }
     }
 
     public var onError: ((Error) -> Void)? {
         willSet {
-            self.subscription?.delegate.onError = { error in
-                self.handleOnError(error: error)
-                newValue?(error)
+            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
+                subDelegate.onError = { error in
+                    self.handleOnError(error: error)
+                    newValue?(error)
+                }
+            } else {
+                // TODO: What to do?
             }
         }
     }
 
-    public internal(set) var subscription: Subscription? = nil
+    public internal(set) var subscription: PPRequest? = nil
     public internal(set) var app: App
     public internal(set) var state: ResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
@@ -66,7 +86,7 @@ import Foundation
         // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?
         // Don't think so, as things like header will probably change depending on context
         app: App,
-        request: SubscribeRequest,
+        requestOptions: PPRequestOptions,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
@@ -75,7 +95,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) {
         self.app = app
-        self.subscribeRequest = request
+        self.subscribeRequestOptions = requestOptions
     }
 
     public func changeState(to newState: ResumableSubscriptionState) {
@@ -102,6 +122,9 @@ import Foundation
     }
 
     public func handleOnError(error: Error) {
+
+        print("Received error and handling it in ResumableSubscription: \(error.localizedDescription)")
+
         // TODO: not always resuming - need to figure out what to do here.
         // We need to be able to differentiate between a recoverable error and
         // errors that mean we need to stop the subscription.
@@ -118,6 +141,8 @@ import Foundation
         }
 
         DispatchQueue.main.async {
+            print("on the main queue about to setup the retry subscription timer")
+
             self.retrySubscriptionTimer = Timer.scheduledTimer(
                 timeInterval: 1.0,
                 target: self,
@@ -139,21 +164,27 @@ import Foundation
     }
 
     internal func setupNewSubscription() {
+        print("in setupNewSubscription")
+
         if let eventId = self.lastEventIdReceived {
             DefaultLogger.Logger.log(message: "Creating new Subscription with Last-Event-ID \(eventId)")
-            self.subscribeRequest.addHeaders(["Last-Event-ID": eventId])
+            self.subscribeRequestOptions.addHeaders(["Last-Event-ID": eventId])
         }
 
-        let newSubscription = self.app.subscribe(
-            using: self.subscribeRequest,
-            onOpening: self.subscription?.delegate.onOpening,
-            onOpen: self.subscription?.delegate.onOpen,
-            onEvent: self.subscription?.delegate.onEvent,
-            onEnd: self.subscription?.delegate.onEnd,
-            onError: self.subscription?.delegate.onError
-        )
+        if let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
+            let newSubscription = self.app.subscribe(
+                using: self.subscribeRequestOptions,
+                onOpening: subscriptionDelegate.onOpening,
+                onOpen: subscriptionDelegate.onOpen,
+                onEvent: subscriptionDelegate.onEvent,
+                onEnd: subscriptionDelegate.onEnd,
+                onError: subscriptionDelegate.onError
+            )
 
-        self.subscription = newSubscription
+            self.subscription = newSubscription
+        } else {
+            // TODO: What the fuck can we do?!
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
+public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     public internal(set) var data: Data = Data()
     public var task: URLSessionDataTask?
 
@@ -11,14 +11,16 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     // data to be received before communicating the error to the handler
     public internal(set) var badResponse: HTTPURLResponse? = nil
 
-    public var onOpening: (() -> Void)?
-    public var onOpen: (() -> Void)?
-    public var onEvent: ((String, [String: String], Any) -> Void)?
-    public var onEnd: ((Int?, [String: String]?, Any?) -> Void)?
-    public var onError: ((Error) -> Void)?
 
-    internal var heartbeatTimeout: Double = 60.0
-    internal var heartbeatTimeoutTimer: Timer? = nil
+    // TODO: Should we use onSuccess and onError or the completionHandler?
+
+//    public var onSuccess: ((Data) -> Void)?
+//    public var onError: ((Error) -> Void)?
+
+    // TODO: Should this be Optional or should it be passed on init?
+    public var completionHandler: ((Result<Data>) -> Void)? = nil
+
+    // TODO: Do we want onError and onSucces?
 
     internal var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? = nil
 
@@ -31,14 +33,11 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
         DefaultLogger.Logger.log(message: "About to cancel task: \(String(describing: self.task?.taskIdentifier))")
 
-        self.heartbeatTimeoutTimer?.invalidate()
         self.task?.cancel()
     }
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let httpResponse = response as? HTTPURLResponse else {
-//            self.onError?(RequestError.invalidHttpResponse(response: response, data: nil))
-
             self.handle(RequestError.invalidHttpResponse(response: response, data: nil))
 
             // TODO: Should this be cancel?
@@ -48,7 +47,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         }
 
         if 200..<300 ~= httpResponse.statusCode {
-            self.onOpen?()
+//            self.onOpen?()
         } else {
 
             // TODO: What do we do if no data is eventually received?
@@ -89,48 +88,30 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             return
         }
 
+        print("APPENDING DATA")
 
-        guard let dataString = String(data: data, encoding: .utf8) else {
-            DefaultLogger.Logger.log(message: "Failed to convert received Data to String for task id \(String(describing: self.task?.taskIdentifier))")
-            return
-        }
-
-        let stringMessages = dataString.components(separatedBy: "\n")
-
-        // No newline character in data received so the received data should be stored, ready
-        // for the next data to be received
-        guard stringMessages.count > 1 else {
-            self.data.append(data)
-            return
-        }
-
-        // TODO: Check that last character of dataString is \n
-
-        let messages = MessageParser.parse(stringMessages: stringMessages)
-        self.handle(messages: messages)
-
-        // If we reached this point we should reset the data to an empty Data
-        self.data = Data()
+        self.data.append(data)
     }
 
     @objc(handleError:)
     internal func handle(_ error: Error?) {
-        self.heartbeatTimeoutTimer?.invalidate()
-        self.heartbeatTimeoutTimer = nil
 
         // TODO: Remove me
 
-        DefaultLogger.Logger.log(message: "In PPSubDel handle(err) for task \(String(describing: self.task?.taskIdentifier))")
+        DefaultLogger.Logger.log(message: "In PPGenReqDel handle(err) for task \(String(describing: self.task?.taskIdentifier))")
 
         guard self.error == nil else {
             DefaultLogger.Logger.log(message: "Subscription to has already communicated an error: \(String(describing: self.error?.localizedDescription))")
             return
         }
 
+        // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
+
         guard error != nil else {
-            let errorToStore = SubscriptionError.unexpectedError
-            self.error = errorToStore
-            self.onError?(errorToStore)
+//            let errorToStore = SubscriptionError.unexpectedError
+//            self.error = errorToStore
+//            self.onError?(errorToStore)
+            self.completionHandler?(.success(self.data))
             return
         }
 
@@ -141,42 +122,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         // checking the response; see above) to the client, as the response-error itself
         // is certain to be more useful
 
-        self.onError?(error!)
+        self.completionHandler?(.failure(error!))
     }
 
-    internal func handle(messages: [Message]) {
-        for message in messages {
-            switch message {
-            case Message.keepAlive:
-                print("Reset the heartbeat timeout timer")
-                self.resetHeartbeatTimeoutTimer()
-                break
-            case Message.event(let eventId, let headers, let body):
-                self.onEvent?(eventId, headers, body)
-            case Message.eos(let statusCode, let headers, let info):
-                self.onEnd?(statusCode, headers, info)
-            }
-        }
-    }
-
-    @objc fileprivate func endSubscription() {
-        self.handle(SubscriptionError.heartbeatTimeoutReached)
-    }
-
-    // TODO: Fix multiple heartbeat timers being created
-
-    fileprivate func resetHeartbeatTimeoutTimer() {
-        self.heartbeatTimeoutTimer?.invalidate()
-        self.heartbeatTimeoutTimer = nil
-
-        DispatchQueue.main.async {
-            self.heartbeatTimeoutTimer = Timer.scheduledTimer(
-                timeInterval: self.heartbeatTimeout + 2,  // Give the timeout a small amount of leeway
-                target: self,
-                selector: #selector(self.endSubscription),
-                userInfo: nil,
-                repeats: false
-            )
-        }
-    }
 }
