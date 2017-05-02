@@ -2,50 +2,45 @@ import Foundation
 
 public class HTTPEndpointAuthorizer: Authorizer {
     public var url: String
+
+    // TODO: Seems like there is a better name for this
+
     public var requestInjector: ((HTTPEndpointAuthorizerRequest) -> (HTTPEndpointAuthorizerRequest))?
     public var accessToken: String? = nil
     public var refreshToken: String? = nil
     public internal(set) var accessTokenExpiresAt: Double? = nil
+    public var retryStrategy: PPRetryStrategy
 
-    public var maxNumberOfAttempts: Int? = 5
-    public internal(set) var numberOfAttempts: Int = 0
-    public var maxGapInSecondsBetweenAttempts: TimeInterval? = nil
-
-    public init(url: String, requestInjector: ((HTTPEndpointAuthorizerRequest) -> (HTTPEndpointAuthorizerRequest))? = nil) {
+    public init(
+        url: String,
+        requestInjector: ((HTTPEndpointAuthorizerRequest) -> (HTTPEndpointAuthorizerRequest))? = nil,
+        retryStrategy: PPRetryStrategy = PPDefaultRetryStrategy()
+    ) {
         self.url = url
         self.requestInjector = requestInjector
+        self.retryStrategy = retryStrategy
     }
 
     public func authorize(completionHandler: @escaping (Result<String>) -> Void) {
+
         // TODO: [unowned self] ?
+
         let retryAwareCompletionHandler = { (result: Result<String>) in
             switch result {
             case .success(let token):
-                self.numberOfAttempts = 0
+                self.retryStrategy.requestSucceeded()
                 completionHandler(.success(token))
             case .failure(let err):
-                self.numberOfAttempts += 1
+                if let retryTimeInterval = self.retryStrategy.shouldRetry(given: err) {
 
-                guard self.maxNumberOfAttempts != nil && self.numberOfAttempts < self.maxNumberOfAttempts! else {
-                    DefaultLogger.Logger.log(message: "Maximum number of auth attempts (\(self.maxNumberOfAttempts!)) made by HTTPEndpointAuthorizer. Latest error: \(err)")
-                    completionHandler(.failure(err))
-                    return
-                }
+                    // TODO: [unowned self] here as well?
 
-                let timeIntervalBeforeNextAttempt = TimeInterval(self.numberOfAttempts * self.numberOfAttempts)
-                let timeBeforeNextAttempt = self.maxGapInSecondsBetweenAttempts != nil ? min(timeIntervalBeforeNextAttempt, self.maxGapInSecondsBetweenAttempts!)
-                                                                                       : timeIntervalBeforeNextAttempt
-
-                if self.maxNumberOfAttempts != nil {
-                    DefaultLogger.Logger.log(message: "HTTPEndpointAuthorizer error occurred. Making attempt \(self.numberOfAttempts + 1) of \(self.maxNumberOfAttempts!) in \(timeBeforeNextAttempt)s. Error was: \(err)")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + retryTimeInterval, execute: { [unowned self] in
+                        self.authorize(completionHandler: completionHandler)
+                    })
                 } else {
-                    DefaultLogger.Logger.log(message: "HTTPEndpointAuthorizer error occurred. Making attempt \(self.numberOfAttempts + 1) in \(timeBeforeNextAttempt)s. Error was: \(err)")
+                    completionHandler(.failure(err))
                 }
-
-                // TODO: [unowned self] here as well?
-                DispatchQueue.main.asyncAfter(deadline: .now() + timeBeforeNextAttempt, execute: { [unowned self] in
-                    self.authorize(completionHandler: completionHandler)
-                })
             }
         }
 
@@ -205,6 +200,8 @@ public class HTTPEndpointAuthorizerRequest {
         self.queryItems = queryItems
     }
 }
+
+// TODO: LocalizedDescription
 
 public enum HTTPEndpointAuthorizerError: Error {
     case maxNumberOfRetriesReached

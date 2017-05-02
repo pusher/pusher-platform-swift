@@ -37,8 +37,6 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let httpResponse = response as? HTTPURLResponse else {
-//            self.onError?(RequestError.invalidHttpResponse(response: response, data: nil))
-
             self.handle(RequestError.invalidHttpResponse(response: response, data: nil))
 
             // TODO: Should this be cancel?

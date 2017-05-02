@@ -101,7 +101,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
         DefaultLogger.Logger.log(message: "In PPGenReqDel handle(err) for task \(String(describing: self.task?.taskIdentifier))")
 
         guard self.error == nil else {
-            DefaultLogger.Logger.log(message: "Subscription to has already communicated an error: \(String(describing: self.error?.localizedDescription))")
+            DefaultLogger.Logger.log(message: "Request to has already communicated an error: \(String(describing: self.error?.localizedDescription))")
             return
         }
 
@@ -116,6 +116,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
         }
 
         self.error = error
+
 
         // TOOD: Maybe check if error!.localizedDescription == "cancelled" to see if we
         // shouldn't report the fact that the task was cancelled (liklely as a result of

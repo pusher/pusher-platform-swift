@@ -24,6 +24,11 @@ let REALLY_LONG_TIME: Double = 252_460_800
     // Set to true if you want to trust all certificates
     public let insecure: Bool
 
+    // TODO: Finish explaining how it works
+
+    // If you want to provide
+    public var retryStrategyBuilder: (() -> PPRetryStrategy)?
+
     // TODO: Need to actually use these
     public var clientName: String
     public var clientVersion: String
@@ -34,6 +39,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
         insecure: Bool = false,
         clientName: String = "pusher-platform-swift",
         clientVersion: String = "0.1.4",
+
+        // TODO: @autoclosure ?
+        retryStrategyBuilder: (() -> PPRetryStrategy)? = nil,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 512
     ) {
@@ -48,6 +56,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.insecure = insecure
         self.clientName = clientName
         self.clientVersion = clientVersion
+        self.retryStrategyBuilder = retryStrategyBuilder
         self.heartbeatTimeout = heartbeatTimeoutInterval
         self.heartbeatInitialSize = heartbeatInitialSize
 
@@ -108,7 +117,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
             return
         }
 
+        if requestOptions.retryStrategy == nil {
+            requestOptions.retryStrategy = PPDefaultRetryStrategy()
+        }
+
         let generalRequest = PPRequest(type: .general)
+
+        // TODO: Probably move this to initializer
+
+        generalRequest.options = requestOptions
+
 
         self.sessionDelegate[task] = generalRequest
 
@@ -164,6 +182,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         self.sessionDelegate[task] = subscription
 
+        subscription.options = requestOptions
+
         if let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate {
             subscriptionDelegate.task = task
             subscriptionDelegate.heartbeatTimeout = Double(self.heartbeatTimeout)
@@ -216,6 +236,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         let subscription = PPRequest(type: .subscription)
+
+        subscription.options = requestOptions
+
         self.sessionDelegate[task] = subscription
 
         if let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate {

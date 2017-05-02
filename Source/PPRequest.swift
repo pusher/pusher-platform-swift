@@ -4,6 +4,12 @@ public class PPRequest {
 
     internal let delegate: PPRequestTaskDelegate
 
+    // TOOD: Set options when needed, otherwise take provided value
+
+    // TODO: Should I be Optional? Who should be able to set me?
+
+    public var options: PPRequestOptions? = nil
+
     // TODO: Fix this - this is just wrong
 
 //    public internal(set) var state: SubscriptionState = .opening

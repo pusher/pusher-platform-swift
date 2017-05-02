@@ -10,19 +10,22 @@ public class PPRequestOptions {
     public internal(set) var queryItems: [URLQueryItem]
     public internal(set) var headers: [String: String]
     public let body: Data?
+    public var retryStrategy: PPRetryStrategy?
 
     public init(
         method: String,
         path: String,
         queryItems: [URLQueryItem] = [],
         headers: [String: String] = [:],
-        body: Data? = nil
+        body: Data? = nil,
+        retryStrategy: PPRetryStrategy? = nil
     ) {
         self.method = method
         self.path = path
         self.queryItems = queryItems
         self.headers = headers
         self.body = body
+        self.retryStrategy = retryStrategy
     }
 
     public func addHeaders(_ newHeaders: [String: String]) {

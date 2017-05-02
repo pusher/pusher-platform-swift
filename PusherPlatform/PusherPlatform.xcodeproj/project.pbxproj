@@ -13,7 +13,7 @@
 		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
 		335BCA0D1C38ABF000B47A66 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		337C551E1E02DC8100C5A317 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337C551D1E02DC8100C5A317 /* Result.swift */; };
-		33816B001EB3446900E5A169 /* RetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816AFF1EB3446900E5A169 /* RetryStrategy.swift */; };
+		33816B001EB3446900E5A169 /* PPRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */; };
 		33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */; };
 		33816B061EB375AA00E5A169 /* PPRequestTaskDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */; };
 		33816B081EB379F800E5A169 /* PPGeneralRequestDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */; };
@@ -25,6 +25,7 @@
 		33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* BaseClient.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D2A5AF1E39075100EA7549 /* DummyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2A5AD1E39074800EA7549 /* DummyTests.swift */; };
+		33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */; };
 		33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* PPRequest.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,7 +45,7 @@
 		332E05E51DDCA3DB007A55FB /* MessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
 		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		337C551D1E02DC8100C5A317 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
-		33816AFF1EB3446900E5A169 /* RetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RetryStrategy.swift; sourceTree = "<group>"; };
+		33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRetryStrategy.swift; sourceTree = "<group>"; };
 		33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequestOptions.swift; sourceTree = "<group>"; };
 		33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequestTaskDelegate.swift; sourceTree = "<group>"; };
 		33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPGeneralRequestDelegate.swift; sourceTree = "<group>"; };
@@ -60,6 +61,7 @@
 		33935EAF1DA53BCF00C5C064 /* BaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClient.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33D2A5AD1E39074800EA7549 /* DummyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DummyTests.swift; path = ../Tests/DummyTests.swift; sourceTree = "<group>"; };
+		33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultRetryStrategy.swift; sourceTree = "<group>"; };
 		33F37F771E0C20CC0048457F /* PPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -107,17 +109,18 @@
 				33935EAF1DA53BCF00C5C064 /* BaseClient.swift */,
 				33816B091EB37C6F00E5A169 /* PPSessionDelegate.swift */,
 				33F37F771E0C20CC0048457F /* PPRequest.swift */,
+				33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */,
+				33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */,
 				3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */,
 				33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */,
-				33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */,
-				33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */,
 				332E05E51DDCA3DB007A55FB /* MessageParser.swift */,
 				332E05E71DDCA919007A55FB /* Message.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
 				330E59061DEDD38900C92897 /* ResumableSubscription.swift */,
+				33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */,
+				33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */,
 				337C551D1E02DC8100C5A317 /* Result.swift */,
 				330DD21B1E0C433A00EC251F /* Logger.swift */,
-				33816AFF1EB3446900E5A169 /* RetryStrategy.swift */,
 				33BB995C1D21225B00B25C2A /* Tests */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* PusherPlatform.h */,
@@ -280,6 +283,7 @@
 			files = (
 				330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
+				33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */,
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
 				330DD21C1E0C433A00EC251F /* Logger.swift in Sources */,
@@ -293,7 +297,7 @@
 				33816B081EB379F800E5A169 /* PPGeneralRequestDelegate.swift in Sources */,
 				33816B061EB375AA00E5A169 /* PPRequestTaskDelegate.swift in Sources */,
 				33935EA81DA5399A00C5C064 /* Authorizer.swift in Sources */,
-				33816B001EB3446900E5A169 /* RetryStrategy.swift in Sources */,
+				33816B001EB3446900E5A169 /* PPRetryStrategy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,8 +1,16 @@
 import Foundation
 
 @objc public class ResumableSubscription: NSObject {
-    public let subscribeRequestOptions: PPRequestOptions
-    public var unsubscribed: Bool = false
+    public let requestOptions: PPRequestOptions
+    public internal(set) var unsubscribed: Bool = false
+    public internal(set) var subscription: PPRequest? = nil
+    public internal(set) var app: App
+    public internal(set) var state: ResumableSubscriptionState = .opening
+    public internal(set) var lastEventIdReceived: String? = nil
+
+    public var retryStrategy: PPRetryStrategy = PPDefaultRetryStrategy()
+
+    internal var retrySubscriptionTimer: Timer? = nil
 
     // TODO: Check memory mangement stuff here - capture list etc
 
@@ -73,20 +81,15 @@ import Foundation
         }
     }
 
-    public internal(set) var subscription: PPRequest? = nil
-    public internal(set) var app: App
-    public internal(set) var state: ResumableSubscriptionState = .opening
-    public internal(set) var lastEventIdReceived: String? = nil
-
-//    public var retryStrategy: RetryStrategy = DefaultRetryStrategy()
-
-    internal var retrySubscriptionTimer: Timer? = nil
-
     public init(
         // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?
         // Don't think so, as things like header will probably change depending on context
         app: App,
         requestOptions: PPRequestOptions,
+
+        // TODO: Do we want to be able to pass these on init? I think they just get passed through
+        // on subscribe function calls and then eventually get set directly in the BaseClient
+
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
@@ -95,7 +98,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) {
         self.app = app
-        self.subscribeRequestOptions = requestOptions
+        self.requestOptions = requestOptions
     }
 
     public func changeState(to newState: ResumableSubscriptionState) {
@@ -111,6 +114,7 @@ import Foundation
 
     public func handleOnOpen() {
         self.changeState(to: .open)
+        self.retryStrategy.requestSucceeded()
     }
 
     public func handleOnResuming() {
@@ -123,6 +127,9 @@ import Foundation
 
     public func handleOnError(error: Error) {
 
+        // TODO: Check how many times this can be called
+        // TODO: Check which errors to pass to RetryStrategy
+
         print("Received error and handling it in ResumableSubscription: \(error.localizedDescription)")
 
         // TODO: not always resuming - need to figure out what to do here.
@@ -132,6 +139,7 @@ import Foundation
         // Then we'd set the state to closed and not try and create a new subscription.
 
         guard !self.unsubscribed else {
+            // TODO: Really? Does this make sense?
             self.changeState(to: .ended)
             return
         }
@@ -140,17 +148,21 @@ import Foundation
             self.changeState(to: .resuming)
         }
 
-        DispatchQueue.main.async {
-            print("on the main queue about to setup the retry subscription timer")
-
-            self.retrySubscriptionTimer = Timer.scheduledTimer(
-                timeInterval: 1.0,
-                target: self,
-                selector: #selector(self.setupNewSubscription),
-                userInfo: nil,
-                repeats: false
-            )
+        if let retryWaitTimeInterval = self.retryStrategy.shouldRetry(given: error) {
+            DispatchQueue.main.async {
+                self.retrySubscriptionTimer = Timer.scheduledTimer(
+                    timeInterval: retryWaitTimeInterval,
+                    target: self,
+                    selector: #selector(self.setupNewSubscription),
+                    userInfo: nil,
+                    repeats: false
+                )
+            }
+        } else {
+            // TODO: Log about not retrying subscription?
         }
+
+        // TODO: Should we
     }
 
     public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any? = nil) {
@@ -160,20 +172,20 @@ import Foundation
 //            return
 //        }
 
+        // TODO: Probably need to invalidate the retryTimer
+
         self.changeState(to: .ended)
     }
 
     internal func setupNewSubscription() {
-        print("in setupNewSubscription")
-
         if let eventId = self.lastEventIdReceived {
             DefaultLogger.Logger.log(message: "Creating new Subscription with Last-Event-ID \(eventId)")
-            self.subscribeRequestOptions.addHeaders(["Last-Event-ID": eventId])
+            self.requestOptions.addHeaders(["Last-Event-ID": eventId])
         }
 
         if let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
             let newSubscription = self.app.subscribe(
-                using: self.subscribeRequestOptions,
+                using: self.requestOptions,
                 onOpening: subscriptionDelegate.onOpening,
                 onOpen: subscriptionDelegate.onOpen,
                 onEvent: subscriptionDelegate.onEvent,
