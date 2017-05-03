@@ -5,37 +5,46 @@ import Foundation
 @objc public class PPRetryableGeneralRequest: NSObject {
     public let requestOptions: PPRequestOptions
     public internal(set) var app: App
-    public var retryStrategy: PPRetryStrategy? = nil
-
     public internal(set) var generalRequest: PPRequest? = nil
-
+    public var retryStrategy: PPRetryStrategy? = nil
+    public var logger: PPLogger? = nil
     internal var retryRequestTimer: Timer? = nil
 
     public var onSuccess: ((Data) -> Void)? {
         willSet {
-            if let genReqDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate {
-                genReqDelegate.onSuccess = { data in
-                    self.handleOnSuccess(data)
-                    newValue?(data)
-                }
-            } else {
-                // TODO: What to do?
+            guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
+                self.logger?.log(
+                    "Invalid delegate for general request: \(String(describing: self.generalRequest))",
+                    logLevel: .error
+                )
+                return
+            }
+
+            generalRequestDelegate.onSuccess = { data in
+                self.handleOnSuccess(data)
+                newValue?(data)
             }
         }
     }
 
     public var onError: ((Error) -> Void)? {
         willSet {
-            if let genReqDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate {
-                genReqDelegate.onError = { error in
-                    self.handleOnError(error: error)
-                    newValue?(error)
-                }
-            } else {
-                // TODO: What to do?
+            guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
+                self.logger?.log(
+                    "Invalid delegate for general request: \(String(describing: self.generalRequest))",
+                    logLevel: .error
+                )
+                return
+            }
+
+            generalRequestDelegate.onError = { error in
+                self.handleOnError(error: error)
+                newValue?(error)
             }
         }
     }
+
+    // TODO: Figure out when / if this should be used
 
     public var onRetry: ((Error?) -> Void)?
 
@@ -49,16 +58,13 @@ import Foundation
         self.retryRequestTimer?.invalidate()
     }
 
-    public func handleOnSuccess(_ data: Data) {
-        print("HANDLING ON SUCCESS IN PPRETRYABLEGENERALREQUEST")
-    }
+    // TODO: What is this doing?
+    public func handleOnSuccess(_ data: Data) {}
 
     public func handleOnError(error: Error) {
 
         // TODO: Check how many times this can be called
         // TODO: Check which errors to pass to RetryStrategy
-
-        print("Received error and handling it in PPRetryableGeneralRequest: \(error.localizedDescription)")
 
         // TODO: not always retrying - need to figure out what to do here.
         // We need to be able to differentiate between a recoverable error and
@@ -75,7 +81,7 @@ import Foundation
 //        }
 
         guard let retryStrategy = self.retryStrategy else {
-            // TODO: Log about not retrying request because no retry strategy
+            self.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             return
         }
 
@@ -89,23 +95,23 @@ import Foundation
                     repeats: false
                 )
             }
-        } else {
-            // TODO: Log about not retrying request because retry strategy said so
-        }
-    }
+        }    }
 
     internal func retryRequest() {
-        if let genReqDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate {
-
-            let newRequest = self.app.request(
-                using: self.requestOptions,
-                onSuccess: genReqDelegate.onSuccess,
-                onError: genReqDelegate.onError
+        guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
+            self.logger?.log(
+                "Invalid delegate for general request: \(String(describing: self.generalRequest))",
+                logLevel: .error
             )
-
-            self.generalRequest = newRequest
-        } else {
-            // TODO: What the fuck can we do?!
+            return
         }
+
+        let newRequest = self.app.request(
+            using: self.requestOptions,
+            onSuccess: generalRequestDelegate.onSuccess,
+            onError: generalRequestDelegate.onError
+        )
+
+        self.generalRequest = newRequest
     }
 }

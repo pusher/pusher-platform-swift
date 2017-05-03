@@ -1,11 +1,10 @@
 import Foundation
 
-// TODO: Should this be public?
-
 internal protocol PPRequestTaskDelegate {
     var data: Data { get set }
     var task: URLSessionDataTask? { get set }
     var error: Error? { get set }
+    var logger: PPLogger? { get set }
 
     // If there's a bad response status code then we need to wait for
     // data to be received before communicating the error to the handler

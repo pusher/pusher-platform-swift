@@ -22,15 +22,19 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     internal var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? = nil
 
+    public var logger: PPLogger? = nil
+
+    internal lazy var messageParser: MessageParser = {
+        let messageParser = MessageParser(logger: self.logger)
+        return messageParser
+    }()
+
     public required init(task: URLSessionDataTask? = nil) {
         self.task = task
     }
 
     deinit {
-        // TODO: Remove me - although it doesn't seem to currently be called (see notes in notebook)
-
-        DefaultLogger.Logger.log(message: "About to cancel task: \(String(describing: self.task?.taskIdentifier))")
-
+        self.logger?.log("Cancelling task: \(String(describing: self.task?.taskIdentifier))", logLevel: .verbose)
         self.heartbeatTimeoutTimer?.invalidate()
         self.task?.cancel()
     }
@@ -89,7 +93,10 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
 
         guard let dataString = String(data: data, encoding: .utf8) else {
-            DefaultLogger.Logger.log(message: "Failed to convert received Data to String for task id \(String(describing: self.task?.taskIdentifier))")
+            self.logger?.log(
+                "Failed to convert received Data to String for task id \(String(describing: self.task?.taskIdentifier))",
+                logLevel: .verbose
+            )
             return
         }
 
@@ -104,7 +111,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
         // TODO: Check that last character of dataString is \n
 
-        let messages = MessageParser.parse(stringMessages: stringMessages)
+        let messages = self.messageParser.parse(stringMessages: stringMessages)
         self.handle(messages: messages)
 
         // If we reached this point we should reset the data to an empty Data
@@ -117,11 +124,13 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.heartbeatTimeoutTimer = nil
 
         // TODO: Remove me
-
-        DefaultLogger.Logger.log(message: "In PPSubDel handle(err) for task \(String(describing: self.task?.taskIdentifier))")
+        self.logger?.log("In PPSubDel handle(err) for task \(String(describing: self.task?.taskIdentifier))", logLevel: .verbose)
 
         guard self.error == nil else {
-            DefaultLogger.Logger.log(message: "Subscription to has already communicated an error: \(String(describing: self.error?.localizedDescription))")
+            self.logger?.log(
+                "Subscription to has already communicated an error: \(String(describing: self.error?.localizedDescription))",
+                logLevel: .debug
+            )
             return
         }
 
@@ -146,7 +155,6 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         for message in messages {
             switch message {
             case Message.keepAlive:
-                print("Reset the heartbeat timeout timer")
                 self.resetHeartbeatTimeoutTimer()
                 break
             case Message.event(let eventId, let headers, let body):
@@ -161,7 +169,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.handleCompletion(error: SubscriptionError.heartbeatTimeoutReached)
     }
 
-    // TODO: Fix multiple heartbeat timers being created
+    // TODO: Fix multiple heartbeat timers being created in certain circumstances
 
     fileprivate func resetHeartbeatTimeoutTimer() {
         self.heartbeatTimeoutTimer?.invalidate()

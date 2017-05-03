@@ -1,38 +1,39 @@
 import Foundation
 
-@objc public protocol Logger: class {
-    func log(message: String)
+public enum PPLogLevel: Int, Comparable {
+    case verbose = 1, debug, info, warning, error
+
+    public static func < (a: PPLogLevel, b: PPLogLevel) -> Bool {
+        return a.rawValue < b.rawValue
+    }
+
+    public func stringRepresentation() -> String {
+        switch self {
+        case .verbose: return "VERBOSE"
+        case .debug: return "DEBUG"
+        case .info: return "INFO"
+        case .warning: return "WARNING"
+        case .error: return "ERROR"
+        }
+    }
+
 }
 
-@objc public class DefaultLogger: NSObject, Logger {
-    static public var Logger: Logger = DefaultLogger()
-    internal let logQueue = DispatchQueue(label: "com.pusherplatform.swift.logger")
+public protocol PPLogger {
+    func log(_ message: @autoclosure @escaping () -> String, logLevel: PPLogLevel)
+}
 
-    public func log(message: String) {
-        logQueue.async {
-            print(message)
+public class PPDefaultLogger {
+    public var minimumLogLevel: PPLogLevel = .debug
+    internal let logQueue = DispatchQueue(label: "com.pusherplatform.swift.defaultlogger")
+}
+
+extension PPDefaultLogger: PPLogger {
+    public func log(_ message: @autoclosure @escaping () -> String, logLevel: PPLogLevel) {
+        if logLevel >= minimumLogLevel {
+            logQueue.async {
+                print("[\(logLevel.stringRepresentation())] \(message())")
+            }
         }
     }
 }
-
-
-
-//public protocol PPLogger {
-//    func log(message: String)
-//}
-//
-//public struct PPDefaultLogger: PPLogger {
-//    public static let sharedInstance = PPDefaultLogger()
-//    internal let logQueue = DispatchQueue(label: "com.pusherplatform.swift.logger")
-//
-//    public func log(message: String) {
-//        logQueue.async {
-//            print(message)
-//        }
-//    }
-//}
-//
-//public enum PPLoggerType {
-//    case `default`
-//    case provided(PPLogger)
-//}

@@ -2,41 +2,49 @@ import Foundation
 
 @objc public class ResumableSubscription: NSObject {
     public let requestOptions: PPRequestOptions
-    public internal(set) var unsubscribed: Bool = false
-    public internal(set) var subscription: PPRequest? = nil
     public internal(set) var app: App
+    public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: ResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
-
+    public internal(set) var subscription: PPRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
-
+    public var logger: PPLogger? = nil
     internal var retrySubscriptionTimer: Timer? = nil
 
     // TODO: Check memory mangement stuff here - capture list etc
 
     public var onOpen: (() -> Void)? {
         willSet {
-            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
-                subDelegate.onOpen = {
-                    self.handleOnOpen()
-                    newValue?()
-                }
-            } else {
-                // TODO: What to do?
+            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+                self.logger?.log(
+                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    logLevel: .error
+                )
+                return
+            }
+
+            subDelegate.onOpen = {
+                self.handleOnOpen()
+                newValue?()
             }
         }
     }
 
     public var onOpening: (() -> Void)? {
         willSet {
-            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
-                subDelegate.onOpening = {
-                    self.handleOnOpening()
-                    newValue?()
-                }
-            } else {
-                // TODO: What to do?
+            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+                self.logger?.log(
+                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    logLevel: .error
+                )
+                return
             }
+
+            subDelegate.onOpening = {
+                self.handleOnOpening()
+                newValue?()
+            }
+
         }
     }
 
@@ -44,39 +52,51 @@ import Foundation
 
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
-            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
-                subDelegate.onEvent = { eventId, headers, data in
-                    self.handleOnEvent(eventId: eventId, headers: headers, data: data)
-                    newValue?(eventId, headers, data)
-                }
-            } else {
-                // TODO: What to do?
+            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+                self.logger?.log(
+                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    logLevel: .error
+                )
+                return
+            }
+
+            subDelegate.onEvent = { eventId, headers, data in
+                self.handleOnEvent(eventId: eventId, headers: headers, data: data)
+                newValue?(eventId, headers, data)
             }
         }
     }
 
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
         willSet {
-            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
-                subDelegate.onEnd = { statusCode, headers, info in
-                    self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
-                    newValue?(statusCode, headers, info)
-                }
-            } else {
-                // TODO: What to do?
+            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+                self.logger?.log(
+                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    logLevel: .error
+                )
+                return
+            }
+
+            subDelegate.onEnd = { statusCode, headers, info in
+                self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
+                newValue?(statusCode, headers, info)
             }
         }
     }
 
     public var onError: ((Error) -> Void)? {
         willSet {
-            if let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
-                subDelegate.onError = { error in
-                    self.handleOnError(error: error)
-                    newValue?(error)
-                }
-            } else {
-                // TODO: What to do?
+            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+                self.logger?.log(
+                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    logLevel: .error
+                )
+                return
+            }
+
+            subDelegate.onError = { error in
+                self.handleOnError(error: error)
+                newValue?(error)
             }
         }
     }
@@ -119,8 +139,6 @@ import Foundation
         // TODO: Check how many times this can be called
         // TODO: Check which errors to pass to RetryStrategy
 
-        print("Received error and handling it in ResumableSubscription: \(error.localizedDescription)")
-
         // TODO: not always resuming - need to figure out what to do here.
         // We need to be able to differentiate between a recoverable error and
         // errors that mean we need to stop the subscription.
@@ -138,7 +156,7 @@ import Foundation
         }
 
         guard let retryStrategy = self.retryStrategy else {
-            // TODO: Log about not retrying request because no retry strategy
+            self.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             return
         }
 
@@ -153,11 +171,7 @@ import Foundation
                     repeats: false
                 )
             }
-        } else {
-            // TODO: Log about not retrying subscription?
         }
-
-        // TODO: Should we
     }
 
     public func handleOnEnd(statusCode: Int? = nil, headers: [String: String]? = nil, info: Any? = nil) {
@@ -167,31 +181,31 @@ import Foundation
 //            return
 //        }
 
-        // TODO: Probably need to invalidate the retryTimer
-
+        self.retrySubscriptionTimer?.invalidate()
         self.changeState(to: .ended)
     }
 
     internal func setupNewSubscription() {
         if let eventId = self.lastEventIdReceived {
-            DefaultLogger.Logger.log(message: "Creating new Subscription with Last-Event-ID \(eventId)")
+            self.logger?.log("Creating new Subscription with Last-Event-ID \(eventId)", logLevel: .debug)
             self.requestOptions.addHeaders(["Last-Event-ID": eventId])
         }
 
-        if let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate {
-            let newSubscription = self.app.subscribe(
-                using: self.requestOptions,
-                onOpening: subscriptionDelegate.onOpening,
-                onOpen: subscriptionDelegate.onOpen,
-                onEvent: subscriptionDelegate.onEvent,
-                onEnd: subscriptionDelegate.onEnd,
-                onError: subscriptionDelegate.onError
-            )
-
-            self.subscription = newSubscription
-        } else {
-            // TODO: What the fuck can we do?!
+        guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+            self.logger?.log("Invalid delegate for subscription: \(String(describing: self.subscription))", logLevel: .error)
+            return
         }
+
+        let newSubscription = self.app.subscribe(
+            using: self.requestOptions,
+            onOpening: subscriptionDelegate.onOpening,
+            onOpen: subscriptionDelegate.onOpen,
+            onEvent: subscriptionDelegate.onEvent,
+            onEnd: subscriptionDelegate.onEnd,
+            onError: subscriptionDelegate.onError
+        )
+
+        self.subscription = newSubscription
     }
 }
 

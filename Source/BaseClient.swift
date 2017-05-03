@@ -12,7 +12,13 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
     public let generalRequestURLSession: URLSession
 
-    public let sessionDelegate: PPSessionDelegate
+    public let sessionDelegate: PPURLSessionDelegate
+
+    public var logger: PPLogger? = nil {
+        willSet {
+            self.sessionDelegate.logger = newValue
+        }
+    }
 
     // Should be between 30 and 300
     public let heartbeatTimeout: Int
@@ -24,12 +30,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
     // Set to true if you want to trust all certificates
     public let insecure: Bool
 
-    // TODO: Finish explaining how it works
-
-    // If you want to provide
+    // If you want to provide a closure that builds a PPRetryStrategy based on
+    // a request's options then you can use this property
     public var retryStrategyBuilder: (PPRequestOptions) -> PPRetryStrategy
 
-    // TODO: Need to actually use these
     public var clientName: String
     public var clientVersion: String
 
@@ -39,8 +43,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         insecure: Bool = false,
         clientName: String = "pusher-platform-swift",
         clientVersion: String = "0.1.4",
-
-        // TODO: @autoclosure ?
         retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = BaseClient.methodAwareRetryStrageyGenerator,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 512
@@ -68,7 +70,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             "X-Initial-Heartbeat-Size": String(self.heartbeatInitialSize)
         ]
 
-        self.sessionDelegate = PPSessionDelegate(insecure: insecure)
+        self.sessionDelegate = PPURLSessionDelegate(insecure: insecure)
 
         self.subscriptionURLSession = URLSession(
             configuration: subscriptionSessionConfiguration,
@@ -126,13 +128,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         generalRequest.options = requestOptions
 
-        if let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate {
-            generalRequestDelegate.task = task
-            generalRequestDelegate.onSuccess = onSuccess
-            generalRequestDelegate.onError = onError
-        } else {
-            // TODO: What the fuck can we do?!
+        guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
+            onError?(BaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
+            return
         }
+
+        // Pass through logger where required
+        generalRequestDelegate.logger = self.logger
+        generalRequestDelegate.task = task
+        generalRequestDelegate.onSuccess = onSuccess
+        generalRequestDelegate.onError = onError
 
         task.resume()
     }
@@ -177,13 +182,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         self.sessionDelegate[task] = generalRequest
 
-        if let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate {
-            generalRequestDelegate.task = task
-            generalRequestDelegate.onSuccess = onSuccess
-            generalRequestDelegate.onError = onError
-        } else {
-            // TODO: What the fuck can we do?!
+        guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
+            onError?(BaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
+            return
         }
+
+        generalRequestDelegate.task = task
 
         retryableGeneralRequest.generalRequest = generalRequest
 
@@ -199,6 +203,11 @@ let REALLY_LONG_TIME: Double = 252_460_800
         retryableGeneralRequest.onSuccess = onSuccess
         retryableGeneralRequest.onError = onError
         retryableGeneralRequest.onRetry = onRetry
+
+        // Pass through logger where required
+        generalRequestDelegate.logger = self.logger
+        retryableGeneralRequest.logger = self.logger
+        (retryableGeneralRequest.retryStrategy as? PPDefaultRetryStrategy)?.logger = self.logger
 
         task.resume()
     }
@@ -216,8 +225,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
         mutableURLComponents.queryItems = requestOptions.queryItems
 
         guard var url = mutableURLComponents.url else {
-            // TODO: Maybe defer calling onError until after returning?
-
             onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
             return
         }
@@ -243,17 +250,22 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         subscription.options = requestOptions
 
-        if let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate {
-            subscriptionDelegate.task = task
-            subscriptionDelegate.heartbeatTimeout = Double(self.heartbeatTimeout)
-            subscriptionDelegate.onOpening = onOpening
-            subscriptionDelegate.onOpen = onOpen
-            subscriptionDelegate.onEvent = onEvent
-            subscriptionDelegate.onEnd = onEnd
-            subscriptionDelegate.onError = onError
-        } else {
-            // TODO: What the fuck can we do?!
+        guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
+            onError?(BaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
+            return
         }
+
+        subscriptionDelegate.task = task
+
+        // Pass through logger where required
+        subscriptionDelegate.logger = self.logger
+
+        subscriptionDelegate.heartbeatTimeout = Double(self.heartbeatTimeout)
+        subscriptionDelegate.onOpening = onOpening
+        subscriptionDelegate.onOpen = onOpen
+        subscriptionDelegate.onEvent = onEvent
+        subscriptionDelegate.onEnd = onEnd
+        subscriptionDelegate.onError = onError
 
         task.resume()
     }
@@ -300,12 +312,13 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         self.sessionDelegate[task] = subscription
 
-        if let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate {
-            subscriptionDelegate.task = task
-            subscriptionDelegate.heartbeatTimeout = Double(self.heartbeatTimeout)
-        } else {
-            // TODO: What the fuck can we do?!
+        guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
+            onError?(BaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
+            return
         }
+
+        subscriptionDelegate.task = task
+        subscriptionDelegate.heartbeatTimeout = Double(self.heartbeatTimeout)
 
         // Retry strategy from PPRequestOptions takes precedent, otherwise falls back to the
         // PPRetryStrategy set in the BaseClient, which is PPDefaultRetryStrategy unless
@@ -317,13 +330,17 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         resumableSubscription.subscription = subscription
-
         resumableSubscription.onOpening = onOpening
         resumableSubscription.onOpen = onOpen
         resumableSubscription.onResuming = onResuming
         resumableSubscription.onEvent = onEvent
         resumableSubscription.onEnd = onEnd
         resumableSubscription.onError = onError
+
+        // Pass through logger where required
+        subscriptionDelegate.logger = self.logger
+        resumableSubscription.logger = self.logger
+        (resumableSubscription.retryStrategy as? PPDefaultRetryStrategy)?.logger = self.logger
 
         task.resume()
     }
@@ -366,11 +383,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
 // TODO: LocalizedError
 
-public enum BaseClientError: Error {
+internal enum BaseClientError: Error {
     case invalidUrl(components: URLComponents)
     case preExistingTaskIdentifierForRequest
     case noTasksForSubscriptionUrlSession(URLSession)
     case noTaskWithMatchingTaskIdentifierFound(taskId: Int, session: URLSession)
+    case requestHasInvalidDelegate(request: PPRequest, delegate: PPRequestTaskDelegate)
 }
 
 //extension BaseClientError: LocalizedError {

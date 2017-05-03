@@ -1,76 +1,81 @@
 import Foundation
 
-internal struct MessageParser {
-    static fileprivate func parseMessageTypeCode(messageTypeCode: Int) -> MessageType? {
-        switch messageTypeCode {
-        case 0: return .keepAlive
-        case 1: return .event
-        case 255: return .eos
-        default: return nil
-        }
+internal class MessageParser {
+    internal var logger: PPLogger?
+
+    init(logger: PPLogger?) {
+        self.logger = logger
     }
 
     // Parse errors are truly unexpected here - we trust the server to give us good data
-    static internal func parse(stringMessages: [String]) -> [Message] {
+    internal func parse(stringMessages: [String]) -> [Message] {
         return stringMessages.flatMap { stringMessage -> Message? in
             guard stringMessage != "" else {
                 return nil
             }
 
             guard let stringMessageData = stringMessage.data(using: .utf8) else {
-                DefaultLogger.Logger.log(message: "Failed to convert message String to Data: \(stringMessage)")
+                self.logger?.log(
+                    "Failed to convert message String to Data: \(stringMessage)",
+                    logLevel: .debug
+                )
                 return nil
             }
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: stringMessageData, options: []) else {
-                DefaultLogger.Logger.log(message: "Failed to deserialize received string to JSON object: \(stringMessage)")
+                self.logger?.log(
+                    "Failed to deserialize received string to JSON object: \(stringMessage)",
+                    logLevel: .debug
+                )
                 return nil
             }
 
             guard let jsonArray = jsonObject as? [Any] else {
-                DefaultLogger.Logger.log(message: "Failed to cast JSON object to Dictionary: \(jsonObject)")
+                self.logger?.log(
+                    "Failed to cast JSON object to Dictionary: \(jsonObject)", logLevel: .debug)
                 return nil
             }
 
             guard jsonArray.count != 0 else {
-                DefaultLogger.Logger.log(message: "Empty JSON array received")
+                self.logger?.log("Empty JSON array received", logLevel: .debug)
                 return nil
             }
 
             guard let messageTypeCode = jsonArray[0] as? Int else {
-                DefaultLogger.Logger.log(message: "Received invalid message type code: \(jsonArray[0])")
+                self.logger?.log("Received invalid message type code: \(jsonArray[0])", logLevel: .debug)
                 return nil
             }
 
             guard let messageType = parseMessageTypeCode(messageTypeCode: messageTypeCode) else {
-                DefaultLogger.Logger.log(message: "Unknown message type code received: \(messageTypeCode)")
+                self.logger?.log("Unknown message type code received: \(messageTypeCode)", logLevel: .debug)
                 return nil
             }
 
             guard jsonArray.count == messageType.numberOfElements() else {
-                DefaultLogger.Logger.log(message: "Expected \(messageType.numberOfElements()) elements in )message of type \(messageType.rawValue) but received \(jsonArray.count)")
+                self.logger?.log(
+                    "Expected \(messageType.numberOfElements()) elements in )message of type \(messageType.rawValue) but received \(jsonArray.count)",
+                    logLevel: .debug
+                )
                 return nil
             }
 
             switch messageType {
             case .keepAlive:
                 guard let _ = jsonArray[1] as? String else {
-                    DefaultLogger.Logger.log(message: "Received invalid keep-alive data: \(jsonArray[1])")
+                    self.logger?.log("Received invalid keep-alive data: \(jsonArray[1])", logLevel: .debug)
                     return nil
                 }
-
-                print("Keep alive received at \(Date().timeIntervalSince1970)")
 
                 return Message.keepAlive
 
             case .event:
                 guard let eventId = jsonArray[1] as? String else {
-                    DefaultLogger.Logger.log(message: "Received invalid event ID: \(jsonArray[1])")
+                    self.logger?.log("Received invalid event ID: \(jsonArray[1])", logLevel: .debug)
                     return nil
                 }
 
                 guard let headers = jsonArray[2] as? [String: String] else {
-                    DefaultLogger.Logger.log(message: "Received invalid headers: \(jsonArray[2])")
+                    self.logger?.log("Received invalid headers: \(jsonArray[2])", logLevel: .debug)
                     return nil
                 }
 
@@ -80,12 +85,12 @@ internal struct MessageParser {
 
             case .eos:
                 guard let statusCode = jsonArray[1] as? Int else {
-                    DefaultLogger.Logger.log(message: "Received invalid status code: \(jsonArray[1])")
+                    self.logger?.log("Received invalid status code: \(jsonArray[1])", logLevel: .debug)
                     return nil
                 }
 
                 guard let headers = jsonArray[2] as? [String: String] else {
-                    DefaultLogger.Logger.log(message: "Received invalid headers: \(jsonArray[2])")
+                    self.logger?.log("Received invalid headers: \(jsonArray[2])", logLevel: .debug)
                     return nil
                 }
 
@@ -93,6 +98,15 @@ internal struct MessageParser {
 
                 return Message.eos(statusCode: statusCode, headers: headers, errorBody: errorBody)
             }
+        }
+    }
+
+    fileprivate func parseMessageTypeCode(messageTypeCode: Int) -> MessageType? {
+        switch messageTypeCode {
+        case 0: return .keepAlive
+        case 1: return .event
+        case 255: return .eos
+        default: return nil
         }
     }
 

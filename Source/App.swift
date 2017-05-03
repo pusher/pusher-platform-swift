@@ -5,12 +5,21 @@ import Foundation
     public var cluster: String?
     public var authorizer: Authorizer?
     public var client: BaseClient
+    public let logger: PPLogger
 
-    public init(id: String, cluster: String? = nil, authorizer: Authorizer? = nil, client: BaseClient? = nil) {
+    public init(
+        id: String,
+        cluster: String? = nil,
+        authorizer: Authorizer? = nil,
+        client: BaseClient? = nil,
+        logger: PPLogger = PPDefaultLogger()
+    ) {
         self.id = id
         self.cluster = cluster
         self.authorizer = authorizer
         self.client = client ?? BaseClient(cluster: cluster)
+        self.logger = logger
+        self.client.logger = logger
     }
 
     public func request(
@@ -211,8 +220,6 @@ import Foundation
 
         let mutableBaseClientRequest = requestOptions
         mutableBaseClientRequest.path = namespacedPath
-
-        // TODO: Maybe Subscription should take the whole request object?
 
         var subscription = PPRequest(type: .subscription)
 

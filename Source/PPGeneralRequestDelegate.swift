@@ -11,9 +11,12 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     // data to be received before communicating the error to the handler
     public internal(set) var badResponse: HTTPURLResponse? = nil
 
+    public var logger: PPLogger? = nil
+
     public var onSuccess: ((Data) -> Void)?
     public var onError: ((Error) -> Void)?
 
+    // TODO: Is this necessary or will we always receive data on error?
     internal var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? = nil
 
     public required init(task: URLSessionDataTask? = nil) {
@@ -21,29 +24,18 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     deinit {
-        // TODO: Remove me - although it doesn't seem to currently be called (see notes in notebook)
-
-        DefaultLogger.Logger.log(message: "About to cancel task: \(String(describing: self.task?.taskIdentifier))")
-
+        // TODO: Does this ever get called?
         self.task?.cancel()
     }
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let httpResponse = response as? HTTPURLResponse else {
             self.handleCompletion(error: RequestError.invalidHttpResponse(response: response, data: nil))
-
-            // TODO: Should this be cancel?
-
             completionHandler(.cancel)
             return
         }
 
-        if 200..<300 ~= httpResponse.statusCode {
-//            self.onOpen?()
-        } else {
-
-            // TODO: What do we do if no data is eventually received?
-
+        if !(200..<300).contains(httpResponse.statusCode) {
             self.badResponse = httpResponse
         }
 
@@ -52,8 +44,6 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
     @objc(handleData:)
     internal func handle(_ data: Data) {
-        // TODO: Timer stuff below
-
         guard self.badResponse == nil else {
             let error = RequestError.badResponseStatusCode(response: self.badResponse!)
 
@@ -80,36 +70,27 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
             return
         }
 
-        print("APPENDING DATA")
-
         self.data.append(data)
     }
 
     @objc(handleError:)
     internal func handleCompletion(error: Error? = nil) {
-
-        // TODO: Remove me
-
-        DefaultLogger.Logger.log(message: "In PPGenReqDel handle(err) for task \(String(describing: self.task?.taskIdentifier))")
-
         guard self.error == nil else {
-            DefaultLogger.Logger.log(message: "Request to has already communicated an error: \(String(describing: self.error?.localizedDescription))")
+            self.logger?.log(
+                "Request to has already communicated an error: \(String(describing: self.error?.localizedDescription))",
+                logLevel: .debug
+            )
             return
         }
 
         // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
 
         guard let error = error  else {
-//            let errorToStore = SubscriptionError.unexpectedError
-//            self.error = errorToStore
-//            self.onError?(errorToStore)
-
             self.onSuccess?(self.data)
             return
         }
 
         self.error = error
-
         self.onError?(error)
     }
 

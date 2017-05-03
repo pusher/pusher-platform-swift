@@ -1,13 +1,13 @@
 import Foundation
 
-// TODO: Check this stuff
-
 public class PPDefaultRetryStrategy: PPRetryStrategy {
 
     public var maxNumberOfAttempts: Int?
     public var maxTimeIntervalBetweenAttempts: TimeInterval?
 
     public internal(set) var numberOfAttempts: Int = 0
+
+    public var logger: PPLogger? = nil
 
     public init(maxNumberOfAttempts: Int = 6, maxTimeIntervalBetweenAttempts: TimeInterval? = nil) {
         self.maxNumberOfAttempts = maxNumberOfAttempts
@@ -22,7 +22,10 @@ public class PPDefaultRetryStrategy: PPRetryStrategy {
         self.numberOfAttempts += 1
 
         guard self.maxNumberOfAttempts != nil && self.numberOfAttempts < self.maxNumberOfAttempts! else {
-            DefaultLogger.Logger.log(message: "Maximum number of attempts (\(self.maxNumberOfAttempts!)) made. Latest error: \(error.localizedDescription)")
+            self.logger?.log(
+                "Maximum number of attempts (\(self.maxNumberOfAttempts!)) made. Latest error: \(error.localizedDescription)",
+                logLevel: .info
+            )
             return nil
         }
 
@@ -33,9 +36,15 @@ public class PPDefaultRetryStrategy: PPRetryStrategy {
                                   : timeIntervalBeforeNextAttempt
 
         if self.maxNumberOfAttempts != nil {
-            DefaultLogger.Logger.log(message: "Making attempt \(self.numberOfAttempts + 1) of \(self.maxNumberOfAttempts!) in \(timeBeforeNextAttempt)s. Error was: \(error.localizedDescription)")
+            self.logger?.log(
+                "Making attempt \(self.numberOfAttempts + 1) of \(self.maxNumberOfAttempts!) in \(timeBeforeNextAttempt)s. Error was: \(error.localizedDescription)",
+                logLevel: .info
+            )
         } else {
-            DefaultLogger.Logger.log(message: "Making attempt \(self.numberOfAttempts + 1) in \(timeBeforeNextAttempt)s. Error was: \(error.localizedDescription)")
+            self.logger?.log(
+                "Making attempt \(self.numberOfAttempts + 1) in \(timeBeforeNextAttempt)s. Error was: \(error.localizedDescription)",
+                logLevel: .info
+            )
         }
 
         return timeBeforeNextAttempt
