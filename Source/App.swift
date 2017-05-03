@@ -13,26 +13,88 @@ import Foundation
         self.client = client ?? BaseClient(cluster: cluster)
     }
 
-    public func request(using requestOptions: PPRequestOptions, completionHandler: @escaping (Result<Data>) -> Void) -> Void {
+    public func request(
+        using requestOptions: PPRequestOptions,
+        onSuccess: ((Data) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) -> PPRequest {
         let sanitisedPath = sanitise(path: requestOptions.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
 
         let mutableBaseClientRequest = requestOptions
         mutableBaseClientRequest.path = namespacedPath
 
+        var generalRequest = PPRequest(type: .general)
+
         if self.authorizer != nil {
             self.authorizer!.authorize { result in
                 switch result {
-                case .failure(let error): completionHandler(.failure(error))
+                case .failure(let error): onError?(error)
                 case .success(let jwtFromAuthorizer):
                     let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
                     mutableBaseClientRequest.addHeaders(["Authorization": authHeaderValue])
-                    self.client.request(using: mutableBaseClientRequest, completionHandler: completionHandler)
+                    self.client.request(
+                        with: &generalRequest,
+                        using: mutableBaseClientRequest,
+                        onSuccess: onSuccess,
+                        onError: onError
+                    )
                 }
             }
         } else {
-            self.client.request(using: mutableBaseClientRequest, completionHandler: completionHandler)
+            self.client.request(
+                with: &generalRequest,
+                using: mutableBaseClientRequest,
+                onSuccess: onSuccess,
+                onError: onError
+            )
         }
+
+        return generalRequest
+    }
+
+
+    public func requestWithRetry(
+        using requestOptions: PPRequestOptions,
+        onSuccess: ((Data) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        onRetry: ((Error?) -> Void)? = nil
+    ) -> PPRetryableGeneralRequest {
+        let sanitisedPath = sanitise(path: requestOptions.path)
+        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+
+        let mutableBaseClientRequest = requestOptions
+        mutableBaseClientRequest.path = namespacedPath
+
+        var generalRetryableRequest = PPRetryableGeneralRequest(app: self, requestOptions: requestOptions)
+
+        if self.authorizer != nil {
+            self.authorizer!.authorize { result in
+                switch result {
+                case .failure(let error): onError?(error)
+                case .success(let jwtFromAuthorizer):
+                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                    mutableBaseClientRequest.addHeaders(["Authorization": authHeaderValue])
+                    self.client.requestWithRetry(
+                        with: &generalRetryableRequest,
+                        using: mutableBaseClientRequest,
+                        onSuccess: onSuccess,
+                        onError: onError,
+                        onRetry: onRetry
+                    )
+                }
+            }
+        } else {
+            self.client.requestWithRetry(
+                with: &generalRetryableRequest,
+                using: mutableBaseClientRequest,
+                onSuccess: onSuccess,
+                onError: onError,
+                onRetry: onRetry
+            )
+        }
+
+        return generalRetryableRequest
     }
 
     public func subscribe(

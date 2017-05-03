@@ -37,7 +37,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let httpResponse = response as? HTTPURLResponse else {
-            self.handle(RequestError.invalidHttpResponse(response: response, data: nil))
+            self.handleCompletion(error: RequestError.invalidHttpResponse(response: response, data: nil))
 
             // TODO: Should this be cancel?
 
@@ -65,24 +65,24 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             let error = RequestError.badResponseStatusCode(response: self.badResponse!)
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                self.handle(error)
+                self.handleCompletion(error: error)
                 return
             }
 
             guard let errorDict = jsonObject as? [String: String] else {
-                self.handle(error)
+                self.handleCompletion(error: error)
                 return
             }
 
             guard let errorShort = errorDict["error"] else {
-                self.handle(error)
+                self.handleCompletion(error: error)
                 return
             }
 
             let errorDescription = errorDict["error_description"]
             let errorString = errorDescription == nil ? errorShort : "\(errorShort): \(errorDescription!)"
 
-            self.handle(RequestError.badResponseStatusCodeWithMessage(response: self.badResponse!, errorMessage: errorString))
+            self.handleCompletion(error: RequestError.badResponseStatusCodeWithMessage(response: self.badResponse!, errorMessage: errorString))
 
             return
         }
@@ -111,8 +111,8 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.data = Data()
     }
 
-    @objc(handleError:)
-    internal func handle(_ error: Error?) {
+//    @objc(handleCompletionWithError:)
+    internal func handleCompletion(error: Error? = nil) {
         self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
 
@@ -158,7 +158,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     @objc fileprivate func endSubscription() {
-        self.handle(SubscriptionError.heartbeatTimeoutReached)
+        self.handleCompletion(error: SubscriptionError.heartbeatTimeoutReached)
     }
 
     // TODO: Fix multiple heartbeat timers being created

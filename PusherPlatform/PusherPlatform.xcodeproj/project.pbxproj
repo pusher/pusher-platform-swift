@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		330DD21C1E0C433A00EC251F /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330DD21B1E0C433A00EC251F /* Logger.swift */; };
 		330E59071DEDD38900C92897 /* ResumableSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E59061DEDD38900C92897 /* ResumableSubscription.swift */; };
+		331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */; };
 		332E05E61DDCA3DB007A55FB /* MessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* MessageParser.swift */; };
 		332E05E81DDCA919007A55FB /* Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* Message.swift */; };
 		335BCA0D1C38ABF000B47A66 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -42,6 +43,7 @@
 /* Begin PBXFileReference section */
 		330DD21B1E0C433A00EC251F /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		330E59061DEDD38900C92897 /* ResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ResumableSubscription.swift; sourceTree = "<group>"; };
+		331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRetryableGeneralRequest.swift; sourceTree = "<group>"; };
 		332E05E51DDCA3DB007A55FB /* MessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParser.swift; sourceTree = "<group>"; };
 		332E05E71DDCA919007A55FB /* Message.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		337C551D1E02DC8100C5A317 /* Result.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 				332E05E71DDCA919007A55FB /* Message.swift */,
 				33935EA71DA5399A00C5C064 /* Authorizer.swift */,
 				330E59061DEDD38900C92897 /* ResumableSubscription.swift */,
+				331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */,
 				33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */,
 				33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */,
 				337C551D1E02DC8100C5A317 /* Result.swift */,
@@ -286,6 +289,7 @@
 				33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */,
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* BaseClient.swift in Sources */,
+				331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */,
 				330DD21C1E0C433A00EC251F /* Logger.swift in Sources */,
 				33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */,
 				337C551E1E02DC8100C5A317 /* Result.swift in Sources */,

@@ -45,7 +45,7 @@ extension PPSessionDelegate: URLSessionDataDelegate {
                 return
             }
 
-            request.delegate.handle(error)
+            request.delegate.handleCompletion(error: error)
         }
     }
 

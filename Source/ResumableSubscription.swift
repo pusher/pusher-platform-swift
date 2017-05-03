@@ -8,7 +8,7 @@ import Foundation
     public internal(set) var state: ResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
 
-    public var retryStrategy: PPRetryStrategy = PPDefaultRetryStrategy()
+    public var retryStrategy: PPRetryStrategy? = nil
 
     internal var retrySubscriptionTimer: Timer? = nil
 
@@ -81,24 +81,13 @@ import Foundation
         }
     }
 
-    public init(
-        // TODO: Does this need to store things like jwt, headers, queryItems etc for when it recreates the subscription?
-        // Don't think so, as things like header will probably change depending on context
-        app: App,
-        requestOptions: PPRequestOptions,
-
-        // TODO: Do we want to be able to pass these on init? I think they just get passed through
-        // on subscribe function calls and then eventually get set directly in the BaseClient
-
-        onOpening: (() -> Void)? = nil,
-        onOpen: (() -> Void)? = nil,
-        onResuming: (() -> Void)? = nil,
-        onEvent: ((String, [String: String], Any) -> Void)? = nil,
-        onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil
-    ) {
+    public init(app: App, requestOptions: PPRequestOptions) {
         self.app = app
         self.requestOptions = requestOptions
+    }
+
+    deinit {
+        self.retrySubscriptionTimer?.invalidate()
     }
 
     public func changeState(to newState: ResumableSubscriptionState) {
@@ -114,7 +103,7 @@ import Foundation
 
     public func handleOnOpen() {
         self.changeState(to: .open)
-        self.retryStrategy.requestSucceeded()
+        self.retryStrategy?.requestSucceeded()
     }
 
     public func handleOnResuming() {
@@ -148,7 +137,13 @@ import Foundation
             self.changeState(to: .resuming)
         }
 
-        if let retryWaitTimeInterval = self.retryStrategy.shouldRetry(given: error) {
+        guard let retryStrategy = self.retryStrategy else {
+            // TODO: Log about not retrying request because no retry strategy
+            return
+        }
+
+
+        if let retryWaitTimeInterval = retryStrategy.shouldRetry(given: error) {
             DispatchQueue.main.async {
                 self.retrySubscriptionTimer = Timer.scheduledTimer(
                     timeInterval: retryWaitTimeInterval,

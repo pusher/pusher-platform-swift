@@ -17,5 +17,5 @@ internal protocol PPRequestTaskDelegate {
 
     func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void)
     func handle(_ data: Data)
-    func handle(_ error: Error?)
+    func handleCompletion(error: Error?)
 }

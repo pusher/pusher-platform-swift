@@ -27,7 +27,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     // TODO: Finish explaining how it works
 
     // If you want to provide
-    public var retryStrategyBuilder: (() -> PPRetryStrategy)?
+    public var retryStrategyBuilder: (PPRequestOptions) -> PPRetryStrategy
 
     // TODO: Need to actually use these
     public var clientName: String
@@ -41,7 +41,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         clientVersion: String = "0.1.4",
 
         // TODO: @autoclosure ?
-        retryStrategyBuilder: (() -> PPRetryStrategy)? = nil,
+        retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = BaseClient.methodAwareRetryStrageyGenerator,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 512
     ) {
@@ -88,12 +88,17 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.generalRequestURLSession.invalidateAndCancel()
     }
 
-    public func request(using requestOptions: PPRequestOptions, completionHandler: @escaping (Result<Data>) -> Void) {
+    public func request(
+        with generalRequest: inout PPRequest,
+        using requestOptions: PPRequestOptions,
+        onSuccess: ((Data) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
         guard var url = mutableURLComponents.url else {
-            completionHandler(.failure(BaseClientError.invalidUrl(components: mutableURLComponents)))
+            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
             return
         }
 
@@ -113,35 +118,89 @@ let REALLY_LONG_TIME: Double = 252_460_800
         let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
 
         guard self.sessionDelegate[task] == nil else {
-//            onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
             return
         }
 
-        if requestOptions.retryStrategy == nil {
-            requestOptions.retryStrategy = PPDefaultRetryStrategy()
-        }
-
-        let generalRequest = PPRequest(type: .general)
-
-        // TODO: Probably move this to initializer
+        self.sessionDelegate[task] = generalRequest
 
         generalRequest.options = requestOptions
 
-
-        self.sessionDelegate[task] = generalRequest
-
         if let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate {
             generalRequestDelegate.task = task
-            generalRequestDelegate.completionHandler = completionHandler
+            generalRequestDelegate.onSuccess = onSuccess
+            generalRequestDelegate.onError = onError
         } else {
             // TODO: What the fuck can we do?!
         }
 
         task.resume()
+    }
 
-//        TODO: Do we want to return anything?
+    public func requestWithRetry(
+        with retryableGeneralRequest: inout PPRetryableGeneralRequest,
+        using requestOptions: PPRequestOptions,
+        onSuccess: ((Data) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        onRetry: ((Error?) -> Void)? = nil
+    ) {
+        var mutableURLComponents = self.baseUrlComponents
+        mutableURLComponents.queryItems = requestOptions.queryItems
 
-//        return request?
+        guard var url = mutableURLComponents.url else {
+            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
+            return
+        }
+
+        url = url.appendingPathComponent(requestOptions.path)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = requestOptions.method
+
+        for (header, value) in requestOptions.headers {
+            request.addValue(value, forHTTPHeaderField: header)
+        }
+
+        if let body = requestOptions.body {
+            request.httpBody = body
+        }
+
+        let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
+
+        guard self.sessionDelegate[task] == nil else {
+            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
+            return
+        }
+
+        let generalRequest = PPRequest(type: .general)
+        generalRequest.options = requestOptions
+
+        self.sessionDelegate[task] = generalRequest
+
+        if let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate {
+            generalRequestDelegate.task = task
+            generalRequestDelegate.onSuccess = onSuccess
+            generalRequestDelegate.onError = onError
+        } else {
+            // TODO: What the fuck can we do?!
+        }
+
+        retryableGeneralRequest.generalRequest = generalRequest
+
+        // Retry strategy from PPRequestOptions takes precedent, otherwise falls back to the
+        // PPRetryStrategy set in the BaseClient, which is PPDefaultRetryStrategy unless
+        // otherwise set
+        if let reqOptionsRetryStrategy = requestOptions.retryStrategy {
+            retryableGeneralRequest.retryStrategy = reqOptionsRetryStrategy
+        } else {
+            retryableGeneralRequest.retryStrategy = self.retryStrategyBuilder(requestOptions)
+        }
+
+        retryableGeneralRequest.onSuccess = onSuccess
+        retryableGeneralRequest.onError = onError
+        retryableGeneralRequest.onRetry = onRetry
+
+        task.resume()
     }
 
     public func subscribe(
@@ -176,7 +235,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
         guard self.sessionDelegate[task] == nil else {
-            onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
             return
         }
 
@@ -231,7 +290,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
         guard self.sessionDelegate[task] == nil else {
-            onError?(BaseClientError.preExistingTaskIdentifierForSubscription)
+            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
             return
         }
 
@@ -248,6 +307,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
             // TODO: What the fuck can we do?!
         }
 
+        // Retry strategy from PPRequestOptions takes precedent, otherwise falls back to the
+        // PPRetryStrategy set in the BaseClient, which is PPDefaultRetryStrategy unless
+        // otherwise set
+        if let reqOptionsRetryStrategy = requestOptions.retryStrategy {
+            resumableSubscription.retryStrategy = reqOptionsRetryStrategy
+        } else {
+            resumableSubscription.retryStrategy = self.retryStrategyBuilder(requestOptions)
+        }
+
         resumableSubscription.subscription = subscription
 
         resumableSubscription.onOpening = onOpening
@@ -259,6 +327,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         task.resume()
     }
+
+    // TODO: Maybe need the same for cancelling general requests?
 
     // TODO: Look at this
 
@@ -280,13 +350,25 @@ let REALLY_LONG_TIME: Double = 252_460_800
             completionHandler?(.success(true))
         }
     }
+
+    static public func methodAwareRetryStrageyGenerator(requestOptions: PPRequestOptions) -> PPRetryStrategy {
+        if let httpMethod = HTTPMethod(rawValue: requestOptions.method) {
+            switch httpMethod {
+            case .POST, .PUT, .PATCH:
+                return PPDefaultRetryStrategy(maxNumberOfAttempts: 1)
+            default:
+                break
+            }
+        }
+        return PPDefaultRetryStrategy()
+    }
 }
 
 // TODO: LocalizedError
 
 public enum BaseClientError: Error {
     case invalidUrl(components: URLComponents)
-    case preExistingTaskIdentifierForSubscription
+    case preExistingTaskIdentifierForRequest
     case noTasksForSubscriptionUrlSession(URLSession)
     case noTaskWithMatchingTaskIdentifierFound(taskId: Int, session: URLSession)
 }

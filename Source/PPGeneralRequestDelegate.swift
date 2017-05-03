@@ -11,16 +11,8 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     // data to be received before communicating the error to the handler
     public internal(set) var badResponse: HTTPURLResponse? = nil
 
-
-    // TODO: Should we use onSuccess and onError or the completionHandler?
-
-//    public var onSuccess: ((Data) -> Void)?
-//    public var onError: ((Error) -> Void)?
-
-    // TODO: Should this be Optional or should it be passed on init?
-    public var completionHandler: ((Result<Data>) -> Void)? = nil
-
-    // TODO: Do we want onError and onSucces?
+    public var onSuccess: ((Data) -> Void)?
+    public var onError: ((Error) -> Void)?
 
     internal var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? = nil
 
@@ -38,7 +30,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let httpResponse = response as? HTTPURLResponse else {
-            self.handle(RequestError.invalidHttpResponse(response: response, data: nil))
+            self.handleCompletion(error: RequestError.invalidHttpResponse(response: response, data: nil))
 
             // TODO: Should this be cancel?
 
@@ -66,24 +58,24 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
             let error = RequestError.badResponseStatusCode(response: self.badResponse!)
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                self.handle(error)
+                self.handleCompletion(error: error)
                 return
             }
 
             guard let errorDict = jsonObject as? [String: String] else {
-                self.handle(error)
+                self.handleCompletion(error: error)
                 return
             }
 
             guard let errorShort = errorDict["error"] else {
-                self.handle(error)
+                self.handleCompletion(error: error)
                 return
             }
 
             let errorDescription = errorDict["error_description"]
             let errorString = errorDescription == nil ? errorShort : "\(errorShort): \(errorDescription!)"
 
-            self.handle(RequestError.badResponseStatusCodeWithMessage(response: self.badResponse!, errorMessage: errorString))
+            self.handleCompletion(error: RequestError.badResponseStatusCodeWithMessage(response: self.badResponse!, errorMessage: errorString))
 
             return
         }
@@ -94,7 +86,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     @objc(handleError:)
-    internal func handle(_ error: Error?) {
+    internal func handleCompletion(error: Error? = nil) {
 
         // TODO: Remove me
 
@@ -107,23 +99,18 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
         // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
 
-        guard error != nil else {
+        guard let error = error  else {
 //            let errorToStore = SubscriptionError.unexpectedError
 //            self.error = errorToStore
 //            self.onError?(errorToStore)
-            self.completionHandler?(.success(self.data))
+
+            self.onSuccess?(self.data)
             return
         }
 
         self.error = error
 
-
-        // TOOD: Maybe check if error!.localizedDescription == "cancelled" to see if we
-        // shouldn't report the fact that the task was cancelled (liklely as a result of
-        // checking the response; see above) to the client, as the response-error itself
-        // is certain to be more useful
-
-        self.completionHandler?(.failure(error!))
+        self.onError?(error)
     }
 
 }
