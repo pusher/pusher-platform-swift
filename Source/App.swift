@@ -66,8 +66,7 @@ import Foundation
     public func requestWithRetry(
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil,
-        onRetry: ((Error?) -> Void)? = nil
+        onError: ((Error) -> Void)? = nil
     ) -> PPRetryableGeneralRequest {
         let sanitisedPath = sanitise(path: requestOptions.path)
         let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
@@ -88,8 +87,7 @@ import Foundation
                         with: &generalRetryableRequest,
                         using: mutableBaseClientRequest,
                         onSuccess: onSuccess,
-                        onError: onError,
-                        onRetry: onRetry
+                        onError: onError
                     )
                 }
             }
@@ -98,8 +96,7 @@ import Foundation
                 with: &generalRetryableRequest,
                 using: mutableBaseClientRequest,
                 onSuccess: onSuccess,
-                onError: onError,
-                onRetry: onRetry
+                onError: onError
             )
         }
 

@@ -1,5 +1,8 @@
 import Foundation
 
+// TODO: This should probably be a protocol which PPSubscribeRequestOptions
+// and PPGeneralRequestOptions conform to
+
 public class PPRequestOptions {
     public let method: String
 

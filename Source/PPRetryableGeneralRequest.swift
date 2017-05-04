@@ -27,6 +27,10 @@ import Foundation
         }
     }
 
+    // TODO: I think Retryable and Resumable things need to keep track of things like 
+    // onError which can happen on the underlying requests / subscriptions multiple 
+    // times but should only be communicated at most once to the end-user
+
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
@@ -44,11 +48,6 @@ import Foundation
         }
     }
 
-    // TODO: Figure out when / if this should be used
-
-    public var onRetry: ((Error?) -> Void)?
-
-
     public init(app: App, requestOptions: PPRequestOptions) {
         self.app = app
         self.requestOptions = requestOptions
@@ -62,16 +61,6 @@ import Foundation
     public func handleOnSuccess(_ data: Data) {}
 
     public func handleOnError(error: Error) {
-
-        // TODO: Check how many times this can be called
-        // TODO: Check which errors to pass to RetryStrategy
-
-        // TODO: not always retrying - need to figure out what to do here.
-        // We need to be able to differentiate between a recoverable error and
-        // errors that mean we need to stop attempting the request
-        // Do we therefore also need to setup a onProperEnd (not the real name suggestion)?
-        // Then we'd set the state to failed and not try and create a new request?
-
 //        TODO: Do we need something like this?
 
 //        guard !self.cancelled else {
@@ -85,6 +74,8 @@ import Foundation
             return
         }
 
+//         TODO: Check which errors to pass to RetryStrategy
+
         if let retryWaitTimeInterval = retryStrategy.shouldRetry(given: error) {
             DispatchQueue.main.async {
                 self.retryRequestTimer = Timer.scheduledTimer(
@@ -95,7 +86,8 @@ import Foundation
                     repeats: false
                 )
             }
-        }    }
+        }
+    }
 
     internal func retryRequest() {
         guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {

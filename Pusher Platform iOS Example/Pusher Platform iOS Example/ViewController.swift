@@ -28,7 +28,6 @@ class ViewController: UIViewController {
 //            using: getOptions,
 //            onSuccess: { data in print("SUCCESS: \(String(data: data, encoding: .utf8))") },
 //            onError: { error in print ("ERRORED: \(error.localizedDescription)")},
-//            onRetry: { error in print ("RETRYING: \(error?.localizedDescription)")}
 //        )
 
         resumableSub = ResumableSubscription(app: app, requestOptions: requestOptions)

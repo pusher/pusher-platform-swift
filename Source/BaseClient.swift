@@ -146,8 +146,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         with retryableGeneralRequest: inout PPRetryableGeneralRequest,
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
-        onError: ((Error) -> Void)? = nil,
-        onRetry: ((Error?) -> Void)? = nil
+        onError: ((Error) -> Void)? = nil
     ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
@@ -202,7 +201,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         retryableGeneralRequest.onSuccess = onSuccess
         retryableGeneralRequest.onError = onError
-        retryableGeneralRequest.onRetry = onRetry
 
         // Pass through logger where required
         generalRequestDelegate.logger = self.logger
