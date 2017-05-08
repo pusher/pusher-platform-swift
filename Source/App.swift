@@ -12,14 +12,14 @@ import Foundation
         cluster: String? = nil,
         authorizer: Authorizer? = nil,
         client: BaseClient? = nil,
-        logger: PPLogger = PPDefaultLogger()
+        logger: PPLogger? = nil
     ) {
         self.id = id
         self.cluster = cluster
         self.authorizer = authorizer
         self.client = client ?? BaseClient(cluster: cluster)
-        self.logger = logger
-        self.client.logger = logger
+        self.logger = logger ?? PPDefaultLogger()
+        self.client.logger = self.logger
     }
 
     public func request(
