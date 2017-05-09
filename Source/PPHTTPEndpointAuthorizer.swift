@@ -1,11 +1,11 @@
 import Foundation
 
-public class HTTPEndpointAuthorizer: Authorizer {
+public class PPHTTPEndpointAuthorizer: PPAuthorizer {
     public var url: String
 
     // TODO: Seems like there is a better name for this
 
-    public var requestInjector: ((HTTPEndpointAuthorizerRequest) -> (HTTPEndpointAuthorizerRequest))?
+    public var requestInjector: ((PPHTTPEndpointAuthorizerRequest) -> (PPHTTPEndpointAuthorizerRequest))?
     public var accessToken: String? = nil
     public var refreshToken: String? = nil
     public internal(set) var accessTokenExpiresAt: Double? = nil
@@ -13,7 +13,7 @@ public class HTTPEndpointAuthorizer: Authorizer {
 
     public init(
         url: String,
-        requestInjector: ((HTTPEndpointAuthorizerRequest) -> (HTTPEndpointAuthorizerRequest))? = nil,
+        requestInjector: ((PPHTTPEndpointAuthorizerRequest) -> (PPHTTPEndpointAuthorizerRequest))? = nil,
         retryStrategy: PPRetryStrategy = PPDefaultRetryStrategy()
     ) {
         self.url = url
@@ -30,16 +30,18 @@ public class HTTPEndpointAuthorizer: Authorizer {
             case .success(let token):
                 self.retryStrategy.requestSucceeded()
                 completionHandler(.success(token))
-            case .failure(let err):
-                if let retryTimeInterval = self.retryStrategy.shouldRetry(given: err) {
+            case .failure(let error):
+                let shouldRetryResult = self.retryStrategy.shouldRetry(given: error)
 
+                switch shouldRetryResult {
+                case .retry(let retryWaitTimeInterval):
                     // TODO: [unowned self] here as well?
 
-                    DispatchQueue.main.asyncAfter(deadline: .now() + retryTimeInterval, execute: { [unowned self] in
+                    DispatchQueue.main.asyncAfter(deadline: .now() + retryWaitTimeInterval, execute: { [unowned self] in
                         self.authorize(completionHandler: completionHandler)
                     })
-                } else {
-                    completionHandler(.failure(err))
+                case .doNotRetry(let reasonErr):
+                    completionHandler(.failure(reasonErr))
                 }
             }
         }
@@ -61,14 +63,14 @@ public class HTTPEndpointAuthorizer: Authorizer {
     }
 
     public func getTokenPair(completionHandler: @escaping (Result<String>) -> Void) {
-        makeAuthRequest(grantType: EndpointRequestGrantType.clientCredentials, completionHandler: completionHandler)
+        makeAuthRequest(grantType: PPEndpointRequestGrantType.clientCredentials, completionHandler: completionHandler)
     }
 
     public func refreshAccessToken(completionHandler: @escaping (Result<String>) -> Void) {
-        makeAuthRequest(grantType: EndpointRequestGrantType.refreshToken, completionHandler: completionHandler)
+        makeAuthRequest(grantType: PPEndpointRequestGrantType.refreshToken, completionHandler: completionHandler)
     }
 
-    public func makeAuthRequest(grantType: EndpointRequestGrantType, completionHandler: @escaping (Result<String>) -> Void) {
+    public func makeAuthRequest(grantType: PPEndpointRequestGrantType, completionHandler: @escaping (Result<String>) -> Void) {
         let authRequestResult = prepareAuthRequest(grantType: grantType)
 
         guard let request = authRequestResult.value else {
@@ -83,43 +85,43 @@ public class HTTPEndpointAuthorizer: Authorizer {
             }
 
             guard let data = data else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.noDataPresent))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.noDataPresent))
                 return
             }
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.invalidHttpResponse(response: response, data: data)))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.invalidHTTPResponse(response: response, data: data)))
                 return
             }
 
             guard 200..<300 ~= httpResponse.statusCode else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.badResponseStatusCode(response: httpResponse, data: data)))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.badResponseStatusCode(response: httpResponse, data: data)))
                 return
             }
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.failedToDeserializeJSON(data)))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.failedToDeserializeJSON(data)))
                 return
             }
 
             guard let json = jsonObject as? [String: Any] else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.failedToCastJSONObjectToDictionary(jsonObject)))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.failedToCastJSONObjectToDictionary(jsonObject)))
                 return
             }
 
             guard let accessToken = json["access_token"] as? String else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.validAccessTokenNotPresentInResponseJSON(json)))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.validAccessTokenNotPresentInResponseJSON(json)))
                 return
             }
 
             guard let refreshToken = json["refresh_token"] as? String else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.validRefreshTokenNotPresentInResponseJSON(json)))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.validRefreshTokenNotPresentInResponseJSON(json)))
                 return
             }
 
             // TODO: Check if Double is sensible type here
             guard let expiresIn = json["expires_in"] as? TimeInterval else {
-                completionHandler(.failure(HTTPEndpointAuthorizerError.validExpiresInNotPresentInResponseJSON(json)))
+                completionHandler(.failure(PPHTTPEndpointAuthorizerError.validExpiresInNotPresentInResponseJSON(json)))
                 return
             }
 
@@ -131,15 +133,15 @@ public class HTTPEndpointAuthorizer: Authorizer {
         }).resume()
     }
 
-    public func prepareAuthRequest(grantType: EndpointRequestGrantType) -> Result<URLRequest> {
+    public func prepareAuthRequest(grantType: PPEndpointRequestGrantType) -> Result<URLRequest> {
         guard var endpointURLComponents = URLComponents(string: self.url) else {
-            return .failure(HTTPEndpointAuthorizerError.failedToCreateURLComponents(self.url))
+            return .failure(PPHTTPEndpointAuthorizerError.failedToCreateURLComponents(self.url))
         }
 
-        var httpEndpointRequest: HTTPEndpointAuthorizerRequest? = nil
+        var httpEndpointRequest: PPHTTPEndpointAuthorizerRequest? = nil
 
         if requestInjector != nil {
-            httpEndpointRequest = requestInjector!(HTTPEndpointAuthorizerRequest())
+            httpEndpointRequest = requestInjector!(PPHTTPEndpointAuthorizerRequest())
         }
 
         let grantBodyString = "grant_type=\(grantType.rawValue)"
@@ -149,7 +151,7 @@ public class HTTPEndpointAuthorizer: Authorizer {
         }
 
         guard let endpointURL = endpointURLComponents.url else {
-            return .failure(HTTPEndpointAuthorizerError.failedToCreateURLObject(endpointURLComponents))
+            return .failure(PPHTTPEndpointAuthorizerError.failedToCreateURLObject(endpointURLComponents))
         }
 
         var request = URLRequest(url: endpointURL)
@@ -178,12 +180,14 @@ public class HTTPEndpointAuthorizer: Authorizer {
     }
 }
 
-public enum EndpointRequestGrantType: String {
+public enum PPEndpointRequestGrantType: String {
     case clientCredentials = "client_credentials"
     case refreshToken = "refresh_token"
 }
 
-public class HTTPEndpointAuthorizerRequest {
+// TODO: This should probably be replaced by PPRequest
+
+public class PPHTTPEndpointAuthorizerRequest {
     public var headers: [String: String] = [:]
     public var body: HTTPParameterProtocol? = nil
     public var queryItems: [URLQueryItem] = []
@@ -203,12 +207,12 @@ public class HTTPEndpointAuthorizerRequest {
 
 // TODO: LocalizedDescription
 
-public enum HTTPEndpointAuthorizerError: Error {
+public enum PPHTTPEndpointAuthorizerError: Error {
     case maxNumberOfRetriesReached
     case failedToCreateURLComponents(String)
     case failedToCreateURLObject(URLComponents)
     case noDataPresent
-    case invalidHttpResponse(response: URLResponse?, data: Data)
+    case invalidHTTPResponse(response: URLResponse?, data: Data)
     case badResponseStatusCode(response: HTTPURLResponse, data: Data)
     case failedToDeserializeJSON(Data)
     case failedToCastJSONObjectToDictionary(Any)

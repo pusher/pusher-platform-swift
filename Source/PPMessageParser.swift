@@ -1,6 +1,6 @@
 import Foundation
 
-internal class MessageParser {
+internal class PPMessageParser {
     internal var logger: PPLogger?
 
     init(logger: PPLogger?) {
@@ -8,8 +8,8 @@ internal class MessageParser {
     }
 
     // Parse errors are truly unexpected here - we trust the server to give us good data
-    internal func parse(stringMessages: [String]) -> [Message] {
-        return stringMessages.flatMap { stringMessage -> Message? in
+    internal func parse(stringMessages: [String]) -> [PPMessage] {
+        return stringMessages.flatMap { stringMessage -> PPMessage? in
             guard stringMessage != "" else {
                 return nil
             }
@@ -66,7 +66,7 @@ internal class MessageParser {
                     return nil
                 }
 
-                return Message.keepAlive
+                return PPMessage.keepAlive
 
             case .event:
                 guard let eventId = jsonArray[1] as? String else {
@@ -81,7 +81,7 @@ internal class MessageParser {
 
                 let body = jsonArray[3]
 
-                return Message.event(eventId: eventId, headers: headers, body: body)
+                return PPMessage.event(eventId: eventId, headers: headers, body: body)
 
             case .eos:
                 guard let statusCode = jsonArray[1] as? Int else {
@@ -96,12 +96,12 @@ internal class MessageParser {
 
                 let errorBody = jsonArray[3]
 
-                return Message.eos(statusCode: statusCode, headers: headers, errorBody: errorBody)
+                return PPMessage.eos(statusCode: statusCode, headers: headers, errorBody: errorBody)
             }
         }
     }
 
-    fileprivate func parseMessageTypeCode(messageTypeCode: Int) -> MessageType? {
+    fileprivate func parseMessageTypeCode(messageTypeCode: Int) -> PPMessageType? {
         switch messageTypeCode {
         case 0: return .keepAlive
         case 1: return .event
@@ -112,7 +112,7 @@ internal class MessageParser {
 
 }
 
-internal enum MessageType: String {
+internal enum PPMessageType: String {
     case keepAlive
     case event
     case eos

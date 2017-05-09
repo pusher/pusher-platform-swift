@@ -10,12 +10,14 @@ public class PPURLSessionDelegate: NSObject {
 
     open subscript(task: URLSessionTask) -> PPRequest? {
         get {
-            lock.lock() ; defer { lock.unlock() }
+            lock.lock()
+            defer { lock.unlock() }
             return requests[task.taskIdentifier]
         }
 
         set {
-            lock.lock() ; defer { lock.unlock() }
+            lock.lock()
+            defer { lock.unlock() }
             requests[task.taskIdentifier] = newValue
         }
     }
@@ -32,9 +34,6 @@ extension PPURLSessionDelegate: URLSessionDataDelegate {
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
         self.logger?.log("Session became invalid: \(session)", logLevel: .error)
     }
-
-    // TODO: Should potentially be more like request.delegate.handleCompletion(error)
-    // I imagine this is called when a data task has finished
 
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         sessionQueue.async {

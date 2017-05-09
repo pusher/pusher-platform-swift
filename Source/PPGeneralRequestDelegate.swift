@@ -10,6 +10,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     // If there's a bad response status code then we need to wait for
     // data to be received before communicating the error to the handler
     public internal(set) var badResponse: HTTPURLResponse? = nil
+    public internal(set) var badResponseError: Error? = nil
 
     public var logger: PPLogger? = nil
 
@@ -30,7 +31,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard let httpResponse = response as? HTTPURLResponse else {
-            self.handleCompletion(error: RequestError.invalidHttpResponse(response: response, data: nil))
+            self.handleCompletion(error: PPRequestTaskDelegateError.invalidHTTPResponse(response: response))
             completionHandler(.cancel)
             return
         }
@@ -45,27 +46,30 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     @objc(handleData:)
     internal func handle(_ data: Data) {
         guard self.badResponse == nil else {
-            let error = RequestError.badResponseStatusCode(response: self.badResponse!)
+            let error = PPRequestTaskDelegateError.badResponseStatusCode(response: self.badResponse!)
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                self.handleCompletion(error: error)
+                self.badResponseError = error
                 return
             }
 
             guard let errorDict = jsonObject as? [String: String] else {
-                self.handleCompletion(error: error)
+                self.badResponseError = error
                 return
             }
 
             guard let errorShort = errorDict["error"] else {
-                self.handleCompletion(error: error)
+                self.badResponseError = error
                 return
             }
 
             let errorDescription = errorDict["error_description"]
             let errorString = errorDescription == nil ? errorShort : "\(errorShort): \(errorDescription!)"
 
-            self.handleCompletion(error: RequestError.badResponseStatusCodeWithMessage(response: self.badResponse!, errorMessage: errorString))
+            self.badResponseError = PPRequestTaskDelegateError.badResponseStatusCodeWithMessage(
+                response: self.badResponse!,
+                errorMessage: errorString
+            )
 
             return
         }
@@ -73,25 +77,30 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
         self.data.append(data)
     }
 
-    @objc(handleError:)
+    // Server errors are not reported through the error parameter here, by default.
+    // The only errors received through the error parameter are client-side errors,
+    // such as being unable to resolve the hostname or connect to the host.
     internal func handleCompletion(error: Error? = nil) {
+
+        // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
+
+        let err = error ?? self.badResponseError
+
+        guard let errorToReport = err else {
+            self.onSuccess?(self.data)
+            return
+        }
+
         guard self.error == nil else {
             self.logger?.log(
-                "Request to has already communicated an error: \(String(describing: self.error?.localizedDescription))",
+                "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
                 logLevel: .debug
             )
             return
         }
 
-        // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
-
-        guard let error = error  else {
-            self.onSuccess?(self.data)
-            return
-        }
-
-        self.error = error
-        self.onError?(error)
+        self.error = errorToReport
+        self.onError?(errorToReport)
     }
 
 }

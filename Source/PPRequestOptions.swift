@@ -5,11 +5,7 @@ import Foundation
 
 public class PPRequestOptions {
     public let method: String
-
-    // TODO: Doesn't seem to be scoped to app - is that desired?
-
     public var path: String
-
     public internal(set) var queryItems: [URLQueryItem]
     public internal(set) var headers: [String: String]
     public let body: Data?
@@ -41,3 +37,25 @@ public class PPRequestOptions {
         self.queryItems.append(contentsOf: newQueryItems)
     }
 }
+
+extension PPRequestOptions: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        let debugString = "\(self.method) request to \(self.path))"
+        var extraInfo = [debugString]
+
+        if self.queryItems.count > 0 {
+            extraInfo.append("Query items: \(self.queryItems.map { $0.debugDescription }.joined(separator: ", "))")
+        }
+
+        if self.headers.count > 0 {
+            extraInfo.append("Headers: \(self.headers.map { "\($0.key): \($0.value)" }.joined(separator: ", "))")
+        }
+
+        if let body = self.body, let bodyString = String(data: body, encoding: .utf8) {
+            extraInfo.append("Body: \(bodyString)")
+        }
+
+        return extraInfo.joined(separator: "\n")
+    }
+}
+

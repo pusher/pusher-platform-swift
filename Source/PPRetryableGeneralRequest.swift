@@ -27,9 +27,7 @@ import Foundation
         }
     }
 
-    // TODO: I think Retryable and Resumable things need to keep track of things like 
-    // onError which can happen on the underlying requests / subscriptions multiple 
-    // times but should only be communicated at most once to the end-user
+    internal var _onError: ((Error) -> Void)? = nil
 
     public var onError: ((Error) -> Void)? {
         willSet {
@@ -43,8 +41,9 @@ import Foundation
 
             generalRequestDelegate.onError = { error in
                 self.handleOnError(error: error)
-                newValue?(error)
             }
+
+            self._onError = newValue
         }
     }
 
@@ -57,7 +56,7 @@ import Foundation
         self.retryRequestTimer?.invalidate()
     }
 
-    // TODO: What is this doing?
+    // TODO: Is this necessary in general?
     public func handleOnSuccess(_ data: Data) {}
 
     public func handleOnError(error: Error) {
@@ -71,12 +70,16 @@ import Foundation
 
         guard let retryStrategy = self.retryStrategy else {
             self.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
 
 //         TODO: Check which errors to pass to RetryStrategy
 
-        if let retryWaitTimeInterval = retryStrategy.shouldRetry(given: error) {
+        let shouldRetryResult = retryStrategy.shouldRetry(given: error)
+
+        switch shouldRetryResult {
+        case .retry(let retryWaitTimeInterval):
             DispatchQueue.main.async {
                 self.retryRequestTimer = Timer.scheduledTimer(
                     timeInterval: retryWaitTimeInterval,
@@ -86,6 +89,8 @@ import Foundation
                     repeats: false
                 )
             }
+        case .doNotRetry(let reasonErr):
+            self._onError?(reasonErr)
         }
     }
 

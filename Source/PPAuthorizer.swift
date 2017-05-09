@@ -1,5 +1,5 @@
 import Foundation
 
-public protocol Authorizer {
+public protocol PPAuthorizer {
     func authorize(completionHandler: @escaping (Result<String>) -> Void) -> Void
 }

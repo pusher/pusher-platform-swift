@@ -1,14 +1,14 @@
 import Foundation
 
-@objc public class ResumableSubscription: NSObject {
+@objc public class PPResumableSubscription: NSObject {
     public let requestOptions: PPRequestOptions
     public internal(set) var app: App
     public internal(set) var unsubscribed: Bool = false
-    public internal(set) var state: ResumableSubscriptionState = .opening
+    public internal(set) var state: PPResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
     public internal(set) var subscription: PPRequest? = nil
-    public var retryStrategy: PPRetryStrategy? = nil
     public var logger: PPLogger? = nil
+    public var retryStrategy: PPRetryStrategy? = nil
     internal var retrySubscriptionTimer: Timer? = nil
 
     // TODO: Check memory mangement stuff here - capture list etc
@@ -48,7 +48,7 @@ import Foundation
         }
     }
 
-    public var onResuming: (() -> Void)?
+    public var onResuming: (() -> Void)? = nil
 
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
@@ -84,6 +84,12 @@ import Foundation
         }
     }
 
+    // This represents the end user's onError callback that they want to be called. We only
+    // ever call this at most once. For example, if we need to retry to instantiate a
+    // subscription then the errors that lead to requiring a retry would not be communicated
+    // back up to the end user, until the retry strategy returns an error itself.
+    internal var _onError: ((Error) -> Void)? = nil
+
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
@@ -96,8 +102,9 @@ import Foundation
 
             subDelegate.onError = { error in
                 self.handleOnError(error: error)
-                newValue?(error)
             }
+
+            self._onError = newValue
         }
     }
 
@@ -110,7 +117,7 @@ import Foundation
         self.retrySubscriptionTimer?.invalidate()
     }
 
-    public func changeState(to newState: ResumableSubscriptionState) {
+    public func changeState(to newState: PPResumableSubscriptionState) {
 //        TODO: Potentially add an onStateChange handlers property
 //        let oldState = self.state
 //        self.onStateChangeHandlers.
@@ -135,14 +142,11 @@ import Foundation
     }
 
     public func handleOnError(error: Error) {
-
-        // TODO: Check how many times this can be called
         // TODO: Check which errors to pass to RetryStrategy
 
         // TODO: not always resuming - need to figure out what to do here.
         // We need to be able to differentiate between a recoverable error and
         // errors that mean we need to stop the subscription.
-        // Do we therefore also need to setup a onProperEnd (not the real name suggestion)?
         // Then we'd set the state to closed and not try and create a new subscription.
 
         guard !self.unsubscribed else {
@@ -157,11 +161,14 @@ import Foundation
 
         guard let retryStrategy = self.retryStrategy else {
             self.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
 
+        let shouldRetryResult = retryStrategy.shouldRetry(given: error)
 
-        if let retryWaitTimeInterval = retryStrategy.shouldRetry(given: error) {
+        switch shouldRetryResult {
+        case .retry(let retryWaitTimeInterval):
             DispatchQueue.main.async {
                 self.retrySubscriptionTimer = Timer.scheduledTimer(
                     timeInterval: retryWaitTimeInterval,
@@ -171,6 +178,8 @@ import Foundation
                     repeats: false
                 )
             }
+        case .doNotRetry(let reasonErr):
+            self._onError?(reasonErr)
         }
     }
 
@@ -209,10 +218,14 @@ import Foundation
     }
 }
 
-public enum ResumableSubscriptionState {
+public enum PPResumableSubscriptionState {
     case opening
     case open
     case resuming
     case failed
     case ended
+}
+
+public enum PPRetryableError: Error {
+    case noRetryStrategyProvided
 }

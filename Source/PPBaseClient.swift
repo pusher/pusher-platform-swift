@@ -2,29 +2,31 @@ import Foundation
 
 let REALLY_LONG_TIME: Double = 252_460_800
 
-@objc public class BaseClient: NSObject {
+@objc public class PPBaseClient: NSObject {
     public var port: Int?
     internal var baseUrlComponents: URLComponents
 
     // The subscriptionURLSession requires a different URLSessionConfiguration, which
     // is why it is separated from the generalRequestURLSession
     public let subscriptionURLSession: URLSession
+    public let subscriptionSessionDelegate: PPURLSessionDelegate
 
     public let generalRequestURLSession: URLSession
-
-    public let sessionDelegate: PPURLSessionDelegate
+    public let generalRequestSessionDelegate: PPURLSessionDelegate
 
     public var logger: PPLogger? = nil {
         willSet {
-            self.sessionDelegate.logger = newValue
+            self.subscriptionSessionDelegate.logger = newValue
+            self.generalRequestSessionDelegate.logger = newValue
         }
     }
 
     // Should be between 30 and 300
     public let heartbeatTimeout: Int
 
-    // Should be between 0 and 10240 (to avoid 422 response) but URLSession
-    // seems to need 512+ bytes to ensure that it calls didReceiveResponse
+    // Should be between 0 and 10240 (to avoid 422 response) - we don't need any
+    // initial data because the custom content type header means that no data
+    // gets buffered by URLSession
     public let heartbeatInitialSize: Int
 
     // Set to true if you want to trust all certificates
@@ -43,10 +45,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
         insecure: Bool = false,
         clientName: String = "pusher-platform-swift",
         clientVersion: String = "0.1.5",
-        retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = BaseClient.methodAwareRetryStrageyGenerator,
+        retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrageyGenerator,
         heartbeatTimeoutInterval: Int = 60,
-        heartbeatInitialSize: Int = 512
-    ) {
+        heartbeatInitialSize: Int = 0
+        ) {
         let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
 
         var urlComponents = URLComponents()
@@ -70,17 +72,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
             "X-Initial-Heartbeat-Size": String(self.heartbeatInitialSize)
         ]
 
-        self.sessionDelegate = PPURLSessionDelegate(insecure: insecure)
+        self.subscriptionSessionDelegate = PPURLSessionDelegate(insecure: insecure)
+        self.generalRequestSessionDelegate = PPURLSessionDelegate(insecure: insecure)
 
         self.subscriptionURLSession = URLSession(
             configuration: subscriptionSessionConfiguration,
-            delegate: self.sessionDelegate,
+            delegate: self.subscriptionSessionDelegate,
             delegateQueue: nil
         )
 
         self.generalRequestURLSession = URLSession(
             configuration: .default,
-            delegate: self.sessionDelegate,
+            delegate: self.generalRequestSessionDelegate,
             delegateQueue: nil
         )
     }
@@ -95,12 +98,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-    ) {
+        ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
         guard var url = mutableURLComponents.url else {
-            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
+            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
@@ -119,17 +122,19 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
 
-        guard self.sessionDelegate[task] == nil else {
-            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
+        // TODO: We should really be locking the sessionDelegate's list of requests for the check
+        // and the assignment together
+        guard self.generalRequestSessionDelegate[task] == nil else {
+            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
             return
         }
 
-        self.sessionDelegate[task] = generalRequest
+        self.generalRequestSessionDelegate[task] = generalRequest
 
         generalRequest.options = requestOptions
 
         guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
-            onError?(BaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
+            onError?(PPBaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
             return
         }
 
@@ -147,12 +152,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-    ) {
+        ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
         guard var url = mutableURLComponents.url else {
-            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
+            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
@@ -171,18 +176,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
 
-        guard self.sessionDelegate[task] == nil else {
-            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
+        guard self.generalRequestSessionDelegate[task] == nil else {
+            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
             return
         }
 
         let generalRequest = PPRequest(type: .general)
         generalRequest.options = requestOptions
 
-        self.sessionDelegate[task] = generalRequest
+        self.generalRequestSessionDelegate[task] = generalRequest
 
         guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
-            onError?(BaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
+            onError?(PPBaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
             return
         }
 
@@ -218,12 +223,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-    ) {
+        ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
         guard var url = mutableURLComponents.url else {
-            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
+            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
@@ -239,17 +244,17 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
-        guard self.sessionDelegate[task] == nil else {
-            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
+        guard self.subscriptionSessionDelegate[task] == nil else {
+            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
             return
         }
 
-        self.sessionDelegate[task] = subscription
+        self.subscriptionSessionDelegate[task] = subscription
 
         subscription.options = requestOptions
 
         guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
-            onError?(BaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
+            onError?(PPBaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
             return
         }
 
@@ -269,7 +274,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 
     public func subscribeWithResume(
-        with resumableSubscription: inout ResumableSubscription,
+        with resumableSubscription: inout PPResumableSubscription,
         using requestOptions: PPRequestOptions,
         app: App,
         onOpening: (() -> Void)? = nil,
@@ -278,12 +283,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-    ) {
+        ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
         guard var url = mutableURLComponents.url else {
-            onError?(BaseClientError.invalidUrl(components: mutableURLComponents))
+            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
@@ -299,8 +304,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
-        guard self.sessionDelegate[task] == nil else {
-            onError?(BaseClientError.preExistingTaskIdentifierForRequest)
+        guard self.subscriptionSessionDelegate[task] == nil else {
+            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
             return
         }
 
@@ -308,10 +313,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         subscription.options = requestOptions
 
-        self.sessionDelegate[task] = subscription
+        self.subscriptionSessionDelegate[task] = subscription
 
         guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
-            onError?(BaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
+            onError?(PPBaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
             return
         }
 
@@ -350,14 +355,14 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) -> Void {
         self.subscriptionURLSession.getAllTasks { tasks in
             guard tasks.count > 0 else {
-                completionHandler?(.failure(BaseClientError.noTasksForSubscriptionUrlSession(self.subscriptionURLSession)))
+                completionHandler?(.failure(PPBaseClientError.noTasksForSubscriptionURLSession(self.subscriptionURLSession)))
                 return
             }
 
             let filteredTasks = tasks.filter { $0.taskIdentifier == taskIdentifier }
 
             guard filteredTasks.count == 1 else {
-                completionHandler?(.failure(BaseClientError.noTaskWithMatchingTaskIdentifierFound(taskId: taskIdentifier, session: self.subscriptionURLSession)))
+                completionHandler?(.failure(PPBaseClientError.noTaskWithMatchingTaskIdentifierFound(taskId: taskIdentifier, session: self.subscriptionURLSession)))
                 return
             }
 
@@ -379,35 +384,29 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 }
 
-// TODO: LocalizedError
-
-internal enum BaseClientError: Error {
-    case invalidUrl(components: URLComponents)
+internal enum PPBaseClientError: Error {
+    case invalidURL(components: URLComponents)
     case preExistingTaskIdentifierForRequest
-    case noTasksForSubscriptionUrlSession(URLSession)
+    case noTasksForSubscriptionURLSession(URLSession)
     case noTaskWithMatchingTaskIdentifierFound(taskId: Int, session: URLSession)
     case requestHasInvalidDelegate(request: PPRequest, delegate: PPRequestTaskDelegate)
 }
 
-//extension BaseClientError: LocalizedError {
-//    public var errorDescription: String? {
-//        switch self {
-//        case .invalidUrl(let components):
-//
-//        }
-//    }
-//}
-
-public enum RequestError: Error {
-    case invalidHttpResponse(response: URLResponse?, data: Data?)
-    case badResponseStatusCode(response: HTTPURLResponse)
-    case badResponseStatusCodeWithMessage(response: HTTPURLResponse, errorMessage: String)
-    case noDataPresent
-}
-
-public enum SubscriptionError: Error {
-    case unexpectedError
-    case heartbeatTimeoutReached
+extension PPBaseClientError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .invalidURL(let components):
+            return "Invalid URL from components: \(components.debugDescription)"
+        case .preExistingTaskIdentifierForRequest:
+            return "Task identifier already in use for another request"
+        case .noTasksForSubscriptionURLSession(let urlSession):
+            return "No tasks for URLSession: \(urlSession.debugDescription)"
+        case .noTaskWithMatchingTaskIdentifierFound(let taskId, let urlSession):
+            return "No task with id \(taskId) for URLSession: \(urlSession.debugDescription)"
+        case .requestHasInvalidDelegate(let request, let delegate):
+            return "Request of type \(request.type.rawValue) has delegate of type \(type(of: delegate))"
+        }
+    }
 }
 
 public enum HTTPMethod: String {
