@@ -218,6 +218,8 @@ import Foundation
     }
 }
 
+// TODO: I don't think this is being used nor is it being set properly 
+
 public enum PPResumableSubscriptionState {
     case opening
     case open
