@@ -48,7 +48,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrageyGenerator,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 0
-        ) {
+    ) {
         let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
 
         var urlComponents = URLComponents()
@@ -98,7 +98,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-        ) {
+    ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
@@ -152,7 +152,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-        ) {
+    ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
@@ -223,7 +223,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-        ) {
+    ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
@@ -283,7 +283,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEvent: ((String, [String: String], Any) -> Void)? = nil,
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
-        ) {
+    ) {
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 

@@ -95,7 +95,10 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             return
         }
 
-        guard let dataString = String(data: data, encoding: .utf8) else {
+        // We always append the data here
+        self.data.append(data)
+
+        guard let dataString = String(data: self.data, encoding: .utf8) else {
             self.logger?.log(
                 "Failed to convert received Data to String for task id \(String(describing: self.task?.taskIdentifier))",
                 logLevel: .verbose
@@ -108,11 +111,19 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         // No newline character in data received so the received data should be stored, ready
         // for the next data to be received
         guard stringMessages.count > 1 else {
-            self.data.append(data)
             return
         }
 
-        // TODO: Check that last character of dataString is \n
+        // TODO: Could optimise reading here to get messages as early as possible by
+        // parsing a message as soon as we have a valid message in the total data, and
+        // then just keep the "remainder" stored, rather than waiting until we have a
+        // full set of messages. E.g. we could have a stream of data received such that
+        // we received messages in this order: 0.5, 2.25, 0.25, and instead of eventually
+        // parsing 3 whole messages (0, 0, 3 - respective to when each bit of data is
+        // received), we would parse 0, 2, 1
+        guard stringMessages.last == "" else {
+            return
+        }
 
         let messages = self.messageParser.parse(stringMessages: stringMessages)
         self.handle(messages: messages)

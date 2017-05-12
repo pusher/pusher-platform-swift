@@ -349,7 +349,7 @@ import Foundation
         if path.substring(to: endIndex) == "/apps/" {
             return path
         } else {
-            let namespacedPath = "/apps/\(appId)/services/\(path)"
+            let namespacedPath = "/apps/\(appId)/services\(path)"
             return namespacedPath
         }
     }
