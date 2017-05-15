@@ -141,6 +141,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         guard let errorToReport = err else {
             // TODO: We probably need to keep track of the fact that the subscription has completed and
             // then potentially communicate any error received as data, if that's possible?
+            // Maybe we just need to call onEnd here, and be done with it?
             return
         }
 

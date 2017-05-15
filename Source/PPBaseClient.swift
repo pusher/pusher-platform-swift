@@ -102,12 +102,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
+        self.logger?.log("URLComponents for request in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
         url = url.appendingPathComponent(requestOptions.path)
+
+        self.logger?.log("URL for request in base client: \(url)", logLevel: .verbose)
 
         var request = URLRequest(url: url)
         request.httpMethod = requestOptions.method
@@ -156,12 +160,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
+        self.logger?.log("URLComponents for requestWithRetry in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
         url = url.appendingPathComponent(requestOptions.path)
+
+        self.logger?.log("URL for requestWithRetry in base client: \(url)", logLevel: .verbose)
 
         var request = URLRequest(url: url)
         request.httpMethod = requestOptions.method
@@ -227,12 +235,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
+        self.logger?.log("URLComponents for subscribe in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
         url = url.appendingPathComponent(requestOptions.path)
+
+        self.logger?.log("URL for subscribe in base client: \(url)", logLevel: .verbose)
 
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.SUBSCRIBE.rawValue
@@ -287,12 +299,16 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
+        self.logger?.log("URLComponents for subscribeWithResume in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
             return
         }
 
         url = url.appendingPathComponent(requestOptions.path)
+
+        self.logger?.log("URL for subscribeWithResume in base client: \(url)", logLevel: .verbose)
 
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.SUBSCRIBE.rawValue
