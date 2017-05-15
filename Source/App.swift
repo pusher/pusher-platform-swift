@@ -76,8 +76,6 @@ import Foundation
 
         var generalRetryableRequest = PPRetryableGeneralRequest(app: self, requestOptions: requestOptions)
 
-        self.logger.log("mutableBaseClientRequestOptions queryItems: \(mutableBaseClientRequestOptions.queryItems.debugDescription)", logLevel: .debug)
-
         if self.authorizer != nil {
             self.authorizer!.authorize { result in
                 switch result {
