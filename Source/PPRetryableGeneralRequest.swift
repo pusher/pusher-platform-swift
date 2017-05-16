@@ -1,6 +1,6 @@
 import Foundation
 
-// TODO: Rename
+// TODO: Rename, maybe?
 
 @objc public class PPRetryableGeneralRequest: NSObject {
     public let requestOptions: PPRequestOptions
@@ -102,6 +102,8 @@ import Foundation
             )
             return
         }
+
+        self.logger?.log("Creating new underlying request for retrying", logLevel: .debug)
 
         let newRequest = self.app.request(
             using: self.requestOptions,

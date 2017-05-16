@@ -368,22 +368,22 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
     // TODO: Look at this
 
-    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) -> Void {
+    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) -> Void {
         self.subscriptionURLSession.getAllTasks { tasks in
             guard tasks.count > 0 else {
-                completionHandler?(.failure(PPBaseClientError.noTasksForSubscriptionURLSession(self.subscriptionURLSession)))
+                completionHandler?(PPBaseClientError.noTasksForSubscriptionURLSession(self.subscriptionURLSession))
                 return
             }
 
             let filteredTasks = tasks.filter { $0.taskIdentifier == taskIdentifier }
 
             guard filteredTasks.count == 1 else {
-                completionHandler?(.failure(PPBaseClientError.noTaskWithMatchingTaskIdentifierFound(taskId: taskIdentifier, session: self.subscriptionURLSession)))
+                completionHandler?(PPBaseClientError.noTaskWithMatchingTaskIdentifierFound(taskId: taskIdentifier, session: self.subscriptionURLSession))
                 return
             }
 
             filteredTasks.first!.cancel()
-            completionHandler?(.success(true))
+            completionHandler?(nil)
         }
     }
 

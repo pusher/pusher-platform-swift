@@ -38,7 +38,7 @@ import Foundation
         if self.authorizer != nil {
             self.authorizer!.authorize { result in
                 switch result {
-                case .failure(let error): onError?(error)
+                case .error(let error): onError?(error)
                 case .success(let jwtFromAuthorizer):
                     let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
@@ -79,7 +79,7 @@ import Foundation
         if self.authorizer != nil {
             self.authorizer!.authorize { result in
                 switch result {
-                case .failure(let error): onError?(error)
+                case .error(let error): onError?(error)
                 case .success(let jwtFromAuthorizer):
                     let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
@@ -123,7 +123,7 @@ import Foundation
 
             self.authorizer!.authorize { [weak subscription] result in
                 switch result {
-                case .failure(let error): onError?(error)
+                case .error(let error): onError?(error)
                 case .success(let jwtFromAuthorizer):
                     let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
@@ -171,7 +171,7 @@ import Foundation
         if self.authorizer != nil {
             self.authorizer!.authorize { [weak resumableSubscription] result in
                 switch result {
-                case .failure(let error): onError?(error)
+                case .error(let error): onError?(error)
                 case .success(let jwtFromAuthorizer):
                     let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
@@ -223,7 +223,7 @@ import Foundation
         if self.authorizer != nil {
             self.authorizer!.authorize { result in
                 switch result {
-                case .failure(let error): onError?(error)
+                case .error(let error): onError?(error)
                 case .success(let jwtFromAuthorizer):
                     let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
@@ -276,7 +276,7 @@ import Foundation
 
             self.authorizer!.authorize { [weak resumableSubscription] result in
                 switch result {
-                case .failure(let error): onError?(error)
+                case .error(let error): onError?(error)
                 case .success(let jwtFromAuthorizer):
                     let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
@@ -311,7 +311,7 @@ import Foundation
         return resumableSubscription
     }
 
-    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Result<Bool>) -> Void)? = nil) {
+    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) {
         self.client.unsubscribe(taskIdentifier: taskIdentifier, completionHandler: completionHandler)
     }
 

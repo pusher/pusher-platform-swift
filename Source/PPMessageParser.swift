@@ -53,7 +53,7 @@ internal class PPMessageParser {
 
             guard jsonArray.count == messageType.numberOfElements() else {
                 self.logger?.log(
-                    "Expected \(messageType.numberOfElements()) elements in )message of type \(messageType.rawValue) but received \(jsonArray.count)",
+                    "Expected \(messageType.numberOfElements()) elements in message of type \(messageType.rawValue) but received \(jsonArray.count)",
                     logLevel: .debug
                 )
                 return nil

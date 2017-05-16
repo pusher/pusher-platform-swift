@@ -18,6 +18,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)?
     public var onError: ((Error) -> Void)?
 
+    // TODO: Check this is being set properly
     internal var heartbeatTimeout: Double = 60.0
     internal var heartbeatTimeoutTimer: Timer? = nil
 
@@ -41,6 +42,13 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
+        guard self.task != nil else {
+            self.logger?.log("Task not set in request delegate", logLevel: .debug)
+            return
+        }
+
+        self.logger?.log("Task \(self.task!.taskIdentifier) handling response: \(response.debugDescription)", logLevel: .verbose)
+
         guard let httpResponse = response as? HTTPURLResponse else {
             self.handleCompletion(error: PPRequestTaskDelegateError.invalidHTTPResponse(response: response))
 
@@ -64,6 +72,11 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     @objc(handleData:)
     internal func handle(_ data: Data) {
+        guard self.task != nil else {
+            self.logger?.log("Task not set in request delegate", logLevel: .debug)
+            return
+        }
+
         // TODO: Timer stuff below
 
         guard self.badResponse == nil else {
@@ -106,6 +119,8 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             return
         }
 
+        self.logger?.log("Task \(self.task!.taskIdentifier) handling dataString: \(dataString)", logLevel: .verbose)
+
         let stringMessages = dataString.components(separatedBy: "\n")
 
         // No newline character in data received so the received data should be stored, ready
@@ -133,6 +148,13 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     internal func handleCompletion(error: Error? = nil) {
+        guard self.task != nil else {
+            self.logger?.log("Task not set in request delegate", logLevel: .debug)
+            return
+        }
+
+        self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
+
         self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
 
@@ -171,13 +193,17 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         }
     }
 
-    @objc fileprivate func endSubscription() {
+    @objc fileprivate func endSubscriptionAfterHeartbeatTimeout() {
+        self.logger?.log("Ending subscription after heartbeat timeout", logLevel: .verbose)
+
         self.handleCompletion(error: PPSubscriptionError.heartbeatTimeoutReached)
     }
 
     // TODO: Fix multiple heartbeat timers being created in certain circumstances
 
     fileprivate func resetHeartbeatTimeoutTimer() {
+        self.logger?.log("Resetting heartbeat timeout timer", logLevel: .verbose)
+
         self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
 
@@ -185,7 +211,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             self.heartbeatTimeoutTimer = Timer.scheduledTimer(
                 timeInterval: self.heartbeatTimeout + 2,  // Give the timeout a small amount of leeway
                 target: self,
-                selector: #selector(self.endSubscription),
+                selector: #selector(self.endSubscriptionAfterHeartbeatTimeout),
                 userInfo: nil,
                 repeats: false
             )

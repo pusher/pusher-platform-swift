@@ -138,7 +138,9 @@ import Foundation
     }
 
     public func handleOnEvent(eventId: String, headers: [String: String]?, data: Any) {
-        self.lastEventIdReceived = eventId
+        if eventId != "" {
+            self.lastEventIdReceived = eventId
+        }
     }
 
     public func handleOnError(error: Error) {
@@ -195,14 +197,16 @@ import Foundation
     }
 
     internal func setupNewSubscription() {
-        if let eventId = self.lastEventIdReceived {
-            self.logger?.log("Creating new Subscription with Last-Event-ID \(eventId)", logLevel: .debug)
-            self.requestOptions.addHeaders(["Last-Event-ID": eventId])
-        }
-
         guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
             self.logger?.log("Invalid delegate for subscription: \(String(describing: self.subscription))", logLevel: .error)
             return
+        }
+
+        if let eventId = self.lastEventIdReceived {
+            self.logger?.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
+            self.requestOptions.addHeaders(["Last-Event-ID": eventId])
+        } else {
+            self.logger?.log("Creating new underlying subscription", logLevel: .debug)
         }
 
         let newSubscription = self.app.subscribe(

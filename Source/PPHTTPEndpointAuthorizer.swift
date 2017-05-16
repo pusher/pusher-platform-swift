@@ -21,17 +21,14 @@ public class PPHTTPEndpointAuthorizer: PPAuthorizer {
         self.retryStrategy = retryStrategy
     }
 
-    public func authorize(completionHandler: @escaping (Result<String>) -> Void) {
+    public func authorize(completionHandler: @escaping (PPAuthorizerResult) -> Void) {
 
         // TODO: [unowned self] ?
 
-        let retryAwareCompletionHandler = { (result: Result<String>) in
-            switch result {
-            case .success(let token):
-                self.retryStrategy.requestSucceeded()
-                completionHandler(.success(token))
-            case .failure(let error):
-                let shouldRetryResult = self.retryStrategy.shouldRetry(given: error)
+        let retryAwareCompletionHandler = { (authorizerResult: PPAuthorizerResult) in
+            switch authorizerResult {
+            case .error(let err):
+                let shouldRetryResult = self.retryStrategy.shouldRetry(given: err)
 
                 switch shouldRetryResult {
                 case .retry(let retryWaitTimeInterval):
@@ -41,8 +38,12 @@ public class PPHTTPEndpointAuthorizer: PPAuthorizer {
                         self.authorize(completionHandler: completionHandler)
                     })
                 case .doNotRetry(let reasonErr):
-                    completionHandler(.failure(reasonErr))
+                    completionHandler(PPAuthorizerResult.error(error: reasonErr))
                 }
+                return
+            case .success(let token):
+                self.retryStrategy.requestSucceeded()
+                completionHandler(PPAuthorizerResult.success(token: token))
             }
         }
 
@@ -56,72 +57,72 @@ public class PPHTTPEndpointAuthorizer: PPAuthorizer {
                 // TODO: Is returning here correct?
                 return
             }
-            completionHandler(.success(token))
+            completionHandler(PPAuthorizerResult.success(token: token))
         } else {
             getTokenPair(completionHandler: retryAwareCompletionHandler)
         }
     }
 
-    public func getTokenPair(completionHandler: @escaping (Result<String>) -> Void) {
+    public func getTokenPair(completionHandler: @escaping (PPAuthorizerResult) -> Void) {
         makeAuthRequest(grantType: PPEndpointRequestGrantType.clientCredentials, completionHandler: completionHandler)
     }
 
-    public func refreshAccessToken(completionHandler: @escaping (Result<String>) -> Void) {
+    public func refreshAccessToken(completionHandler: @escaping (PPAuthorizerResult) -> Void) {
         makeAuthRequest(grantType: PPEndpointRequestGrantType.refreshToken, completionHandler: completionHandler)
     }
 
-    public func makeAuthRequest(grantType: PPEndpointRequestGrantType, completionHandler: @escaping (Result<String>) -> Void) {
+    public func makeAuthRequest(grantType: PPEndpointRequestGrantType, completionHandler: @escaping (PPAuthorizerResult) -> Void) {
         let authRequestResult = prepareAuthRequest(grantType: grantType)
 
-        guard let request = authRequestResult.value else {
-            completionHandler(.failure(authRequestResult.error!))
+        guard let request = authRequestResult.request, authRequestResult.error == nil else {
+            completionHandler(PPAuthorizerResult.error(error: authRequestResult.error!))
             return
         }
 
         URLSession.shared.dataTask(with: request, completionHandler: { data, response, sessionError in
             if let error = sessionError {
-                completionHandler(.failure(error))
+                completionHandler(PPAuthorizerResult.error(error: error))
                 return
             }
 
             guard let data = data else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.noDataPresent))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.noDataPresent))
                 return
             }
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.invalidHTTPResponse(response: response, data: data)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.invalidHTTPResponse(response: response, data: data)))
                 return
             }
 
             guard 200..<300 ~= httpResponse.statusCode else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.badResponseStatusCode(response: httpResponse, data: data)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.badResponseStatusCode(response: httpResponse, data: data)))
                 return
             }
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.failedToDeserializeJSON(data)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.failedToDeserializeJSON(data)))
                 return
             }
 
             guard let json = jsonObject as? [String: Any] else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.failedToCastJSONObjectToDictionary(jsonObject)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.failedToCastJSONObjectToDictionary(jsonObject)))
                 return
             }
 
             guard let accessToken = json["access_token"] as? String else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.validAccessTokenNotPresentInResponseJSON(json)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.validAccessTokenNotPresentInResponseJSON(json)))
                 return
             }
 
             guard let refreshToken = json["refresh_token"] as? String else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.validRefreshTokenNotPresentInResponseJSON(json)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.validRefreshTokenNotPresentInResponseJSON(json)))
                 return
             }
 
             // TODO: Check if Double is sensible type here
             guard let expiresIn = json["expires_in"] as? TimeInterval else {
-                completionHandler(.failure(PPHTTPEndpointAuthorizerError.validExpiresInNotPresentInResponseJSON(json)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointAuthorizerError.validExpiresInNotPresentInResponseJSON(json)))
                 return
             }
 
@@ -129,13 +130,13 @@ public class PPHTTPEndpointAuthorizer: PPAuthorizer {
             self.refreshToken = refreshToken
             self.accessTokenExpiresAt = Date().timeIntervalSince1970 + expiresIn
 
-            completionHandler(.success(accessToken))
+            completionHandler(PPAuthorizerResult.success(token: accessToken))
         }).resume()
     }
 
-    public func prepareAuthRequest(grantType: PPEndpointRequestGrantType) -> Result<URLRequest> {
+    public func prepareAuthRequest(grantType: PPEndpointRequestGrantType) -> (request: URLRequest?, error: Error?) {
         guard var endpointURLComponents = URLComponents(string: self.url) else {
-            return .failure(PPHTTPEndpointAuthorizerError.failedToCreateURLComponents(self.url))
+            return (request: nil, error: PPHTTPEndpointAuthorizerError.failedToCreateURLComponents(self.url))
         }
 
         var httpEndpointRequest: PPHTTPEndpointAuthorizerRequest? = nil
@@ -151,7 +152,7 @@ public class PPHTTPEndpointAuthorizer: PPAuthorizer {
         }
 
         guard let endpointURL = endpointURLComponents.url else {
-            return .failure(PPHTTPEndpointAuthorizerError.failedToCreateURLObject(endpointURLComponents))
+            return (request: nil, error: PPHTTPEndpointAuthorizerError.failedToCreateURLObject(endpointURLComponents))
         }
 
         var request = URLRequest(url: endpointURL)
@@ -176,7 +177,7 @@ public class PPHTTPEndpointAuthorizer: PPAuthorizer {
             request.httpBody = grantBodyString.data(using: .utf8)
         }
 
-        return .success(request)
+        return (request: request, error: nil)
     }
 }
 
@@ -219,111 +220,4 @@ public enum PPHTTPEndpointAuthorizerError: Error {
     case validAccessTokenNotPresentInResponseJSON([String: Any])
     case validRefreshTokenNotPresentInResponseJSON([String: Any])
     case validExpiresInNotPresentInResponseJSON([String: Any])
-}
-
-// Code based on SwiftHTTP https://github.com/daltoniam/SwiftHTTP
-// License: Apache-2.0
-// Modifications made for usage in pusher-platform-swift
-
-/**
-    This protocol is used to make the dictionary and array serializable into key/value pairs.
-*/
-public protocol HTTPParameterProtocol {
-    func createPairs(_ key: String?) -> Array<HTTPPair>
-}
-
-/**
-    Support for the Dictionary type as an HTTPParameter.
-*/
-extension Dictionary: HTTPParameterProtocol {
-    public func createPairs(_ key: String?) -> Array<HTTPPair> {
-        var collect: [HTTPPair] = []
-
-        for (k, v) in self {
-            if let nestedKey = k as? String {
-                let useKey = key != nil ? "\(key!)[\(nestedKey)]" : nestedKey
-                if let subParam = v as? HTTPParameterProtocol {
-                    collect.append(contentsOf: subParam.createPairs(useKey))
-                } else if let subParam = v as? Array<AnyObject> {
-//                    // TODO: Maybe works??
-//                    collect.append(contentsOf: subParam.createPairs(useKey))
-                    for s in subParam.createPairs(useKey) {
-                        collect.append(s)
-                    }
-                } else {
-                    collect.append(HTTPPair(key: useKey, value: v as AnyObject))
-                }
-            }
-        }
-
-        return collect
-    }
-}
-
-/**
-    Support for the Array type as an HTTPParameter.
-*/
-extension Array: HTTPParameterProtocol {
-    public func createPairs(_ key: String?) -> Array<HTTPPair> {
-        var collect = Array<HTTPPair>()
-        for v in self {
-            let useKey = key != nil ? "\(key!)[]" : key
-            if let subParam = v as? Dictionary<String, AnyObject> {
-                collect.append(contentsOf: subParam.createPairs(useKey))
-            } else if let subParam = v as? Array<AnyObject> {
-                //collect.appendContentsOf(subParam.createPairs(useKey)) <- bug? should work.
-                for s in subParam.createPairs(useKey) {
-                    collect.append(s)
-                }
-            } else {
-                collect.append(HTTPPair(key: useKey, value: v as AnyObject))
-            }
-        }
-        return collect
-    }
-}
-
-/**
-    This is used to create key/value pairs of the parameters
-*/
-public struct HTTPPair {
-    var key: String?
-    let storeVal: AnyObject
-
-    /**
-        Create the object with a possible key and a value
-    */
-    init(key: String?, value: AnyObject) {
-        self.key = key
-        self.storeVal = value
-    }
-
-    /**
-        Computed property of the string representation of the storedVal
-    */
-    var value: String {
-        if let v = storeVal as? String {
-            return v
-        } else if let v = storeVal.description {
-            return v
-        }
-        return ""
-    }
-
-    /**
-        Computed property of the string representation of the storedVal escaped for URLs
-    */
-    var escapedValue: String {
-        let allowedCharacterSet = CharacterSet(charactersIn: "!*'();:@&=+$,/?%#[]. ").inverted
-
-        if let v = value.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) {
-            if let k = key {
-                if let escapedKey = k.addingPercentEncoding(withAllowedCharacters: allowedCharacterSet) {
-                    return "\(escapedKey)=\(v)"
-                }
-            }
-            return v
-        }
-        return ""
-    }
 }
