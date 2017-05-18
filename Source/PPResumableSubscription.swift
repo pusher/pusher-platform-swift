@@ -117,6 +117,10 @@ import Foundation
         self.retrySubscriptionTimer?.invalidate()
     }
 
+    public func setLastEventIdReceivedTo(_ eventId: String?) {
+        self.lastEventIdReceived = eventId
+    }
+
     public func changeState(to newState: PPResumableSubscriptionState) {
 //        TODO: Potentially add an onStateChange handlers property
 //        let oldState = self.state
