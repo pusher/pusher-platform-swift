@@ -22,18 +22,3 @@ public enum PPLogLevel: Int, Comparable {
 public protocol PPLogger {
     func log(_ message: @autoclosure @escaping () -> String, logLevel: PPLogLevel)
 }
-
-public class PPDefaultLogger {
-    public var minimumLogLevel: PPLogLevel = .debug
-    internal let logQueue = DispatchQueue(label: "com.pusherplatform.swift.defaultlogger")
-}
-
-extension PPDefaultLogger: PPLogger {
-    public func log(_ message: @autoclosure @escaping () -> String, logLevel: PPLogLevel) {
-        if logLevel >= minimumLogLevel {
-            logQueue.async {
-                print("[\(logLevel.stringRepresentation())] \(message())")
-            }
-        }
-    }
-}

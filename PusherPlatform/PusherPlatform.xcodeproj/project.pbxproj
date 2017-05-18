@@ -12,6 +12,7 @@
 		331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */; };
 		332E05E61DDCA3DB007A55FB /* PPMessageParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E51DDCA3DB007A55FB /* PPMessageParser.swift */; };
 		332E05E81DDCA919007A55FB /* PPMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 332E05E71DDCA919007A55FB /* PPMessage.swift */; };
+		334B9A2F1ECCA295007A3D3B /* PPDefaultLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 334B9A2E1ECCA295007A3D3B /* PPDefaultLogger.swift */; };
 		335BCA0D1C38ABF000B47A66 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33816B001EB3446900E5A169 /* PPRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */; };
 		33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */; };
@@ -46,6 +47,7 @@
 		331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRetryableGeneralRequest.swift; sourceTree = "<group>"; };
 		332E05E51DDCA3DB007A55FB /* PPMessageParser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPMessageParser.swift; sourceTree = "<group>"; };
 		332E05E71DDCA919007A55FB /* PPMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPMessage.swift; sourceTree = "<group>"; };
+		334B9A2E1ECCA295007A3D3B /* PPDefaultLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultLogger.swift; sourceTree = "<group>"; };
 		33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRetryStrategy.swift; sourceTree = "<group>"; };
 		33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequestOptions.swift; sourceTree = "<group>"; };
 		33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequestTaskDelegate.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 				33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */,
 				33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */,
 				330DD21B1E0C433A00EC251F /* PPLogger.swift */,
+				334B9A2E1ECCA295007A3D3B /* PPDefaultLogger.swift */,
 				33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */,
 				33BB995C1D21225B00B25C2A /* Tests */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
@@ -285,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				330E59071DEDD38900C92897 /* PPResumableSubscription.swift in Sources */,
+				334B9A2F1ECCA295007A3D3B /* PPDefaultLogger.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
 				33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */,
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
