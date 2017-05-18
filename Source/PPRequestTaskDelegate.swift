@@ -12,7 +12,8 @@ internal protocol PPRequestTaskDelegate {
 
     var badResponseError: Error? { get set }
 
-    var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? { get set }
+    // TODO: Is this necessary or will we always receive data on error?
+//    var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? { get set }
 
     init(task: URLSessionDataTask?)
 

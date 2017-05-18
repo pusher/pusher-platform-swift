@@ -22,8 +22,6 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     internal var heartbeatTimeout: Double = 60.0
     internal var heartbeatTimeoutTimer: Timer? = nil
 
-    internal var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? = nil
-
     public var logger: PPLogger? = nil
 
     internal lazy var messageParser: PPMessageParser = {
@@ -155,6 +153,8 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
         self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
 
+        self.task!.cancel()
+
         self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
 
@@ -168,10 +168,15 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         }
 
         guard self.error == nil else {
-            self.logger?.log(
-                "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
-                logLevel: .debug
-            )
+            if (errorToReport as NSError).code == NSURLErrorCancelled {
+                self.logger?.log("Request cancelled, likely because of a heartbeat timeout", logLevel: .verbose)
+            } else {
+                self.logger?.log(
+                    "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
+                    logLevel: .debug
+                )
+            }
+
             return
         }
 
@@ -198,8 +203,6 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
         self.handleCompletion(error: PPSubscriptionError.heartbeatTimeoutReached)
     }
-
-    // TODO: Fix multiple heartbeat timers being created in certain circumstances
 
     fileprivate func resetHeartbeatTimeoutTimer() {
         self.logger?.log("Resetting heartbeat timeout timer", logLevel: .verbose)

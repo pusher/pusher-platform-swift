@@ -17,9 +17,6 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     public var onSuccess: ((Data) -> Void)?
     public var onError: ((Error) -> Void)?
 
-    // TODO: Is this necessary or will we always receive data on error?
-    internal var waitForDataAccompanyingBadStatusCodeResponseTimer: Timer? = nil
-
     public required init(task: URLSessionDataTask? = nil) {
         self.task = task
     }
@@ -117,10 +114,15 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
         }
 
         guard self.error == nil else {
-            self.logger?.log(
-                "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
-                logLevel: .debug
-            )
+            if (errorToReport as NSError).code == NSURLErrorCancelled {
+                self.logger?.log("Request cancelled", logLevel: .verbose)
+            } else {
+                self.logger?.log(
+                    "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
+                    logLevel: .debug
+                )
+            }
+
             return
         }
 

@@ -202,6 +202,9 @@ import Foundation
             return
         }
 
+        self.logger?.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
+        subscriptionDelegate.task?.cancel()
+
         if let eventId = self.lastEventIdReceived {
             self.logger?.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
             self.requestOptions.addHeaders(["Last-Event-ID": eventId])

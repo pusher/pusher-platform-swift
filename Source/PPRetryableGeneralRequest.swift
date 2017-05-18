@@ -103,6 +103,9 @@ import Foundation
             return
         }
 
+        self.logger?.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
+        generalRequestDelegate.task?.cancel()
+
         self.logger?.log("Creating new underlying request for retrying", logLevel: .debug)
 
         let newRequest = self.app.request(
