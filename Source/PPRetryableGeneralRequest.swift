@@ -76,6 +76,8 @@ import Foundation
 
 //         TODO: Check which errors to pass to RetryStrategy
 
+        self.retryRequestTimer?.invalidate()
+
         let shouldRetryResult = retryStrategy.shouldRetry(given: error)
 
         switch shouldRetryResult {

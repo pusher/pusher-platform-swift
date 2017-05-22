@@ -171,6 +171,8 @@ import Foundation
             return
         }
 
+        self.retrySubscriptionTimer?.invalidate()
+
         let shouldRetryResult = retryStrategy.shouldRetry(given: error)
 
         switch shouldRetryResult {
