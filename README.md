@@ -33,12 +33,18 @@ If you don't already have the Cocoapods gem installed, run the following command
 $ gem install cocoapods
 ```
 
-Then run `pod init` to create your `Podfile` (if you don't already have one), and add the following lines to it:
+Then run `pod init` to create your `Podfile` (if you don't already have one).
+
+Next, add the Pusher private pod spec repository: 
+
+```
+pod repo install pusher  git@github.com:pusher/PrivatePodSpecs.git
+```
+
+Then add the following lines to it:
 
 ```ruby
-source 'https://github.com/CocoaPods/Specs.git'
-
-platform :ios, '10.0' # change this if you're not making an iOS app!
+platform :ios, '9.0' # change this if you're not making an iOS app!
 
 target 'your-app-name' do
   pod 'PusherPlatform'
@@ -85,127 +91,21 @@ github "pusher/pusher-platform-swift"
 TODO
 ```
 
-## Feeds
-
-### TL;DR (let me copy paste something)
-
-```swift
-let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
-let app = try! App(id: "yourAppId", authorizer: authorizer)
-
-let myFeed = app.feed("myFeed")
-
-let subscription = myFeed.subscribe(
-    onOpen: { Void in print("We're subscribed to myFeed") },
-    onAppend: { itemId, headers, item in print("Received new item", item) } ,
-    onEnd: { statusCode, headers, info in print("Subscription ended", info) },
-    onError: { error in print("Error: ", error) }
-)
-```
 
 ### Getting started
 
-First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id` along with an `authorizer`. An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them. In our example we're going to use a `SimpleTokenAuthorizer`, which, as the name suggests, is an `authorizer` that accepts a token (a JSON web token or JWT to be precise) and uses that for authorization. You can find, or generate, tokens to test things out by visiting [the dashboard](https://dash.pusher.com).
+First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id`. You can get your app ID from the dashboard.
 
 ```swift
-let authorizer = SimpleTokenAuthorizer(jwt: "your.token.here")
-let app = try! App(id: "YOUR APP ID", authorizer: authorizer)
+let app = try! App(id: "YOUR APP ID")
 ```
 
-### Setting up a FeedsHelper
+The `App` instance allows you to interact with the service using the Elements protocol. The high level methods it exposes are:
 
-When we've got an `App` then we can create a `FeedsHelper` object, which is where we specify the name of our feed:
-
-```swift
-let myFeed = app.feed("myFeed")
-```
-
-### Subscribing to receive new items
-
-Now that we've got a `FeedsHelper` we can subscribe to that feed to start receiving new items. When you subscribe to a feed you also receive (up to) the 50 most recently added items in the feed. For each of these items the `onAppend` function that you provide will be called.
-
-```swift
-myFeed.subscribe(
-    onOpen: { Void in print("We're subscribed to myFeed") },
-    onAppend: { itemId, headers, item in print("Received new item", item) } ,
-    onEnd: { statusCode, headers, info in print("Subscription ended", info) },
-    onError: { error in print("Error: ", error) }
-)
-```
-
-### Fetching older items in a feed
-
-If you need to fetch older items in a feed then you can do so by providing the id of the oldest item that the client is currently aware of. The response will then contain (up to) the next 50 oldest items in the feed. The default number of items that will be returned is (a maximum of) 50, but you can control this limit by providing a value for the `limit` parameter.
-
-```swift
-myFeed.fetchOlderItems(limit: 20) { result in
-    switch result {
-    case .failure(let error):
-        // handle the error appropriately
-    case .success(let feedItems):
-        print(feedItems)
-    }
-}
-```
-
-### Appending to feeds
-
-You can also append items to feeds, provided you have the appropriate permissions.
-
-```swift
-myFeed.append(item: ["newValue": 123]) { result in
-    switch result {
-    case .failure(let error):
-        // handle the error appropriately
-    case .success(let itemId):
-        print(itemId)
-    }
-}
-```
-
-Appending multiple items to a feed in one request is done like this:
-
-```swift
-myFeed.append(items: [["newValue": 123], ["someOtherKey": "someString"]]) { result in
-    switch result {
-    case .failure(let error):
-        // handle the error appropriately
-    case .success(let itemId):
-        // here the itemId returned is the id of the most recently appended item
-        // i.e. the last item in the items array passed in as a parameter
-        print(itemId)
-    }
-}
-```
-
-
-## Authorizers
-
-An `authorizer` is what `App` objects uses to ensure that any requests made will have the appropriate authorization information attached to them.
-
-There are two provided `Authorizers` in the library:
-
-- `SimpleTokenAuthorizer`: accepts a token (a JSON web token, or JWT, to be precise) and uses that for authorization
-- `EndpointAuthorizer`: makes a request to the provided URL with the expectation that it will receive a response of the form `{ "jwt": "some.relevant.jwt" }`, where the `jwt` value will then be cached by the authorizer and used for authorization purposes
-
-### SimpleTokenAuthorizer
-
-```swift
-let authorizer = SimpleTokenAuthorizer(jwt: "YOUR.CLIENT.JWT")
-```
-
-### EndpointAuthorizer
-
-```swift
-let requestMutator: ((URLRequest) -> (URLRequest))? = { request in
-    request.httpMethod = "POST"
-    request.httpBody = "some session info".data(using: String.Encoding.utf8)
-    return request
-}
-
-let authorizer = EndpointAuthorizer(url: "https://my.token.endpoint", requestMutator: requestMutator)
-```
-
+- `request` for standard HTTP requests
+- `subscribe` for longer running subscriptions
+and 
+- `subscribeWithResume` which is a special kind of subscription that you can resume from the last received event ID.
 
 ## Testing
 
