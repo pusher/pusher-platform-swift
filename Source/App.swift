@@ -22,6 +22,7 @@ import Foundation
         self.client.logger = self.logger
     }
 
+    @discardableResult
     public func request(
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
@@ -62,7 +63,7 @@ import Foundation
         return generalRequest
     }
 
-
+    @discardableResult
     public func requestWithRetry(
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
