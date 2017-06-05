@@ -1,23 +1,14 @@
-# PusherPlatform (pusher-platform-swift) (also works with Objective-C!)
+# PusherPlatform (pusher-platform-swift)
 
-![Languages](https://img.shields.io/badge/languages-swift%20%7C%20objc-orange.svg)
 [![Twitter](https://img.shields.io/badge/twitter-@Pusher-blue.svg?style=flat)](http://twitter.com/Pusher)
-[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/pusher/pusher-websocket-swift/master/LICENSE.md)
-
-
-## I just want to copy and paste some code to get me started
-
-What else would you want? Head over to the example app [ViewController.swift](https://github.com/pusher/pusher-platform-swift/blob/master/Pusher%20Platform%20macOS%20Example/Pusher%20Platform%20macOS%20Example/ViewController.swift) to get some code you can drop in to get started.
+[![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/pusher/pusher-platform-swift/master/LICENSE.md)
 
 
 ## Table of Contents
 
 * [Installation](#installation)
-* [Feeds](#feeds)
-* [Authorizers](#authorizers)
 * [Testing](#testing)
 * [Communication](#communication)
-* [Credits](#credits)
 * [License](#license)
 
 
@@ -35,7 +26,7 @@ $ gem install cocoapods
 
 Then run `pod init` to create your `Podfile` (if you don't already have one).
 
-Next, add the Pusher private pod spec repository: 
+Next, add the Pusher private pod spec repository:
 
 ```
 pod repo install pusher  git@github.com:pusher/PrivatePodSpecs.git
@@ -102,10 +93,10 @@ let app = try! App(id: "YOUR APP ID")
 
 The `App` instance allows you to interact with the service using the Elements protocol. The high level methods it exposes are:
 
-- `request` for standard HTTP requests
-- `subscribe` for longer running subscriptions
-and 
-- `subscribeWithResume` which is a special kind of subscription that you can resume from the last received event ID.
+- `request` and `requestWithRetry` for standard HTTP requests
+- `subscribe` for subscriptions
+- `subscribeWithResume` for subscriptions that you can resume from the last received event ID
+
 
 ## Testing
 
@@ -119,11 +110,6 @@ The tests also get run on [Travis-CI](https://travis-ci.org/pusher/pusher-platfo
 - Found a bug? Please open an issue.
 - Have a feature request. Please open an issue.
 - If you want to contribute, please submit a pull request (preferrably with some tests 🙂 ).
-
-
-## Credits
-
-PusherPlatform is owned and maintained by [Pusher](https://pusher.com). It was originally created by [Hamilton Chapman](https://github.com/hamchapman).
 
 
 ## License
