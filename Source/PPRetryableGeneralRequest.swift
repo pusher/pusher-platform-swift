@@ -19,13 +19,14 @@ import Foundation
                 return
             }
 
-            generalRequestDelegate.onSuccess = { [weak self] data in
-                guard let strongSelf = self else {
-                    print("self is nil when trying to handle onSuccess in general request delegate")
-                    return
-                }
-
-                strongSelf.handleOnSuccess(data)
+            // TODO: Not using a weak self here because a request, unlike a subscription,
+            // is notexpected to be referenced and stored for its lifecycle, so we do in
+            // fact want to capture self here - this isn't ideal though, so we need a
+            // better way of handling with cleanup. Could just be a function that gets
+            // called after success / error and sets the onSuccess and onError closures
+            // on the delegate to be nil so that the references to this are gone
+            generalRequestDelegate.onSuccess = { data in
+                self.handleOnSuccess(data)
                 newValue?(data)
             }
         }
@@ -43,13 +44,14 @@ import Foundation
                 return
             }
 
-            generalRequestDelegate.onError = { [weak self] error in
-                guard let strongSelf = self else {
-                    print("self is nil when trying to handle onError in general request delegate")
-                    return
-                }
-
-                strongSelf.handleOnError(error: error)
+            // TODO: Not using a weak self here because a request, unlike a subscription,
+            // is notexpected to be referenced and stored for its lifecycle, so we do in
+            // fact want to capture self here - this isn't ideal though, so we need a
+            // better way of handling with cleanup. Could just be a function that gets
+            // called after success / error and sets the onSuccess and onError closures
+            // on the delegate to be nil so that the references to this are gone
+            generalRequestDelegate.onError = { error in
+                self.handleOnError(error: error)
             }
 
             self._onError = newValue
