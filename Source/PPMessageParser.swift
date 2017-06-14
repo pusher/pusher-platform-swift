@@ -32,7 +32,9 @@ internal class PPMessageParser {
 
             guard let jsonArray = jsonObject as? [Any] else {
                 self.logger?.log(
-                    "Failed to cast JSON object to Dictionary: \(jsonObject)", logLevel: .debug)
+                    "Failed to cast JSON object to Dictionary: \(jsonObject)",
+                    logLevel: .debug
+                )
                 return nil
             }
 

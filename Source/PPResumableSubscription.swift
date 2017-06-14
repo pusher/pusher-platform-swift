@@ -186,6 +186,18 @@ import Foundation
             return
         }
 
+        self.retrySubscriptionTimer?.invalidate()
+
+        if let err = error as? PPSubscriptionError, case let .eosWithRetryAfter(eosWithRetryError) = err {
+            let retryWaitTimeInterval = eosWithRetryError.timeInterval
+            self.app.logger.log(
+                "Attempting retry in \(retryWaitTimeInterval)s because of retry after message received with EOS message",
+                logLevel: .debug
+            )
+            self.setupRetrySubscriptionTimer(retryWaitTimeInterval: retryWaitTimeInterval)
+            return
+        }
+
         if self.state != .resuming {
             self.changeState(to: .resuming)
         }
@@ -196,28 +208,30 @@ import Foundation
             return
         }
 
-        self.retrySubscriptionTimer?.invalidate()
-
         let shouldRetryResult = retryStrategy.shouldRetry(given: error)
 
         switch shouldRetryResult {
         case .retry(let retryWaitTimeInterval):
-            DispatchQueue.main.async { [weak self] in
-                guard let strongSelf = self else {
-                    print("self is nil when setting up retry subscription timer")
-                    return
-                }
-
-                strongSelf.retrySubscriptionTimer = Timer.scheduledTimer(
-                    timeInterval: retryWaitTimeInterval,
-                    target: strongSelf,
-                    selector: #selector(strongSelf.setupNewSubscription),
-                    userInfo: nil,
-                    repeats: false
-                )
-            }
+            self.setupRetrySubscriptionTimer(retryWaitTimeInterval: retryWaitTimeInterval)
         case .doNotRetry(let reasonErr):
             self._onError?(reasonErr)
+        }
+    }
+
+    func setupRetrySubscriptionTimer(retryWaitTimeInterval: TimeInterval) {
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else {
+                print("self is nil when setting up retry subscription timer")
+                return
+            }
+
+            strongSelf.retrySubscriptionTimer = Timer.scheduledTimer(
+                timeInterval: retryWaitTimeInterval,
+                target: strongSelf,
+                selector: #selector(strongSelf.setupNewSubscription),
+                userInfo: nil,
+                repeats: false
+            )
         }
     }
 

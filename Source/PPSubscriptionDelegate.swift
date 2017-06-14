@@ -148,14 +148,13 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     internal func handleCompletion(error: Error? = nil) {
-        guard self.task != nil else {
-            self.logger?.log("Task not set in request delegate", logLevel: .debug)
-            return
+        if self.task != nil {
+            self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
+            self.logger?.log("Cancelling task \(self.task!.taskIdentifier)", logLevel: .verbose)
+            self.task!.cancel()
+        } else {
+            self.logger?.log("Task with unknown id handling completion", logLevel: .verbose)
         }
-
-        self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
-
-        self.task!.cancel()
 
         self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
@@ -186,7 +185,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.onError?(errorToReport)
     }
 
-    internal func handle(messages: [PPMessage]) {
+    func handle(messages: [PPMessage]) {
         for message in messages {
             switch message {
             case PPMessage.keepAlive:
@@ -195,14 +194,47 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             case PPMessage.event(let eventId, let headers, let body):
                 self.onEvent?(eventId, headers, body)
             case PPMessage.eos(let statusCode, let headers, let info):
-                self.onEnd?(statusCode, headers, info)
+                self.handleEos(statusCode: statusCode, headers: headers, info: info)
             }
         }
     }
 
+    func handleEos(statusCode: Int, headers: [String: String], info: Any) {
+        guard let errorInfo = info as? [String: String] else {
+            let error = PPSubscriptionError.eosWithoutInfo(info)
+            self.logger?.log(error.localizedDescription, logLevel: .verbose)
+
+            self.handleCompletion(error: error)
+            return
+        }
+
+        guard let errorShort = errorInfo["error"] else {
+            let error = PPSubscriptionError.eosWithoutErrorInformation(errorInfo: errorInfo)
+            self.logger?.log(error.localizedDescription, logLevel: .verbose)
+
+            self.handleCompletion(error: error)
+            return
+        }
+
+        let errorDescription = errorInfo["error_description"]
+        let errorString = errorDescription == nil ? errorShort : "\(errorShort): \(errorDescription!)"
+
+        guard let retryAfterString = headers["retry-after"], let retryAfterTimeInterval = Double(retryAfterString) else {
+            let error = PPSubscriptionError.eosWithoutRetryAfter(errorMessage: errorString)
+            self.logger?.log(error.localizedDescription, logLevel: .verbose)
+
+            self.handleCompletion(error: error)
+            return
+        }
+
+        let error = PPSubscriptionError.eosWithRetryAfter(timeInterval: retryAfterTimeInterval, errorMessage: errorString)
+        self.logger?.log(error.localizedDescription, logLevel: .verbose)
+
+        self.handleCompletion(error: error)
+    }
+
     @objc fileprivate func endSubscriptionAfterHeartbeatTimeout() {
         self.logger?.log("Ending subscription after heartbeat timeout", logLevel: .verbose)
-
         self.handleCompletion(error: PPSubscriptionError.heartbeatTimeoutReached)
     }
 
@@ -232,6 +264,10 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
 public enum PPSubscriptionError: Error {
     case heartbeatTimeoutReached
+    case eosWithRetryAfter(timeInterval: TimeInterval, errorMessage: String)
+    case eosWithoutRetryAfter(errorMessage: String)
+    case eosWithoutErrorInformation(errorInfo: [String: String])
+    case eosWithoutInfo(Any)
 }
 
 extension PPSubscriptionError: LocalizedError {
@@ -239,6 +275,14 @@ extension PPSubscriptionError: LocalizedError {
         switch self {
         case .heartbeatTimeoutReached:
             return "Heartbeat timeout reached for subscription"
+        case .eosWithRetryAfter(let retryAfter, let errorString):
+            return "Receievd EOS with instruction to retry subscription after \(retryAfter)s. Error: \(errorString)"
+        case .eosWithoutRetryAfter(let errorString):
+            return "Receievd EOS without instruction to retry subscription. Error: \(errorString)"
+        case .eosWithoutErrorInformation:
+            return "Receievd EOS without error information"
+        case .eosWithoutInfo(let info):
+            return "Failed to cast EOS info object to Dictionary: \(info)"
         }
     }
 }
