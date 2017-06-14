@@ -102,7 +102,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
-        self.logger?.log("URLComponents for request in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+        self.logger?.log(
+            "URLComponents for request in base client: \(mutableURLComponents.debugDescription)",
+            logLevel: .verbose
+        )
 
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
@@ -138,7 +141,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         generalRequest.options = requestOptions
 
         guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
-            onError?(PPBaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
+            onError?(
+                PPBaseClientError.requestHasInvalidDelegate(
+                    request: generalRequest,
+                    delegate: generalRequest.delegate
+                )
+            )
             return
         }
 
@@ -160,7 +168,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
-        self.logger?.log("URLComponents for requestWithRetry in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+        self.logger?.log(
+            "URLComponents for requestWithRetry in base client: \(mutableURLComponents.debugDescription)",
+            logLevel: .verbose
+        )
 
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
@@ -195,7 +206,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.generalRequestSessionDelegate[task] = generalRequest
 
         guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
-            onError?(PPBaseClientError.requestHasInvalidDelegate(request: generalRequest, delegate: generalRequest.delegate))
+            onError?(
+                PPBaseClientError.requestHasInvalidDelegate(
+                    request: generalRequest,
+                    delegate: generalRequest.delegate
+                )
+            )
             return
         }
 
@@ -217,7 +233,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         // Pass through logger where required
         generalRequestDelegate.logger = self.logger
-        retryableGeneralRequest.logger = self.logger
         (retryableGeneralRequest.retryStrategy as? PPDefaultRetryStrategy)?.logger = self.logger
 
         task.resume()
@@ -235,7 +250,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
-        self.logger?.log("URLComponents for subscribe in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+        self.logger?.log(
+            "URLComponents for subscribe in base client: \(mutableURLComponents.debugDescription)",
+            logLevel: .verbose
+        )
 
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
@@ -266,7 +284,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
         subscription.options = requestOptions
 
         guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
-            onError?(PPBaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
+            onError?(
+                PPBaseClientError.requestHasInvalidDelegate(
+                    request: subscription,
+                    delegate: subscription.delegate
+                )
+            )
             return
         }
 
@@ -299,7 +322,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
         var mutableURLComponents = self.baseUrlComponents
         mutableURLComponents.queryItems = requestOptions.queryItems
 
-        self.logger?.log("URLComponents for subscribeWithResume in base client: \(mutableURLComponents.debugDescription)", logLevel: .verbose)
+        self.logger?.log(
+            "URLComponents for subscribeWithResume in base client: \(mutableURLComponents.debugDescription)",
+            logLevel: .verbose
+        )
 
         guard var url = mutableURLComponents.url else {
             onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
@@ -332,16 +358,22 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.subscriptionSessionDelegate[task] = subscription
 
         guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
-            onError?(PPBaseClientError.requestHasInvalidDelegate(request: subscription, delegate: subscription.delegate))
+            onError?(
+                PPBaseClientError.requestHasInvalidDelegate(
+                    request: subscription,
+                    delegate: subscription.delegate
+                )
+            )
             return
         }
 
+        subscriptionDelegate.requestCleanup = self.subscriptionSessionDelegate.removeRequestPairedWithTaskId
         subscriptionDelegate.task = task
         subscriptionDelegate.heartbeatTimeout = Double(self.heartbeatTimeout)
 
         // Retry strategy from PPRequestOptions takes precedent, otherwise falls back to the
-        // PPRetryStrategy set in the BaseClient, which is PPDefaultRetryStrategy unless
-        // otherwise set
+        // PPRetryStrategy set in the BaseClient, which is PPDefaultRetryStrategy, unless
+        // explicitly set to something else
         if let reqOptionsRetryStrategy = requestOptions.retryStrategy {
             resumableSubscription.retryStrategy = reqOptionsRetryStrategy
         } else {
@@ -358,7 +390,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         // Pass through logger where required
         subscriptionDelegate.logger = self.logger
-        resumableSubscription.logger = self.logger
         (resumableSubscription.retryStrategy as? PPDefaultRetryStrategy)?.logger = self.logger
 
         task.resume()
@@ -371,14 +402,21 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) -> Void {
         self.subscriptionURLSession.getAllTasks { tasks in
             guard tasks.count > 0 else {
-                completionHandler?(PPBaseClientError.noTasksForSubscriptionURLSession(self.subscriptionURLSession))
+                completionHandler?(
+                    PPBaseClientError.noTasksForSubscriptionURLSession(self.subscriptionURLSession)
+                )
                 return
             }
 
             let filteredTasks = tasks.filter { $0.taskIdentifier == taskIdentifier }
 
             guard filteredTasks.count == 1 else {
-                completionHandler?(PPBaseClientError.noTaskWithMatchingTaskIdentifierFound(taskId: taskIdentifier, session: self.subscriptionURLSession))
+                completionHandler?(
+                    PPBaseClientError.noTaskWithMatchingTaskIdentifierFound(
+                        taskId: taskIdentifier,
+                        session: self.subscriptionURLSession
+                    )
+                )
                 return
             }
 

@@ -5,7 +5,11 @@ import Foundation
     public var cluster: String?
     public var authorizer: PPAuthorizer?
     public var client: PPBaseClient
-    public let logger: PPLogger
+    public var logger: PPLogger {
+        willSet {
+            self.client.logger = newValue
+        }
+    }
 
     public init(
         id: String,
@@ -19,7 +23,9 @@ import Foundation
         self.authorizer = authorizer
         self.client = client ?? PPBaseClient(cluster: cluster)
         self.logger = logger ?? PPDefaultLogger()
-        self.client.logger = self.logger
+        if self.client.logger == nil {
+            self.client.logger = self.logger
+        }
     }
 
     @discardableResult
@@ -120,7 +126,7 @@ import Foundation
         mutableBaseClientRequestOptions.path = namespacedPath
 
         if self.authorizer != nil {
-            // TODO: The weak here feels dangerous
+            // TODO: The weak here feels dangerous, also probably should be weak self
 
             self.authorizer!.authorize { [weak subscription] result in
                 switch result {

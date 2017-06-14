@@ -3,7 +3,15 @@ import Foundation
 public class PPURLSessionDelegate: NSObject {
     public let insecure: Bool
     internal let sessionQueue: DispatchQueue
-    public var logger: PPLogger? = nil
+    public var logger: PPLogger? = nil {
+        willSet {
+            // TODO: Do we want to set the logger on the requests' delegates here?
+
+            self.requests.forEach { _, req in
+                req.setLoggerOnDelegate(newValue)
+            }
+        }
+    }
 
     public var requests: [Int: PPRequest] = [:]
     private let lock = NSLock()
@@ -20,6 +28,12 @@ public class PPURLSessionDelegate: NSObject {
             defer { lock.unlock() }
             requests[task.taskIdentifier] = newValue
         }
+    }
+
+    public func removeRequestPairedWithTaskId(_ taskId: Int) {
+        lock.lock()
+        defer { lock.unlock() }
+        requests.removeValue(forKey: taskId)
     }
 
     public init(insecure: Bool) {

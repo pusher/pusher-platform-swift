@@ -7,21 +7,25 @@ import Foundation
     public internal(set) var app: App
     public internal(set) var generalRequest: PPRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
-    public var logger: PPLogger? = nil
     internal var retryRequestTimer: Timer? = nil
 
     public var onSuccess: ((Data) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
-                self.logger?.log(
+                self.app.logger.log(
                     "Invalid delegate for general request: \(String(describing: self.generalRequest))",
                     logLevel: .error
                 )
                 return
             }
 
-            generalRequestDelegate.onSuccess = { data in
-                self.handleOnSuccess(data)
+            generalRequestDelegate.onSuccess = { [weak self] data in
+                guard let strongSelf = self else {
+                    print("self is nil when trying to handle onSuccess in general request delegate")
+                    return
+                }
+
+                strongSelf.handleOnSuccess(data)
                 newValue?(data)
             }
         }
@@ -32,15 +36,20 @@ import Foundation
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
-                self.logger?.log(
+                self.app.logger.log(
                     "Invalid delegate for general request: \(String(describing: self.generalRequest))",
                     logLevel: .error
                 )
                 return
             }
 
-            generalRequestDelegate.onError = { error in
-                self.handleOnError(error: error)
+            generalRequestDelegate.onError = { [weak self] error in
+                guard let strongSelf = self else {
+                    print("self is nil when trying to handle onError in general request delegate")
+                    return
+                }
+
+                strongSelf.handleOnError(error: error)
             }
 
             self._onError = newValue
@@ -69,7 +78,7 @@ import Foundation
 //        }
 
         guard let retryStrategy = self.retryStrategy else {
-            self.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self.app.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
@@ -82,11 +91,16 @@ import Foundation
 
         switch shouldRetryResult {
         case .retry(let retryWaitTimeInterval):
-            DispatchQueue.main.async {
-                self.retryRequestTimer = Timer.scheduledTimer(
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else {
+                    print("self is nil when setting up retry subscription timer")
+                    return
+                }
+
+                strongSelf.retryRequestTimer = Timer.scheduledTimer(
                     timeInterval: retryWaitTimeInterval,
-                    target: self,
-                    selector: #selector(self.retryRequest),
+                    target: strongSelf,
+                    selector: #selector(strongSelf.retryRequest),
                     userInfo: nil,
                     repeats: false
                 )
@@ -98,17 +112,17 @@ import Foundation
 
     internal func retryRequest() {
         guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
-            self.logger?.log(
+            self.app.logger.log(
                 "Invalid delegate for general request: \(String(describing: self.generalRequest))",
                 logLevel: .error
             )
             return
         }
 
-        self.logger?.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
+        self.app.logger.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
         generalRequestDelegate.task?.cancel()
 
-        self.logger?.log("Creating new underlying request for retrying", logLevel: .debug)
+        self.app.logger.log("Creating new underlying request for retrying", logLevel: .debug)
 
         let newRequest = self.app.request(
             using: self.requestOptions,

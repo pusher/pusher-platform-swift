@@ -2,20 +2,21 @@ import Foundation
 
 public class PPRequest {
 
-    internal let type: PPRequestType
-    internal let delegate: PPRequestTaskDelegate
+    let type: PPRequestType
+    var delegate: PPRequestTaskDelegate
 
-    // TODO: Should I be Optional? Who should be able to set me?
+    // TODO: Should this be Optional? Who should be able to set options?
 
     public var options: PPRequestOptions? = nil
-
 
     // TODO: Fix this - this is just wrong. It should only live on a PPSubscription
     // sort of object
 
 //    public internal(set) var state: SubscriptionState = .opening
 
-    internal init(type: PPRequestType, delegate: PPRequestTaskDelegate? = nil) {
+
+    // TODO: Should this be public?
+    init(type: PPRequestType, delegate: PPRequestTaskDelegate? = nil) {
         self.type = type
         switch type {
         case .subscription:
@@ -24,6 +25,11 @@ public class PPRequest {
             self.delegate = delegate ?? PPGeneralRequestDelegate()
         }
     }
+
+    func setLoggerOnDelegate(_ logger: PPLogger?) {
+        self.delegate.logger = logger
+    }
+
 }
 
 extension PPRequest: CustomDebugStringConvertible {

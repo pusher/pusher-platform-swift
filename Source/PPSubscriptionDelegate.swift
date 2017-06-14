@@ -29,6 +29,8 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         return messageParser
     }()
 
+    public var requestCleanup: ((Int) -> Void)? = nil
+
     public required init(task: URLSessionDataTask? = nil) {
         self.task = task
     }
@@ -210,11 +212,17 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
 
-        DispatchQueue.main.async {
-            self.heartbeatTimeoutTimer = Timer.scheduledTimer(
-                timeInterval: self.heartbeatTimeout + 2,  // Give the timeout a small amount of leeway
-                target: self,
-                selector: #selector(self.endSubscriptionAfterHeartbeatTimeout),
+        // TODO: Is this correct?
+        DispatchQueue.main.async { [weak self] in
+            guard let strongSelf = self else {
+                print("self is nil when trying to reset a heartbeat timeout timer")
+                return
+            }
+
+            strongSelf.heartbeatTimeoutTimer = Timer.scheduledTimer(
+                timeInterval: strongSelf.heartbeatTimeout + 2,  // Give the timeout a small amount of leeway
+                target: strongSelf,
+                selector: #selector(strongSelf.endSubscriptionAfterHeartbeatTimeout),
                 userInfo: nil,
                 repeats: false
             )

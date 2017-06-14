@@ -2,29 +2,34 @@ import Foundation
 
 @objc public class PPResumableSubscription: NSObject {
     public let requestOptions: PPRequestOptions
+
+    // TODO: Should app be a weak reference here?
+
     public internal(set) var app: App
     public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: PPResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
     public internal(set) var subscription: PPRequest? = nil
-    public var logger: PPLogger? = nil
     public var retryStrategy: PPRetryStrategy? = nil
     internal var retrySubscriptionTimer: Timer? = nil
-
-    // TODO: Check memory mangement stuff here - capture list etc
 
     public var onOpen: (() -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.logger?.log(
+                self.app.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onOpen = {
-                self.handleOnOpen()
+            subDelegate.onOpen = { [weak self] in
+                guard let strongSelf = self else {
+                    print("self is nil when trying to handle onOpen in subscription delegate")
+                    return
+                }
+
+                strongSelf.handleOnOpen()
                 newValue?()
             }
         }
@@ -33,15 +38,20 @@ import Foundation
     public var onOpening: (() -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.logger?.log(
+                self.app.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onOpening = {
-                self.handleOnOpening()
+            subDelegate.onOpening = { [weak self] in
+                guard let strongSelf = self else {
+                    print("self is nil when trying to handle onOpening in subscription delegate")
+                    return
+                }
+
+                strongSelf.handleOnOpening()
                 newValue?()
             }
 
@@ -53,15 +63,20 @@ import Foundation
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.logger?.log(
+                self.app.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onEvent = { eventId, headers, data in
-                self.handleOnEvent(eventId: eventId, headers: headers, data: data)
+            subDelegate.onEvent = { [weak self] eventId, headers, data in
+                guard let strongSelf = self else {
+                    print("self is nil when trying to handle onEvent in subscription delegate")
+                    return
+                }
+
+                strongSelf.handleOnEvent(eventId: eventId, headers: headers, data: data)
                 newValue?(eventId, headers, data)
             }
         }
@@ -70,15 +85,20 @@ import Foundation
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.logger?.log(
+                self.app.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onEnd = { statusCode, headers, info in
-                self.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
+            subDelegate.onEnd = { [weak self] statusCode, headers, info in
+                guard let strongSelf = self else {
+                    print("self is nil when trying to handle onEnd in subscription delegate")
+                    return
+                }
+
+                strongSelf.handleOnEnd(statusCode: statusCode, headers: headers, info: info)
                 newValue?(statusCode, headers, info)
             }
         }
@@ -93,15 +113,20 @@ import Foundation
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.logger?.log(
+                self.app.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onError = { error in
-                self.handleOnError(error: error)
+            subDelegate.onError = { [weak self] error in
+                guard let strongSelf = self else {
+                    print("self is nil when trying to handle onError in subscription delegate")
+                    return
+                }
+
+                strongSelf.handleOnError(error: error)
             }
 
             self._onError = newValue
@@ -166,7 +191,7 @@ import Foundation
         }
 
         guard let retryStrategy = self.retryStrategy else {
-            self.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self.app.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
@@ -177,11 +202,16 @@ import Foundation
 
         switch shouldRetryResult {
         case .retry(let retryWaitTimeInterval):
-            DispatchQueue.main.async {
-                self.retrySubscriptionTimer = Timer.scheduledTimer(
+            DispatchQueue.main.async { [weak self] in
+                guard let strongSelf = self else {
+                    print("self is nil when setting up retry subscription timer")
+                    return
+                }
+
+                strongSelf.retrySubscriptionTimer = Timer.scheduledTimer(
                     timeInterval: retryWaitTimeInterval,
-                    target: self,
-                    selector: #selector(self.setupNewSubscription),
+                    target: strongSelf,
+                    selector: #selector(strongSelf.setupNewSubscription),
                     userInfo: nil,
                     repeats: false
                 )
@@ -204,18 +234,21 @@ import Foundation
 
     internal func setupNewSubscription() {
         guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-            self.logger?.log("Invalid delegate for subscription: \(String(describing: self.subscription))", logLevel: .error)
+            self.app.logger.log(
+                "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                logLevel: .error
+            )
             return
         }
 
-        self.logger?.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
+        self.app.logger.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
         subscriptionDelegate.task?.cancel()
 
         if let eventId = self.lastEventIdReceived {
-            self.logger?.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
+            self.app.logger.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
             self.requestOptions.addHeaders(["Last-Event-ID": eventId])
         } else {
-            self.logger?.log("Creating new underlying subscription", logLevel: .debug)
+            self.app.logger.log("Creating new underlying subscription", logLevel: .debug)
         }
 
         let newSubscription = self.app.subscribe(
@@ -228,6 +261,21 @@ import Foundation
         )
 
         self.subscription = newSubscription
+
+        guard let reqCleanupClosure = subscriptionDelegate.requestCleanup else {
+            self.app.logger.log("No request cleanup closure set on subscription delegate", logLevel: .verbose)
+            return
+        }
+
+        guard let taskId = subscriptionDelegate.task?.taskIdentifier else {
+            self.app.logger.log(
+                "Could not retrieve task identifier associated with subscription delegate",
+                logLevel: .verbose
+            )
+            return
+        }
+
+        reqCleanupClosure(taskId)
     }
 }
 
