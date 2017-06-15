@@ -19,12 +19,12 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     public var onError: ((Error) -> Void)?
 
     // TODO: Check this is being set properly
-    internal var heartbeatTimeout: Double = 60.0
-    internal var heartbeatTimeoutTimer: Timer? = nil
+    var heartbeatTimeout: Double = 60.0
+    var heartbeatTimeoutTimer: Timer? = nil
 
     public var logger: PPLogger? = nil
 
-    internal lazy var messageParser: PPMessageParser = {
+    lazy var messageParser: PPMessageParser = {
         let messageParser = PPMessageParser(logger: self.logger)
         return messageParser
     }()
@@ -37,11 +37,12 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     deinit {
         self.logger?.log("Cancelling task: \(String(describing: self.task?.taskIdentifier))", logLevel: .verbose)
-        self.heartbeatTimeoutTimer?.invalidate()
         self.task?.cancel()
+        self.logger?.log("Invalidating heartbeatTimeoutTimer: \(String(describing: self.heartbeatTimeoutTimer))", logLevel: .verbose)
+        self.heartbeatTimeoutTimer?.invalidate()
     }
 
-    internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
+    func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard self.task != nil else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
@@ -71,7 +72,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     @objc(handleData:)
-    internal func handle(_ data: Data) {
+    func handle(_ data: Data) {
         guard self.task != nil else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
@@ -147,17 +148,15 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.data = Data()
     }
 
-    internal func handleCompletion(error: Error? = nil) {
+    func handleCompletion(error: Error? = nil) {
         if self.task != nil {
             self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
-            self.logger?.log("Cancelling task \(self.task!.taskIdentifier)", logLevel: .verbose)
-            self.task!.cancel()
+            self.cancelTask()
         } else {
             self.logger?.log("Task with unknown id handling completion", logLevel: .verbose)
         }
 
-        self.heartbeatTimeoutTimer?.invalidate()
-        self.heartbeatTimeoutTimer = nil
+        self.cleanUpHeartbeatTimeoutTimer()
 
         let err = error ?? self.badResponseError
 
@@ -170,7 +169,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
         guard self.error == nil else {
             if (errorToReport as NSError).code == NSURLErrorCancelled {
-                self.logger?.log("Request cancelled, likely because of a heartbeat timeout", logLevel: .verbose)
+                self.logger?.log("Request cancelled; likely due to an explicit call to end it, or a heartbeat timeout", logLevel: .verbose)
             } else {
                 self.logger?.log(
                     "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
@@ -204,7 +203,9 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             let error = PPSubscriptionError.eosWithoutInfo(info)
             self.logger?.log(error.localizedDescription, logLevel: .verbose)
 
-            self.handleCompletion(error: error)
+            if self.task != nil { self.cancelTask() }
+            self.cleanUpHeartbeatTimeoutTimer()
+            self.onEnd?(statusCode, headers, info)
             return
         }
 
@@ -212,7 +213,9 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             let error = PPSubscriptionError.eosWithoutErrorInformation(errorInfo: errorInfo)
             self.logger?.log(error.localizedDescription, logLevel: .verbose)
 
-            self.handleCompletion(error: error)
+            if self.task != nil { self.cancelTask() }
+            self.cleanUpHeartbeatTimeoutTimer()
+            self.onEnd?(statusCode, headers, info)
             return
         }
 
@@ -223,7 +226,9 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             let error = PPSubscriptionError.eosWithoutRetryAfter(errorMessage: errorString)
             self.logger?.log(error.localizedDescription, logLevel: .verbose)
 
-            self.handleCompletion(error: error)
+            if self.task != nil { self.cancelTask() }
+            self.cleanUpHeartbeatTimeoutTimer()
+            self.onEnd?(statusCode, headers, info)
             return
         }
 
@@ -231,6 +236,23 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.logger?.log(error.localizedDescription, logLevel: .verbose)
 
         self.handleCompletion(error: error)
+    }
+
+    func endSubscription() {
+        self.cleanUpHeartbeatTimeoutTimer()
+
+        // TODO: Should all of these be nil?
+        self.onEnd?(nil, nil, nil)
+    }
+
+    func cleanUpHeartbeatTimeoutTimer() {
+        self.heartbeatTimeoutTimer?.invalidate()
+        self.heartbeatTimeoutTimer = nil
+    }
+
+    func cancelTask() {
+        self.logger?.log("Cancelling task \(self.task!.taskIdentifier)", logLevel: .verbose)
+        self.task!.cancel()
     }
 
     @objc fileprivate func endSubscriptionAfterHeartbeatTimeout() {

@@ -52,10 +52,26 @@ extension PPURLSessionDelegate: URLSessionDataDelegate {
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         sessionQueue.async {
             guard let request = self[task] else {
-                self.logger?.log(
-                    "No request found paired with taskIdentifier \(task.taskIdentifier), which errored with error: \(String(describing: error?.localizedDescription))",
-                    logLevel: .debug
-                )
+                guard let error = error else {
+                    self.logger?.log(
+                        "No request found paired with taskIdentifier \(task.taskIdentifier), which encountered an unknown error",
+                        logLevel: .debug
+                    )
+                    return
+                }
+
+                if (error as NSError).code == NSURLErrorCancelled {
+                    self.logger?.log(
+                        "No request found paried with taskIdentifier \(task.taskIdentifier) as request was cancelled; likely due to an explicit call to end it, or a heartbeat timeout",
+                         logLevel: .debug
+                    )
+                } else {
+                    self.logger?.log(
+                        "No request found paired with taskIdentifier \(task.taskIdentifier), which encountered error: \(error.localizedDescription))",
+                        logLevel: .debug
+                    )
+                }
+
                 return
             }
 

@@ -11,7 +11,7 @@ import Foundation
     public internal(set) var lastEventIdReceived: String? = nil
     public internal(set) var subscription: PPRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
-    internal var retrySubscriptionTimer: Timer? = nil
+    var retrySubscriptionTimer: Timer? = nil
 
     public var onOpen: (() -> Void)? {
         willSet {
@@ -108,7 +108,7 @@ import Foundation
     // ever call this at most once. For example, if we need to retry to instantiate a
     // subscription then the errors that lead to requiring a retry would not be communicated
     // back up to the end user, until the retry strategy returns an error itself.
-    internal var _onError: ((Error) -> Void)? = nil
+    var _onError: ((Error) -> Void)? = nil
 
     public var onError: ((Error) -> Void)? {
         willSet {
@@ -140,6 +140,20 @@ import Foundation
 
     deinit {
         self.retrySubscriptionTimer?.invalidate()
+    }
+
+    public func end() {
+        guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+            self.app.logger.log(
+                "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                logLevel: .error
+            )
+            return
+        }
+
+        self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
+        subscriptionDelegate.endSubscription()
+        self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
     }
 
     public func setLastEventIdReceivedTo(_ eventId: String?) {
@@ -246,7 +260,7 @@ import Foundation
         self.changeState(to: .ended)
     }
 
-    internal func setupNewSubscription() {
+    func setupNewSubscription() {
         guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
             self.app.logger.log(
                 "Invalid delegate for subscription: \(String(describing: self.subscription))",
@@ -255,8 +269,7 @@ import Foundation
             return
         }
 
-        self.app.logger.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
-        subscriptionDelegate.task?.cancel()
+        self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
 
         if let eventId = self.lastEventIdReceived {
             self.app.logger.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
@@ -275,7 +288,15 @@ import Foundation
         )
 
         self.subscription = newSubscription
+        self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
+    }
 
+    func cancelExistingSubscriptionTask(subscriptionDelegate: PPSubscriptionDelegate) {
+        self.app.logger.log("Cancelling subscriptionDelegate's existing task, if it exists", logLevel: .verbose)
+        subscriptionDelegate.task?.cancel()
+    }
+
+    func cleanUpOldSubscription(subscriptionDelegate: PPSubscriptionDelegate) {
         guard let reqCleanupClosure = subscriptionDelegate.requestCleanup else {
             self.app.logger.log("No request cleanup closure set on subscription delegate", logLevel: .verbose)
             return

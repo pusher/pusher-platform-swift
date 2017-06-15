@@ -294,6 +294,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         subscriptionDelegate.task = task
+        subscriptionDelegate.requestCleanup = self.subscriptionSessionDelegate.removeRequestPairedWithTaskId
 
         // Pass through logger where required
         subscriptionDelegate.logger = self.logger
