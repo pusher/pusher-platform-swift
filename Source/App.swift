@@ -3,7 +3,7 @@ import Foundation
 @objc public class App: NSObject {
     public var id: String
     public var cluster: String?
-    public var authorizer: PPAuthorizer?
+    public var tokenProvider: PPTokenProvider?
     public var client: PPBaseClient
     public var logger: PPLogger {
         willSet {
@@ -14,13 +14,13 @@ import Foundation
     public init(
         id: String,
         cluster: String? = nil,
-        authorizer: PPAuthorizer? = nil,
+        tokenProvider: PPTokenProvider? = nil,
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
     ) {
         self.id = id
         self.cluster = cluster
-        self.authorizer = authorizer
+        self.tokenProvider = tokenProvider
         self.client = client ?? PPBaseClient(cluster: cluster)
         self.logger = logger ?? PPDefaultLogger()
         if self.client.logger == nil {
@@ -42,12 +42,12 @@ import Foundation
 
         var generalRequest = PPRequest(type: .general)
 
-        if self.authorizer != nil {
-            self.authorizer!.authorize { result in
+        if self.tokenProvider != nil {
+            self.tokenProvider!.fetchToken { result in
                 switch result {
                 case .error(let error): onError?(error)
-                case .success(let jwtFromAuthorizer):
-                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                case .success(let jwtFromTokenProvider):
+                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
                     self.client.request(
                         with: &generalRequest,
@@ -83,12 +83,12 @@ import Foundation
 
         var generalRetryableRequest = PPRetryableGeneralRequest(app: self, requestOptions: requestOptions)
 
-        if self.authorizer != nil {
-            self.authorizer!.authorize { result in
+        if self.tokenProvider != nil {
+            self.tokenProvider!.fetchToken { result in
                 switch result {
                 case .error(let error): onError?(error)
-                case .success(let jwtFromAuthorizer):
-                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                case .success(let jwtFromTokenProvider):
+                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
                     self.client.requestWithRetry(
                         with: &generalRetryableRequest,
@@ -125,14 +125,14 @@ import Foundation
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
 
-        if self.authorizer != nil {
+        if self.tokenProvider != nil {
             // TODO: The weak here feels dangerous, also probably should be weak self
 
-            self.authorizer!.authorize { [weak subscription] result in
+            self.tokenProvider!.fetchToken { [weak subscription] result in
                 switch result {
                 case .error(let error): onError?(error)
-                case .success(let jwtFromAuthorizer):
-                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                case .success(let jwtFromTokenProvider):
+                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
 
                     self.client.subscribe(
@@ -175,12 +175,12 @@ import Foundation
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
 
-        if self.authorizer != nil {
-            self.authorizer!.authorize { [weak resumableSubscription] result in
+        if self.tokenProvider != nil {
+            self.tokenProvider!.fetchToken { [weak resumableSubscription] result in
                 switch result {
                 case .error(let error): onError?(error)
-                case .success(let jwtFromAuthorizer):
-                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                case .success(let jwtFromTokenProvider):
+                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
 
                     self.client.subscribeWithResume(
@@ -227,12 +227,12 @@ import Foundation
 
         var subscription = PPRequest(type: .subscription)
 
-        if self.authorizer != nil {
-            self.authorizer!.authorize { result in
+        if self.tokenProvider != nil {
+            self.tokenProvider!.fetchToken { result in
                 switch result {
                 case .error(let error): onError?(error)
-                case .success(let jwtFromAuthorizer):
-                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                case .success(let jwtFromTokenProvider):
+                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
 
                     self.client.subscribe(
@@ -278,14 +278,14 @@ import Foundation
 
         var resumableSubscription = PPResumableSubscription(app: self, requestOptions: requestOptions)
 
-        if self.authorizer != nil {
+        if self.tokenProvider != nil {
             // TODO: Does resumableSubscription need to be weak here?
 
-            self.authorizer!.authorize { [weak resumableSubscription] result in
+            self.tokenProvider!.fetchToken { [weak resumableSubscription] result in
                 switch result {
                 case .error(let error): onError?(error)
-                case .success(let jwtFromAuthorizer):
-                    let authHeaderValue = "Bearer \(jwtFromAuthorizer)"
+                case .success(let jwtFromTokenProvider):
+                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableBaseClientRequestOptions.addHeaders(["Authorization": authHeaderValue])
 
                     self.client.subscribeWithResume(
