@@ -27,6 +27,7 @@ public class PPRequestOptions {
         self.retryStrategy = retryStrategy
     }
 
+    // If a header key already exists then calling this will override it
     public func addHeaders(_ newHeaders: [String: String]) {
         for header in newHeaders {
             self.headers[header.key] = header.value

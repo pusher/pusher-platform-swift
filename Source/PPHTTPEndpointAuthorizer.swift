@@ -186,23 +186,22 @@ public enum PPEndpointRequestGrantType: String {
     case refreshToken = "refresh_token"
 }
 
-// TODO: This should probably be replaced by PPRequest
+// TODO: This should probably be replaced by PPRequestOptions
 
 public class PPHTTPEndpointAuthorizerRequest {
     public var headers: [String: String] = [:]
     public var body: HTTPParameterProtocol? = nil
     public var queryItems: [URLQueryItem] = []
 
-    public func set(headers: [String: String]) {
-        self.headers = headers
+    // If a header key already exists then calling this will override it
+    public func addHeaders(_ newHeaders: [String: String]) {
+        for header in newHeaders {
+            self.headers[header.key] = header.value
+        }
     }
 
-    public func set(body: HTTPParameterProtocol) {
-        self.body = body
-    }
-
-    public func set(queryItems: [URLQueryItem]) {
-        self.queryItems = queryItems
+    public func addQueryItems(_ newQueryItems: [URLQueryItem]) {
+        self.queryItems.append(contentsOf: newQueryItems)
     }
 }
 
