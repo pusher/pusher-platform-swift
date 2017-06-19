@@ -1,6 +1,6 @@
 import Foundation
 
-public class PPHTTPEndpointTokenProvider: PPTokenProvider {
+public class PPHTTPEndpointTokenProvider: PPAuthorizer {
     public var url: String
 
     // TODO: Seems like there is a better name for this
@@ -21,11 +21,11 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
         self.retryStrategy = retryStrategy
     }
 
-    public func fetchToken(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+    public func fetchToken(completionHandler: @escaping (PPAuthorizerResult) -> Void) {
 
         // TODO: [unowned self] ?
 
-        let retryAwareCompletionHandler = { (tokenProviderResult: PPTokenProviderResult) in
+        let retryAwareCompletionHandler = { (tokenProviderResult: PPAuthorizerResult) in
             switch tokenProviderResult {
             case .error(let err):
                 let shouldRetryResult = self.retryStrategy.shouldRetry(given: err)
@@ -38,12 +38,12 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
                         self.fetchToken(completionHandler: completionHandler)
                     })
                 case .doNotRetry(let reasonErr):
-                    completionHandler(PPTokenProviderResult.error(error: reasonErr))
+                    completionHandler(PPAuthorizerResult.error(error: reasonErr))
                 }
                 return
             case .success(let token):
                 self.retryStrategy.requestSucceeded()
-                completionHandler(PPTokenProviderResult.success(token: token))
+                completionHandler(PPAuthorizerResult.success(token: token))
             }
         }
 
@@ -57,72 +57,72 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
                 // TODO: Is returning here correct?
                 return
             }
-            completionHandler(PPTokenProviderResult.success(token: token))
+            completionHandler(PPAuthorizerResult.success(token: token))
         } else {
             getTokenPair(completionHandler: retryAwareCompletionHandler)
         }
     }
 
-    public func getTokenPair(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+    public func getTokenPair(completionHandler: @escaping (PPAuthorizerResult) -> Void) {
         makeAuthRequest(grantType: PPEndpointRequestGrantType.clientCredentials, completionHandler: completionHandler)
     }
 
-    public func refreshAccessToken(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+    public func refreshAccessToken(completionHandler: @escaping (PPAuthorizerResult) -> Void) {
         makeAuthRequest(grantType: PPEndpointRequestGrantType.refreshToken, completionHandler: completionHandler)
     }
 
-    public func makeAuthRequest(grantType: PPEndpointRequestGrantType, completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+    public func makeAuthRequest(grantType: PPEndpointRequestGrantType, completionHandler: @escaping (PPAuthorizerResult) -> Void) {
         let authRequestResult = prepareAuthRequest(grantType: grantType)
 
         guard let request = authRequestResult.request, authRequestResult.error == nil else {
-            completionHandler(PPTokenProviderResult.error(error: authRequestResult.error!))
+            completionHandler(PPAuthorizerResult.error(error: authRequestResult.error!))
             return
         }
 
         URLSession.shared.dataTask(with: request, completionHandler: { data, response, sessionError in
             if let error = sessionError {
-                completionHandler(PPTokenProviderResult.error(error: error))
+                completionHandler(PPAuthorizerResult.error(error: error))
                 return
             }
 
             guard let data = data else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.noDataPresent))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.noDataPresent))
                 return
             }
 
             guard let httpResponse = response as? HTTPURLResponse else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.invalidHTTPResponse(response: response, data: data)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.invalidHTTPResponse(response: response, data: data)))
                 return
             }
 
             guard 200..<300 ~= httpResponse.statusCode else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.badResponseStatusCode(response: httpResponse, data: data)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.badResponseStatusCode(response: httpResponse, data: data)))
                 return
             }
 
             guard let jsonObject = try? JSONSerialization.jsonObject(with: data, options: []) else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.failedToDeserializeJSON(data)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.failedToDeserializeJSON(data)))
                 return
             }
 
             guard let json = jsonObject as? [String: Any] else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.failedToCastJSONObjectToDictionary(jsonObject)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.failedToCastJSONObjectToDictionary(jsonObject)))
                 return
             }
 
             guard let accessToken = json["access_token"] as? String else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.validAccessTokenNotPresentInResponseJSON(json)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.validAccessTokenNotPresentInResponseJSON(json)))
                 return
             }
 
             guard let refreshToken = json["refresh_token"] as? String else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.validRefreshTokenNotPresentInResponseJSON(json)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.validRefreshTokenNotPresentInResponseJSON(json)))
                 return
             }
 
             // TODO: Check if Double is sensible type here
             guard let expiresIn = json["expires_in"] as? TimeInterval else {
-                completionHandler(PPTokenProviderResult.error(error: PPHTTPEndpointTokenProviderError.validExpiresInNotPresentInResponseJSON(json)))
+                completionHandler(PPAuthorizerResult.error(error: PPHTTPEndpointTokenProviderError.validExpiresInNotPresentInResponseJSON(json)))
                 return
             }
 
@@ -130,7 +130,7 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
             self.refreshToken = refreshToken
             self.accessTokenExpiresAt = Date().timeIntervalSince1970 + expiresIn
 
-            completionHandler(PPTokenProviderResult.success(token: accessToken))
+            completionHandler(PPAuthorizerResult.success(token: accessToken))
         }).resume()
     }
 

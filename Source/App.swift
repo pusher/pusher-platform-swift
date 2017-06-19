@@ -3,7 +3,7 @@ import Foundation
 @objc public class App: NSObject {
     public var id: String
     public var cluster: String?
-    public var tokenProvider: PPTokenProvider?
+    public var tokenProvider: PPAuthorizer?
     public var client: PPBaseClient
     public var logger: PPLogger {
         willSet {
@@ -14,7 +14,7 @@ import Foundation
     public init(
         id: String,
         cluster: String? = nil,
-        tokenProvider: PPTokenProvider? = nil,
+        tokenProvider: PPAuthorizer? = nil,
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
     ) {
