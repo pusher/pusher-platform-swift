@@ -9,28 +9,43 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        let userId = "will"
+        let serviceId = "some-app-id"
+        let path = "/chat_api/v1/users"
+
+        let localBaseClient = PPBaseClient(
+            cluster: "localhost",
+            port: 10443,
+            insecure: true,
+            heartbeatTimeoutInterval: 30
+        )
+
+        let kubeBaseClient = PPBaseClient(
+            cluster: "api-ceres.pusherplatform.io",
+            insecure: true
+        )
+
+        let tokenProvider = PPHTTPEndpointTokenProvider(
+            url: "https://chat-api-test-token-provider.herokuapp.com/token",
+            requestInjector: { req -> PPHTTPEndpointTokenProviderRequest in
+                req.addQueryItems(
+                    [
+                        URLQueryItem(name: "user_id", value: userId),
+                        URLQueryItem(name: "service_id", value: serviceId)
+                    ]
+                )
+                return req
+            }
+        )
 
         app = App(
-            id: "4ff02853-bfed-4590-80c7-40c09f25d113",
-            client: PPBaseClient(
-                cluster: "api.private-beta-1.pusherplatform.com",
-                retryStrategyBuilder: { reqOpts in return PPDefaultRetryStrategy(maxNumberOfAttempts: 5) },
-                heartbeatTimeoutInterval: 30,
-                heartbeatInitialSize: 0
-            )
+            id: serviceId,
+            tokenProvider: tokenProvider,
+            client: localBaseClient,
+            logger: HamLogger()
         )
-
-        let path = "feeds-service/feeds/resumable-ham/items"
 
         let requestOptions = PPRequestOptions(method: HTTPMethod.SUBSCRIBE.rawValue, path: path)
-
-        let getOptions = PPRequestOptions(method: HTTPMethod.GET.rawValue, path: path)
-
-        let retryableReq = app.requestWithRetry(
-            using: getOptions,
-            onSuccess: { data in print("SUCCESS: \(String(data: data, encoding: .utf8))") },
-            onError: { error in print ("GENREQ ERRORED: \(error.localizedDescription)")}
-        )
 
         resumableSub = PPResumableSubscription(app: app, requestOptions: requestOptions)
 
@@ -44,5 +59,12 @@ class ViewController: UIViewController {
             onEnd: { statusCode, headers, error in print("ERROR RECEIVED: \(String(describing: statusCode)), \(String(describing: error))") },
             onError: { error in print ("SUB ERRORED: \(error.localizedDescription)")}
         )
+    }
+}
+
+
+public struct HamLogger: PPLogger {
+    public func log(_ message: @autoclosure @escaping () -> String, logLevel: PPLogLevel) {
+        print("HAMLOG: \(message())")
     }
 }
