@@ -112,7 +112,7 @@ import Foundation
         }
     }
 
-    internal func retryRequest() {
+    @objc internal func retryRequest() {
         guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
             self.app.logger.log(
                 "Invalid delegate for general request: \(String(describing: self.generalRequest))",
