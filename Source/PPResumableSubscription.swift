@@ -260,7 +260,7 @@ import Foundation
         self.changeState(to: .ended)
     }
 
-    func setupNewSubscription() {
+    @objc func setupNewSubscription() {
         guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
             self.app.logger.log(
                 "Invalid delegate for subscription: \(String(describing: self.subscription))",

@@ -7,7 +7,9 @@ public class PPURLSessionDelegate: NSObject {
         willSet {
             // TODO: Do we want to set the logger on the requests' delegates here?
 
-            self.requests.forEach { _, req in
+            self.requests.forEach { (arg) in
+                
+                let (_, req) = arg
                 req.setLoggerOnDelegate(newValue)
             }
         }
