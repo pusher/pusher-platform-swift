@@ -49,7 +49,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 0
     ) {
-        let cluster = cluster ?? "api.private-beta-1.pusherplatform.com"
+        let cluster = cluster ?? "api-ceres.pusherplatform.io"
 
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
