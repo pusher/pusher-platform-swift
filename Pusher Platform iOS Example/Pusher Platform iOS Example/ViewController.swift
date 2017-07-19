@@ -11,7 +11,7 @@ class ViewController: UIViewController {
 
         let userId = "will"
         let serviceId = "some-app-id"
-        let path = "/chat_api/v1/users"
+        let path = "/chatkit/v1/users"
 
         let localBaseClient = PPBaseClient(
             cluster: "localhost",
