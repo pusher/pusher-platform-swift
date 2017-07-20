@@ -29,6 +29,7 @@
 		33D486011ECB2AEB0097392D /* HTTPParameterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */; };
 		33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */; };
 		33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* PPRequest.swift */; };
+		A1F9EFA31F20C5300034E3EC /* ClientVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F9EFA21F20C5300034E3EC /* ClientVersion.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPParameterProtocol.swift; sourceTree = "<group>"; };
 		33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultRetryStrategy.swift; sourceTree = "<group>"; };
 		33F37F771E0C20CC0048457F /* PPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequest.swift; sourceTree = "<group>"; };
+		A1F9EFA21F20C5300034E3EC /* ClientVersion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientVersion.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 				33BB995C1D21225B00B25C2A /* Tests */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
 				33831CD61A9CFFF200B124F1 /* PusherPlatform.h */,
+				A1F9EFA21F20C5300034E3EC /* ClientVersion.swift */,
 			);
 			name = Source;
 			path = ../Source;
@@ -290,6 +293,7 @@
 				330E59071DEDD38900C92897 /* PPResumableSubscription.swift in Sources */,
 				334B9A2F1ECCA295007A3D3B /* PPDefaultLogger.swift in Sources */,
 				338290721DF5CEC6008CDC8F /* App.swift in Sources */,
+				A1F9EFA31F20C5300034E3EC /* ClientVersion.swift in Sources */,
 				33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */,
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */,
