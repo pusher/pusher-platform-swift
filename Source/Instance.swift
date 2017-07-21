@@ -1,6 +1,6 @@
 import Foundation
 
-@objc public class App: NSObject {
+@objc public class Instance: NSObject {
     public var id: String
     public var cluster: String?
     public var tokenProvider: PPTokenProvider?
@@ -81,7 +81,7 @@ import Foundation
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
 
-        var generalRetryableRequest = PPRetryableGeneralRequest(app: self, requestOptions: requestOptions)
+        var generalRetryableRequest = PPRetryableGeneralRequest(instance: self, requestOptions: requestOptions)
 
         if self.tokenProvider != nil {
             self.tokenProvider!.fetchToken { result in
@@ -186,7 +186,7 @@ import Foundation
                     self.client.subscribeWithResume(
                         with: &resumableSubscription!,
                         using: mutableBaseClientRequestOptions,
-                        app: self,
+                        instance: self,
                         onOpening: onOpening,
                         onOpen: onOpen,
                         onResuming: onResuming,
@@ -200,7 +200,7 @@ import Foundation
             self.client.subscribeWithResume(
                 with: &resumableSubscription,
                 using: mutableBaseClientRequestOptions,
-                app: self,
+                instance: self,
                 onOpening: onOpening,
                 onOpen: onOpen,
                 onResuming: onResuming,
@@ -276,7 +276,7 @@ import Foundation
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
 
-        var resumableSubscription = PPResumableSubscription(app: self, requestOptions: requestOptions)
+        var resumableSubscription = PPResumableSubscription(instance: self, requestOptions: requestOptions)
 
         if self.tokenProvider != nil {
             // TODO: Does resumableSubscription need to be weak here?
@@ -291,7 +291,7 @@ import Foundation
                     self.client.subscribeWithResume(
                         with: &resumableSubscription!,
                         using: mutableBaseClientRequestOptions,
-                        app: self,
+                        instance: self,
                         onOpening: onOpening,
                         onOpen: onOpen,
                         onResuming: onResuming,
@@ -305,7 +305,7 @@ import Foundation
             self.client.subscribeWithResume(
                 with: &resumableSubscription,
                 using: mutableBaseClientRequestOptions,
-                app: self,
+                instance: self,
                 onOpening: onOpening,
                 onOpen: onOpen,
                 onResuming: onResuming,

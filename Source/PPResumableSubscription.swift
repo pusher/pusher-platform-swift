@@ -3,9 +3,9 @@ import Foundation
 @objc public class PPResumableSubscription: NSObject {
     public let requestOptions: PPRequestOptions
 
-    // TODO: Should app be a weak reference here?
+    // TODO: Should instance be a weak reference here?
 
-    public internal(set) var app: App
+    public internal(set) var instance: Instance
     public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: PPResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
@@ -16,7 +16,7 @@ import Foundation
     public var onOpen: (() -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.app.logger.log(
+                self.instance.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
@@ -38,7 +38,7 @@ import Foundation
     public var onOpening: (() -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.app.logger.log(
+                self.instance.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
@@ -63,7 +63,7 @@ import Foundation
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.app.logger.log(
+                self.instance.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
@@ -85,7 +85,7 @@ import Foundation
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.app.logger.log(
+                self.instance.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
@@ -113,7 +113,7 @@ import Foundation
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-                self.app.logger.log(
+                self.instance.logger.log(
                     "Invalid delegate for subscription: \(String(describing: self.subscription))",
                     logLevel: .error
                 )
@@ -133,8 +133,8 @@ import Foundation
         }
     }
 
-    public init(app: App, requestOptions: PPRequestOptions) {
-        self.app = app
+    public init(instance: Instance, requestOptions: PPRequestOptions) {
+        self.instance = instance
         self.requestOptions = requestOptions
     }
 
@@ -144,7 +144,7 @@ import Foundation
 
     public func end() {
         guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-            self.app.logger.log(
+            self.instance.logger.log(
                 "Invalid delegate for subscription: \(String(describing: self.subscription))",
                 logLevel: .error
             )
@@ -204,7 +204,7 @@ import Foundation
 
         if let err = error as? PPSubscriptionError, case let .eosWithRetryAfter(eosWithRetryError) = err {
             let retryWaitTimeInterval = eosWithRetryError.timeInterval
-            self.app.logger.log(
+            self.instance.logger.log(
                 "Attempting retry in \(retryWaitTimeInterval)s because of retry after message received with EOS message",
                 logLevel: .debug
             )
@@ -217,7 +217,7 @@ import Foundation
         }
 
         guard let retryStrategy = self.retryStrategy else {
-            self.app.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self.instance.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
@@ -262,7 +262,7 @@ import Foundation
 
     @objc func setupNewSubscription() {
         guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
-            self.app.logger.log(
+            self.instance.logger.log(
                 "Invalid delegate for subscription: \(String(describing: self.subscription))",
                 logLevel: .error
             )
@@ -272,13 +272,13 @@ import Foundation
         self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
 
         if let eventId = self.lastEventIdReceived {
-            self.app.logger.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
+            self.instance.logger.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
             self.requestOptions.addHeaders(["Last-Event-ID": eventId])
         } else {
-            self.app.logger.log("Creating new underlying subscription", logLevel: .debug)
+            self.instance.logger.log("Creating new underlying subscription", logLevel: .debug)
         }
 
-        let newSubscription = self.app.subscribe(
+        let newSubscription = self.instance.subscribe(
             using: self.requestOptions,
             onOpening: subscriptionDelegate.onOpening,
             onOpen: subscriptionDelegate.onOpen,
@@ -292,18 +292,18 @@ import Foundation
     }
 
     func cancelExistingSubscriptionTask(subscriptionDelegate: PPSubscriptionDelegate) {
-        self.app.logger.log("Cancelling subscriptionDelegate's existing task, if it exists", logLevel: .verbose)
+        self.instance.logger.log("Cancelling subscriptionDelegate's existing task, if it exists", logLevel: .verbose)
         subscriptionDelegate.task?.cancel()
     }
 
     func cleanUpOldSubscription(subscriptionDelegate: PPSubscriptionDelegate) {
         guard let reqCleanupClosure = subscriptionDelegate.requestCleanup else {
-            self.app.logger.log("No request cleanup closure set on subscription delegate", logLevel: .verbose)
+            self.instance.logger.log("No request cleanup closure set on subscription delegate", logLevel: .verbose)
             return
         }
 
         guard let taskId = subscriptionDelegate.task?.taskIdentifier else {
-            self.app.logger.log(
+            self.instance.logger.log(
                 "Could not retrieve task identifier associated with subscription delegate",
                 logLevel: .verbose
             )

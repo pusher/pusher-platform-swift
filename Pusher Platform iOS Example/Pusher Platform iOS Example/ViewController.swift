@@ -3,14 +3,14 @@ import PusherPlatform
 
 class ViewController: UIViewController {
 
-    var app: App!
+    var instance: Instance!
     var resumableSub: PPResumableSubscription? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let userId = "will"
-        let serviceId = "some-app-id"
+        let serviceId = "some-instance-id"
         let path = "/chatkit/v1/users"
 
         let localBaseClient = PPBaseClient(
@@ -38,7 +38,7 @@ class ViewController: UIViewController {
             }
         )
 
-        app = App(
+        instance = Instance(
             id: serviceId,
             tokenProvider: tokenProvider,
             client: localBaseClient,
@@ -47,9 +47,9 @@ class ViewController: UIViewController {
 
         let requestOptions = PPRequestOptions(method: HTTPMethod.SUBSCRIBE.rawValue, path: path)
 
-        resumableSub = PPResumableSubscription(app: app, requestOptions: requestOptions)
+        resumableSub = PPResumableSubscription(instance: instance, requestOptions: requestOptions)
 
-        app.subscribeWithResume(
+        instance.subscribeWithResume(
             with: &resumableSub!,
             using: requestOptions,
             onOpening: { print("OPENING") },

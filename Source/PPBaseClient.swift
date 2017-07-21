@@ -311,7 +311,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public func subscribeWithResume(
         with resumableSubscription: inout PPResumableSubscription,
         using requestOptions: PPRequestOptions,
-        app: App,
+        instance: Instance,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,
