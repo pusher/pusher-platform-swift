@@ -353,6 +353,6 @@ import Foundation
     }
 
     internal func namespace(path: String) -> String {
-        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)/\(path)"
+        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)\(path)"
     }
 }
