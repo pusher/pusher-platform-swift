@@ -14,14 +14,14 @@ class ViewController: UIViewController {
         let path = "/chatkit/v1/users"
 
         let localBaseClient = PPBaseClient(
-            cluster: "localhost",
+            host: "localhost",
             port: 10443,
             insecure: true,
             heartbeatTimeoutInterval: 30
         )
 
         let kubeBaseClient = PPBaseClient(
-            cluster: "api-ceres.pusherplatform.io",
+            host: "api-ceres.pusherplatform.io",
             insecure: true
         )
 
@@ -39,7 +39,9 @@ class ViewController: UIViewController {
         )
 
         instance = Instance(
-            id: serviceId,
+            instanceId: "v1:CLUSTER_SUBDOMAIN_HERE:blah-blah",
+            serviceName: "chatkit",
+            serviceVersion: "v1",
             tokenProvider: tokenProvider,
             client: localBaseClient,
             logger: HamLogger()
