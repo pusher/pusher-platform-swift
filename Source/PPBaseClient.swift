@@ -40,7 +40,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public var clientVersion: String
 
     public init(
-        serviceId: String,
+        instanceId: String,
         serviceName: String,
         serviceVersion: String,
         port: Int? = nil,
