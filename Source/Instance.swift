@@ -38,7 +38,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) -> PPRequest {
         let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, instanceId: self.instanceId)
+        let namespacedPath = namespace(path: sanitisedPath)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -79,7 +79,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) -> PPRetryableGeneralRequest {
         let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, instanceId: self.instanceId)
+        let namespacedPath = namespace(path: sanitisedPath)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -123,7 +123,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) {
         let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, instanceId: self.instanceId)
+        let namespacedPath = namespace(path: sanitisedPath)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -173,7 +173,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) {
         let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, instanceId: self.instanceId)
+        let namespacedPath = namespace(path: sanitisedPath)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -223,7 +223,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) -> PPRequest {
         let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, instanceId: self.instanceId)
+        let namespacedPath = namespace(path: sanitisedPath)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -274,7 +274,7 @@ import Foundation
         onError: ((Error) -> Void)? = nil
     ) -> PPResumableSubscription {
         let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, instanceId: self.instanceId)
+        let namespacedPath = namespace(path: sanitisedPath)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -352,15 +352,7 @@ import Foundation
         return sanitisedPath
     }
 
-    // Only prefix with /apps/APP_ID if /apps/ isn't at the start of the path
-    internal func namespace(path: String, instanceId: String) -> String {
-        let endIndex = path.index(path.startIndex, offsetBy: 6)
-
-        if path.substring(to: endIndex) == "/apps/" {
-            return path
-        } else {
-            let namespacedPath = "/apps/\(instanceId)/services\(path)"
-            return namespacedPath
-        }
+    internal func namespace(path: String) -> String {
+        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)/\(path)"
     }
 }
