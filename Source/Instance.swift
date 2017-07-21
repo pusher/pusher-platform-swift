@@ -352,7 +352,6 @@ import Foundation
         return sanitisedPath
     }
 
-    // This could be potentially removed.
     // Only prefix with /apps/APP_ID if /apps/ isn't at the start of the path
     internal func namespace(path: String, instanceId: String) -> String {
         let endIndex = path.index(path.startIndex, offsetBy: 6)
