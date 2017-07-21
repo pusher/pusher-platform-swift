@@ -24,7 +24,7 @@ import Foundation
         self.serviceName = serviceName
         self.serviceVersion = serviceVersion
         self.tokenProvider = tokenProvider
-        self.client = client ?? PPBaseClient(instanceId: instanceId, serviceName: serviceName, serviceVersion: serviceVersion)
+        self.client = client ?? PPBaseClient(host: "")
         self.logger = logger ?? PPDefaultLogger()
         if self.client.logger == nil {
             self.client.logger = self.logger

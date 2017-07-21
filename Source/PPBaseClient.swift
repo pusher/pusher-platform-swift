@@ -40,9 +40,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public var clientVersion: String
 
     public init(
-        instanceId: String,
-        serviceName: String,
-        serviceVersion: String,
+        host: String,
         port: Int? = nil,
         insecure: Bool = false,
         clientName: String = "pusher-platform-swift",
@@ -52,6 +50,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     ) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
+        urlComponents.host = host
         urlComponents.port = port
 
         self.baseUrlComponents = urlComponents
