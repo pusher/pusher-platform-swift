@@ -1,7 +1,6 @@
 import Foundation
 
 @objc public class Instance: NSObject {
-    private let hostBase = "pusherplatform.io"
     public var instanceId: String
     public var serviceName: String
     public var serviceVersion: String
@@ -24,8 +23,8 @@ import Foundation
         logger: PPLogger? = nil
     ) {
         assert (!instanceId.isEmpty, "Expected `instanceId` property in Instance!")
-        let instance = Instance.split(instance: instanceId)
-        assert(Mirror(reflecting: instance).children.count == 3, "The instance property is in the wrong format!")
+        let instance = instanceId.components(separatedBy: ":")
+        assert(instance.count == 3, "The instance property is in the wrong format!")
         assert(!serviceName.isEmpty, "Expected `serviceName` property in Instance options!")
         assert(!serviceVersion.isEmpty, "Expected `serviceVersion` property in Instance otpions!")
 
@@ -34,7 +33,8 @@ import Foundation
         self.serviceVersion = serviceVersion
         self.tokenProvider = tokenProvider
 
-        let host = Instance.hostname(host: host, cluster: instance.cluster, hostBase: self.hostBase)
+        let cluster = instance[1]
+        let host = host ?? "\(cluster).pusherplatform.io"
         self.host = host
         self.client = client ?? PPBaseClient(host: host)
 
@@ -367,20 +367,5 @@ import Foundation
 
     internal func namespace(path: String) -> String {
         return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)\(path)"
-    }
-
-    private static func split(instance: String) -> (platformVersion: String, cluster: String, id: String) {
-        var splitInstance = instance.components(separatedBy: ":")
-
-        return (splitInstance[0], splitInstance[1], splitInstance[2])
-    }
-
-    private static func hostname(host: String?, cluster: String, hostBase: String) -> String {
-        if let host = host {
-            return host
-        }
-        else {
-            return "\(cluster).\(hostBase)"
-        }
     }
 }
