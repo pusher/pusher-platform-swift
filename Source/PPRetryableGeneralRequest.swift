@@ -4,7 +4,7 @@ import Foundation
 
 @objc public class PPRetryableGeneralRequest: NSObject {
     public let requestOptions: PPRequestOptions
-    public internal(set) var app: App
+    public internal(set) var instance: Instance
     public internal(set) var generalRequest: PPRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
     internal var retryRequestTimer: Timer? = nil
@@ -12,7 +12,7 @@ import Foundation
     public var onSuccess: ((Data) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
-                self.app.logger.log(
+                self.instance.logger.log(
                     "Invalid delegate for general request: \(String(describing: self.generalRequest))",
                     logLevel: .error
                 )
@@ -37,7 +37,7 @@ import Foundation
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
-                self.app.logger.log(
+                self.instance.logger.log(
                     "Invalid delegate for general request: \(String(describing: self.generalRequest))",
                     logLevel: .error
                 )
@@ -58,8 +58,8 @@ import Foundation
         }
     }
 
-    public init(app: App, requestOptions: PPRequestOptions) {
-        self.app = app
+    public init(instance: Instance, requestOptions: PPRequestOptions) {
+        self.instance = instance
         self.requestOptions = requestOptions
     }
 
@@ -80,7 +80,7 @@ import Foundation
 //        }
 
         guard let retryStrategy = self.retryStrategy else {
-            self.app.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self.instance.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
@@ -114,19 +114,19 @@ import Foundation
 
     @objc internal func retryRequest() {
         guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
-            self.app.logger.log(
+            self.instance.logger.log(
                 "Invalid delegate for general request: \(String(describing: self.generalRequest))",
                 logLevel: .error
             )
             return
         }
 
-        self.app.logger.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
+        self.instance.logger.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
         generalRequestDelegate.task?.cancel()
 
-        self.app.logger.log("Creating new underlying request for retrying", logLevel: .debug)
+        self.instance.logger.log("Creating new underlying request for retrying", logLevel: .debug)
 
-        let newRequest = self.app.request(
+        let newRequest = self.instance.request(
             using: self.requestOptions,
             onSuccess: generalRequestDelegate.onSuccess,
             onError: generalRequestDelegate.onError

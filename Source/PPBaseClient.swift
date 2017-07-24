@@ -40,7 +40,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public var clientVersion: String
 
     public init(
-        cluster: String? = nil,
+        host: String,
         port: Int? = nil,
         insecure: Bool = false,
         clientName: String = "pusher-platform-swift",
@@ -48,11 +48,9 @@ let REALLY_LONG_TIME: Double = 252_460_800
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 0
     ) {
-        let cluster = cluster ?? "api-ceres.pusherplatform.io"
-
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
-        urlComponents.host = cluster
+        urlComponents.host = host
         urlComponents.port = port
 
         self.baseUrlComponents = urlComponents
@@ -311,7 +309,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public func subscribeWithResume(
         with resumableSubscription: inout PPResumableSubscription,
         using requestOptions: PPRequestOptions,
-        app: App,
+        instance: Instance,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
         onResuming: (() -> Void)? = nil,

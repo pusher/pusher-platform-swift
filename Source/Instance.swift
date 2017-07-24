@@ -1,8 +1,10 @@
 import Foundation
 
-@objc public class App: NSObject {
-    public var id: String
-    public var cluster: String?
+@objc public class Instance: NSObject {
+    public var instanceId: String
+    public var serviceName: String
+    public var serviceVersion: String
+    public var host: String
     public var tokenProvider: PPTokenProvider?
     public var client: PPBaseClient
     public var logger: PPLogger {
@@ -12,16 +14,30 @@ import Foundation
     }
 
     public init(
-        id: String,
-        cluster: String? = nil,
+        instanceId: String,
+        serviceName: String,
+        serviceVersion: String,
+        host: String?,
         tokenProvider: PPTokenProvider? = nil,
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
     ) {
-        self.id = id
-        self.cluster = cluster
+        assert (!instanceId.isEmpty, "Expected `instanceId` property in Instance!")
+        let instance = instanceId.components(separatedBy: ":")
+        assert(instance.count == 3, "The instance property is in the wrong format!")
+        assert(!serviceName.isEmpty, "Expected `serviceName` property in Instance options!")
+        assert(!serviceVersion.isEmpty, "Expected `serviceVersion` property in Instance otpions!")
+
+        self.instanceId = instanceId
+        self.serviceName = serviceName
+        self.serviceVersion = serviceVersion
         self.tokenProvider = tokenProvider
-        self.client = client ?? PPBaseClient(cluster: cluster)
+
+        let cluster = instance[1]
+        let host = host ?? "\(cluster).pusherplatform.io"
+        self.host = host
+        self.client = client ?? PPBaseClient(host: host)
+
         self.logger = logger ?? PPDefaultLogger()
         if self.client.logger == nil {
             self.client.logger = self.logger
@@ -34,8 +50,7 @@ import Foundation
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPRequest {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -75,13 +90,12 @@ import Foundation
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPRetryableGeneralRequest {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
 
-        var generalRetryableRequest = PPRetryableGeneralRequest(app: self, requestOptions: requestOptions)
+        var generalRetryableRequest = PPRetryableGeneralRequest(instance: self, requestOptions: requestOptions)
 
         if self.tokenProvider != nil {
             self.tokenProvider!.fetchToken { result in
@@ -119,8 +133,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -169,8 +182,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -186,7 +198,7 @@ import Foundation
                     self.client.subscribeWithResume(
                         with: &resumableSubscription!,
                         using: mutableBaseClientRequestOptions,
-                        app: self,
+                        instance: self,
                         onOpening: onOpening,
                         onOpen: onOpen,
                         onResuming: onResuming,
@@ -200,7 +212,7 @@ import Foundation
             self.client.subscribeWithResume(
                 with: &resumableSubscription,
                 using: mutableBaseClientRequestOptions,
-                app: self,
+                instance: self,
                 onOpening: onOpening,
                 onOpen: onOpen,
                 onResuming: onResuming,
@@ -219,8 +231,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPRequest {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -270,13 +281,12 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPResumableSubscription {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath, appId: self.id)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
 
-        var resumableSubscription = PPResumableSubscription(app: self, requestOptions: requestOptions)
+        var resumableSubscription = PPResumableSubscription(instance: self, requestOptions: requestOptions)
 
         if self.tokenProvider != nil {
             // TODO: Does resumableSubscription need to be weak here?
@@ -291,7 +301,7 @@ import Foundation
                     self.client.subscribeWithResume(
                         with: &resumableSubscription!,
                         using: mutableBaseClientRequestOptions,
-                        app: self,
+                        instance: self,
                         onOpening: onOpening,
                         onOpen: onOpen,
                         onResuming: onResuming,
@@ -305,7 +315,7 @@ import Foundation
             self.client.subscribeWithResume(
                 with: &resumableSubscription,
                 using: mutableBaseClientRequestOptions,
-                app: self,
+                instance: self,
                 onOpening: onOpening,
                 onOpen: onOpen,
                 onResuming: onResuming,
@@ -349,15 +359,8 @@ import Foundation
         return sanitisedPath
     }
 
-    // Only prefix with /apps/APP_ID if /apps/ isn't at the start of the path
-    internal func namespace(path: String, appId: String) -> String {
-        let endIndex = path.index(path.startIndex, offsetBy: 6)
-
-        if path.substring(to: endIndex) == "/apps/" {
-            return path
-        } else {
-            let namespacedPath = "/apps/\(appId)/services\(path)"
-            return namespacedPath
-        }
+    internal func namespace(path: String) -> String {
+        let sanitisedPath = sanitise(path: path)
+        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)\(sanitisedPath)"
     }
 }

@@ -3,25 +3,25 @@ import PusherPlatform
 
 class ViewController: UIViewController {
 
-    var app: App!
+    var instance: Instance!
     var resumableSub: PPResumableSubscription? = nil
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let userId = "will"
-        let serviceId = "some-app-id"
+        let serviceId = "some-instance-id"
         let path = "/chatkit/v1/users"
 
         let localBaseClient = PPBaseClient(
-            cluster: "localhost",
+            host: "localhost",
             port: 10443,
             insecure: true,
             heartbeatTimeoutInterval: 30
         )
 
         let kubeBaseClient = PPBaseClient(
-            cluster: "api-ceres.pusherplatform.io",
+            host: "api-ceres.pusherplatform.io",
             insecure: true
         )
 
@@ -38,8 +38,11 @@ class ViewController: UIViewController {
             }
         )
 
-        app = App(
-            id: serviceId,
+        instance = Instance(
+            instanceId: "v1:CLUSTER_SUBDOMAIN_HERE:blah-blah",
+            serviceName: "chatkit",
+            serviceVersion: "v1",
+            host: nil,
             tokenProvider: tokenProvider,
             client: localBaseClient,
             logger: HamLogger()
@@ -47,9 +50,9 @@ class ViewController: UIViewController {
 
         let requestOptions = PPRequestOptions(method: HTTPMethod.SUBSCRIBE.rawValue, path: path)
 
-        resumableSub = PPResumableSubscription(app: app, requestOptions: requestOptions)
+        resumableSub = PPResumableSubscription(instance: instance, requestOptions: requestOptions)
 
-        app.subscribeWithResume(
+        instance.subscribeWithResume(
             with: &resumableSub!,
             using: requestOptions,
             onOpening: { print("OPENING") },
