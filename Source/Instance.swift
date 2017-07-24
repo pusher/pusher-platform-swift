@@ -50,8 +50,7 @@ import Foundation
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPRequest {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -91,8 +90,7 @@ import Foundation
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPRetryableGeneralRequest {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -135,8 +133,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -185,8 +182,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -235,8 +231,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPRequest {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -286,8 +281,7 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPResumableSubscription {
-        let sanitisedPath = sanitise(path: requestOptions.path)
-        let namespacedPath = namespace(path: sanitisedPath)
+        let namespacedPath = namespace(path: requestOptions.path)
 
         let mutableBaseClientRequestOptions = requestOptions
         mutableBaseClientRequestOptions.path = namespacedPath
@@ -366,6 +360,7 @@ import Foundation
     }
 
     internal func namespace(path: String) -> String {
-        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)\(path)"
+        let sanitisedPath = sanitise(path: path)
+        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)\(sanitisedPath)"
     }
 }
