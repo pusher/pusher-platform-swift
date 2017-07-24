@@ -42,6 +42,7 @@ class ViewController: UIViewController {
             instanceId: "v1:CLUSTER_SUBDOMAIN_HERE:blah-blah",
             serviceName: "chatkit",
             serviceVersion: "v1",
+            host: nil,
             tokenProvider: tokenProvider,
             client: localBaseClient,
             logger: HamLogger()

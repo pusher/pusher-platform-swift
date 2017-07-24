@@ -1,9 +1,11 @@
 import Foundation
 
 @objc public class Instance: NSObject {
+    private let hostBase = "pusherplatform.io"
     public var instanceId: String
     public var serviceName: String
     public var serviceVersion: String
+    public var host: String
     public var tokenProvider: PPTokenProvider?
     public var client: PPBaseClient
     public var logger: PPLogger {
@@ -16,6 +18,7 @@ import Foundation
         instanceId: String,
         serviceName: String,
         serviceVersion: String,
+        host: String?,
         tokenProvider: PPTokenProvider? = nil,
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
@@ -24,7 +27,12 @@ import Foundation
         self.serviceName = serviceName
         self.serviceVersion = serviceVersion
         self.tokenProvider = tokenProvider
-        self.client = client ?? PPBaseClient(host: "")
+
+        let instance = Instance.split(instance: instanceId)
+        let host = Instance.hostname(host: host, cluster: instance.cluster, hostBase: self.hostBase)
+        self.host = host
+        self.client = client ?? PPBaseClient(host: host)
+
         self.logger = logger ?? PPDefaultLogger()
         if self.client.logger == nil {
             self.client.logger = self.logger
@@ -354,5 +362,20 @@ import Foundation
 
     internal func namespace(path: String) -> String {
         return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)\(path)"
+    }
+
+    private static func split(instance: String) -> (platformVersion: String, cluster: String, id: String) {
+        var splitInstance = instance.components(separatedBy: ":")
+
+        return (splitInstance[0], splitInstance[1], splitInstance[2])
+    }
+
+    private static func hostname(host: String?, cluster: String, hostBase: String) -> String {
+        if let host = host {
+            return host
+        }
+        else {
+            return "\(cluster).\(hostBase)"
+        }
     }
 }
