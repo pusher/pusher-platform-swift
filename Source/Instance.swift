@@ -23,12 +23,17 @@ import Foundation
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
     ) {
+        assert (!instanceId.isEmpty, "Expected `instanceId` property in Instance!")
+        let instance = Instance.split(instance: instanceId)
+        assert(Mirror(reflecting: instance).children.count == 3, "The instance property is in the wrong format!")
+        assert(!serviceName.isEmpty, "Expected `serviceName` property in Instance options!")
+        assert(!serviceVersion.isEmpty, "Expected `serviceVersion` property in Instance otpions!")
+
         self.instanceId = instanceId
         self.serviceName = serviceName
         self.serviceVersion = serviceVersion
         self.tokenProvider = tokenProvider
 
-        let instance = Instance.split(instance: instanceId)
         let host = Instance.hostname(host: host, cluster: instance.cluster, hostBase: self.hostBase)
         self.host = host
         self.client = client ?? PPBaseClient(host: host)
