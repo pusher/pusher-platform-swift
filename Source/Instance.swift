@@ -17,7 +17,6 @@ import Foundation
         instanceId: String,
         serviceName: String,
         serviceVersion: String,
-        host: String?,
         tokenProvider: PPTokenProvider? = nil,
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
@@ -34,7 +33,7 @@ import Foundation
         self.tokenProvider = tokenProvider
 
         let cluster = instance[1]
-        let host = host ?? "\(cluster).pusherplatform.io"
+        let host = "\(cluster).pusherplatform.io"
         self.host = host
         self.client = client ?? PPBaseClient(host: host)
 
