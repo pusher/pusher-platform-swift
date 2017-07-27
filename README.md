@@ -85,13 +85,13 @@ TODO
 
 ### Getting started
 
-First we need to have an instance of an `App`. To create an `App` we need to pass in an app's `id`. You can get your app ID from the dashboard.
+First we need to have an instance of an `Instance`. To create an `Instance` we need to pass in `instanceId`, `serviceName`, and `serviceVersion`. You can get your instance ID from the dashboard.
 
 ```swift
-let app = try! App(id: "YOUR APP ID")
+let instance = Instance(instanceId: "instance-id", serviceName: "service-name", serviceVersion: "service-version")
 ```
 
-The `App` instance allows you to interact with the service using the Elements protocol. The high level methods it exposes are:
+The `Instance` instance allows you to interact with the service using the Elements protocol. The high level methods it exposes are:
 
 - `request` and `requestWithRetry` for standard HTTP requests
 - `subscribe` for subscriptions
