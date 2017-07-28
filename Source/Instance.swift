@@ -1,7 +1,7 @@
 import Foundation
 
 @objc public class Instance: NSObject {
-    public var instanceId: String
+    public let id: String
     public var serviceName: String
     public var serviceVersion: String
     public var host: String
@@ -22,17 +22,17 @@ import Foundation
         logger: PPLogger? = nil
     ) {
         assert (!instanceId.isEmpty, "Expected `instanceId` property in Instance!")
-        let instance = instanceId.components(separatedBy: ":")
-        assert(instance.count == 3, "The instance property is in the wrong format!")
+        let splitInstance = instanceId.components(separatedBy: ":")
+        assert(splitInstance.count == 3, "The instance property is in the wrong format!")
         assert(!serviceName.isEmpty, "Expected `serviceName` property in Instance options!")
         assert(!serviceVersion.isEmpty, "Expected `serviceVersion` property in Instance otpions!")
 
-        self.instanceId = instanceId
+        self.id = splitInstance[2]
         self.serviceName = serviceName
         self.serviceVersion = serviceVersion
         self.tokenProvider = tokenProvider
 
-        let cluster = instance[1]
+        let cluster = splitInstance[1]
         let host = "\(cluster).pusherplatform.io"
         self.host = host
         self.client = client ?? PPBaseClient(host: host)
@@ -360,6 +360,6 @@ import Foundation
 
     internal func namespace(path: String) -> String {
         let sanitisedPath = sanitise(path: path)
-        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.instanceId)\(sanitisedPath)"
+        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.id)\(sanitisedPath)"
     }
 }
