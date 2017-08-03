@@ -362,8 +362,7 @@ import Foundation
         if path.hasPrefix("/services/") {
             return path
         }
-        else {
-            return sanitise(path: "services/\(self.serviceName)/\(self.serviceVersion)/\(self.id)\(path)")
-        }
+
+        return sanitise(path: "services/\(self.serviceName)/\(self.serviceVersion)/\(self.id)\(path)")
     }
 }
