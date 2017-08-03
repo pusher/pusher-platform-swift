@@ -359,7 +359,10 @@ import Foundation
     }
 
     internal func namespace(path: String) -> String {
-        let sanitisedPath = sanitise(path: path)
-        return "services/\(self.serviceName)/\(self.serviceVersion)/\(self.id)\(sanitisedPath)"
+        if path.hasPrefix("/services/") {
+            return path
+        }
+
+        return sanitise(path: "services/\(self.serviceName)/\(self.serviceVersion)/\(self.id)/\(path)")
     }
 }
