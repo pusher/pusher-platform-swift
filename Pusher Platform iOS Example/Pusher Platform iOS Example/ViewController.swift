@@ -9,9 +9,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let userId = "will"
-        let serviceId = "some-instance-id"
-        let path = "/chatkit/v1/users"
+        let userId = "pusherino"
+        let instanceId = "v1:api-deneb:luka-chat"
+        let path = "/users"
 
         let localBaseClient = PPBaseClient(
             host: "localhost",
@@ -20,18 +20,13 @@ class ViewController: UIViewController {
             heartbeatTimeoutInterval: 30
         )
 
-        let kubeBaseClient = PPBaseClient(
-            host: "api-ceres.pusherplatform.io",
-            insecure: true
-        )
-
         let tokenProvider = PPHTTPEndpointTokenProvider(
             url: "https://chat-api-test-token-provider.herokuapp.com/token",
             requestInjector: { req -> PPHTTPEndpointTokenProviderRequest in
                 req.addQueryItems(
                     [
                         URLQueryItem(name: "user_id", value: userId),
-                        URLQueryItem(name: "service_id", value: serviceId)
+                        URLQueryItem(name: "instance", value: instanceId)
                     ]
                 )
                 return req
@@ -39,11 +34,10 @@ class ViewController: UIViewController {
         )
 
         instance = Instance(
-            instanceId: "v1:CLUSTER_SUBDOMAIN_HERE:blah-blah",
+            instanceId: "v1:api-deneb:luka-chat",
             serviceName: "chatkit",
             serviceVersion: "v1",
             tokenProvider: tokenProvider,
-            client: localBaseClient,
             logger: HamLogger()
         )
 
