@@ -363,6 +363,6 @@ import Foundation
             return path
         }
 
-        return sanitise(path: "services/\(self.serviceName)/\(self.serviceVersion)/\(self.id)\(path)")
+        return sanitise(path: "services/\(self.serviceName)/\(self.serviceVersion)/\(self.id)/\(path)")
     }
 }
