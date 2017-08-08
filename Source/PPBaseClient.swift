@@ -44,7 +44,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         port: Int? = nil,
         insecure: Bool = false,
         clientName: String = "pusher-platform-swift",
-        retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrageyGenerator,
+        retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrategyGenerator,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 0
     ) {
@@ -423,7 +423,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
     }
 
-    static public func methodAwareRetryStrageyGenerator(requestOptions: PPRequestOptions) -> PPRetryStrategy {
+    static public func methodAwareRetryStrategyGenerator(requestOptions: PPRequestOptions) -> PPRetryStrategy {
         if let httpMethod = HTTPMethod(rawValue: requestOptions.method) {
             switch httpMethod {
             case .POST, .PUT, .PATCH:
