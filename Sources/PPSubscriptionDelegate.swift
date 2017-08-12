@@ -120,7 +120,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
         self.logger?.log("Task \(self.task!.taskIdentifier) handling dataString: \(dataString)", logLevel: .verbose)
 
-        let stringMessages = dataString.components(separatedBy: "\n")
+        var stringMessages = dataString.components(separatedBy: "\n")
 
         // No newline character in data received so the received data should be stored, ready
         // for the next data to be received
@@ -128,22 +128,30 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             return
         }
 
-        // TODO: Could optimise reading here to get messages as early as possible by
-        // parsing a message as soon as we have a valid message in the total data, and
-        // then just keep the "remainder" stored, rather than waiting until we have a
-        // full set of messages. E.g. we could have a stream of data received such that
-        // we received messages in this order: 0.5, 2.25, 0.25, and instead of eventually
-        // parsing 3 whole messages (0, 0, 3 - respective to when each bit of data is
-        // received), we would parse 0, 2, 1
-        guard stringMessages.last == "" else {
-            return
+        // We could have a stream of data received such that we received messages
+        // in this order: 2.25, 2.25, 0.5, and instead of eventually parsing 5
+        // whole messages (0, 0, 5 - respective to when each bit of data is
+        // received), we would parse 2, 2, 1
+
+        var incompleteStringMessage: String? = nil
+
+        if stringMessages.last != "" {
+            self.logger?.log(
+                "Last message not an empty string, which means it will be parsed when the remaining event data is received",
+                logLevel: .verbose
+            )
+            // Remove and store the last message so that it can be parsed in future
+            // when the remaining event data is received
+            incompleteStringMessage = stringMessages.popLast()
         }
 
         let messages = self.messageParser.parse(stringMessages: stringMessages)
         self.handle(messages: messages)
 
-        // If we reached this point we should reset the data to an empty Data
-        self.data = Data()
+        // If we reached this point we should reset the data to an empty Data, or
+        // if there was an incomplete message then we convert that back to Data
+        // and store that
+        self.data = incompleteStringMessage?.data(using: .utf8) ?? Data()
     }
 
     func handleCompletion(error: Error? = nil) {
