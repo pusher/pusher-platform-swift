@@ -1,6 +1,6 @@
 import Foundation
 
-internal protocol PPRequestTaskDelegate {
+public protocol PPRequestTaskDelegate {
     var data: Data { get set }
     var task: URLSessionDataTask? { get set }
     var error: Error? { get set }
