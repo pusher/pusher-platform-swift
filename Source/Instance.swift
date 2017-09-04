@@ -23,7 +23,7 @@ import Foundation
     ) {
         assert (!instanceId.isEmpty, "Expected instanceId property in Instance!")
         let splitInstance = instanceId.components(separatedBy: ":")
-        assert(splitInstance.count == 3, "Expecting instanceId in the format of 'v1:api-deneb:2f354c91-269f-4820-93d2-5441219fdd23' but got this instead: '\(instanceId)'")
+        assert(splitInstance.count == 3, "Expecting instanceId in the format of 'v1:us1:1a234-123a-1234-12a3-1234123aa12' but got this instead: '\(instanceId)'. Check the dashboard to ensure you have a properly formatted instanceId")
         assert(!serviceName.isEmpty, "Expected serviceName property in Instance options!")
         assert(!serviceVersion.isEmpty, "Expected serviceVersion property in Instance otpions!")
 
