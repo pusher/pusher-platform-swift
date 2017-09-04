@@ -21,11 +21,11 @@ import Foundation
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
     ) {
-        assert (!instanceId.isEmpty, "Expected `instanceId` property in Instance!")
+        assert (!instanceId.isEmpty, "Expected instanceId property in Instance!")
         let splitInstance = instanceId.components(separatedBy: ":")
-        assert(splitInstance.count == 3, "The instance property is in the wrong format!")
-        assert(!serviceName.isEmpty, "Expected `serviceName` property in Instance options!")
-        assert(!serviceVersion.isEmpty, "Expected `serviceVersion` property in Instance otpions!")
+        assert(splitInstance.count == 3, "Expecting instanceId in the format of 'v1:us1:1a234-123a-1234-12a3-1234123aa12' but got this instead: '\(instanceId)'. Check the dashboard to ensure you have a properly formatted instanceId.")
+        assert(!serviceName.isEmpty, "Expected serviceName property in Instance options!")
+        assert(!serviceVersion.isEmpty, "Expected serviceVersion property in Instance otpions!")
 
         self.id = splitInstance[2]
         self.serviceName = serviceName
