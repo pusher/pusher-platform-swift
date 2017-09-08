@@ -226,7 +226,6 @@ public class PPHTTPEndpointTokenProviderRequest {
 }
 
 public enum PPHTTPEndpointTokenProviderError: Error {
-    case maxNumberOfRetriesReached
     case failedToCreateURLComponents(String)
     case failedToCreateURLObject(URLComponents)
     case noDataPresent
@@ -242,8 +241,6 @@ public enum PPHTTPEndpointTokenProviderError: Error {
 extension PPHTTPEndpointTokenProviderError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .maxNumberOfRetriesReached: // This is not used anywhere, can it be removed?
-            return "Maximum number of retries reached"
         case .failedToCreateURLComponents(let errorString):
             return "Failed to parse url into the components. Error: \(errorString)"
         case .failedToCreateURLObject(let urlComponents):
