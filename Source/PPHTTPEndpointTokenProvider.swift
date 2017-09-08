@@ -242,25 +242,25 @@ extension PPHTTPEndpointTokenProviderError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .failedToCreateURLComponents(let errorString):
-            return "Failed to parse url into the components. Error: \(errorString)"
+            return "Failed to parse URL into components. Error: \(errorString)"
         case .failedToCreateURLObject(let urlComponents):
-            return "URL component doesn't exists in: \(urlComponents)"
+            return "URL component doesn't exist in: \(urlComponents)"
         case .noDataPresent:
             return "No data present"
         case .invalidHTTPResponse(let response, _):
             return "Invalid HTTP response: \(response.debugDescription)"
         case .badResponseStatusCode(let response, _):
-            return "Bad response code: \(response.debugDescription)"
+            return "Bad response code: \(response.statusCode)"
         case .failedToDeserializeJSON(let data):
             return "Failed to deserialize JSON with data: \(data)"
         case .failedToCastJSONObjectToDictionary(let jsonObject):
             return "Failed to cast JSON object: \(jsonObject) to dictionary"
         case .validAccessTokenNotPresentInResponseJSON(let json):
-            return "Valid access token not present in response JSON: \(json)"
+            return "Valid \"access_token\" value not present in response JSON: \(json)"
         case .validRefreshTokenNotPresentInResponseJSON(let json):
-            return "Valid refresh token not present in response JSON: \(json)"
+            return "Valid \"refresh_token\" value not present in response JSON: \(json)"
         case .validExpiresInNotPresentInResponseJSON(let json):
-            return "Valid expires-in value not present in response JSON: \(json)"
+            return "Valid \"expires_in\" value not present in response JSON: \(json)"
         }
     }
 }
