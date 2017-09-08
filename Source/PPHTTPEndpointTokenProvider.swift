@@ -225,8 +225,6 @@ public class PPHTTPEndpointTokenProviderRequest {
     }
 }
 
-// TODO: LocalizedDescription
-
 public enum PPHTTPEndpointTokenProviderError: Error {
     case maxNumberOfRetriesReached
     case failedToCreateURLComponents(String)
@@ -239,4 +237,33 @@ public enum PPHTTPEndpointTokenProviderError: Error {
     case validAccessTokenNotPresentInResponseJSON([String: Any])
     case validRefreshTokenNotPresentInResponseJSON([String: Any])
     case validExpiresInNotPresentInResponseJSON([String: Any])
+}
+
+extension PPHTTPEndpointTokenProviderError: LocalizedError {
+    public var errorDescription: String? {
+        switch self {
+        case .maxNumberOfRetriesReached: // This is not used anywhere, can it be removed?
+            return "Maximum number of retries reached"
+        case .failedToCreateURLComponents(let errorString):
+            return "Failed to parse url into the components. Error: \(errorString)"
+        case .failedToCreateURLObject(let urlComponents):
+            return "URL component doesn't exists in: \(urlComponents)"
+        case .noDataPresent:
+            return "No data present"
+        case .invalidHTTPResponse(let response, _):
+            return "Invalid HTTP response: \(response.debugDescription)"
+        case .badResponseStatusCode(let response, _):
+            return "Bad response code: \(response.debugDescription)"
+        case .failedToDeserializeJSON(let data):
+            return "Failed to deserialize JSON with data: \(data)"
+        case .failedToCastJSONObjectToDictionary(let jsonObject):
+            return "Failed to cast JSON object: \(jsonObject) to dictionary"
+        case .validAccessTokenNotPresentInResponseJSON(let json):
+            return "Valid access token not present in response JSON: \(json)"
+        case .validRefreshTokenNotPresentInResponseJSON(let json):
+            return "Valid refresh token not present in response JSON: \(json)"
+        case .validExpiresInNotPresentInResponseJSON(let json):
+            return "Valid expires-in value not present in response JSON: \(json)"
+        }
+    }
 }
