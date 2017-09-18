@@ -1,5 +1,6 @@
 # PusherPlatform (pusher-platform-swift)
 
+[![Build Status](https://travis-ci.org/pusher/pusher-platform-swift.svg?branch=master)](https://travis-ci.org/pusher/pusher-platform-swift)
 [![Twitter](https://img.shields.io/badge/twitter-@Pusher-blue.svg?style=flat)](http://twitter.com/Pusher)
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/pusher/pusher-platform-swift/master/LICENSE.md)
 
