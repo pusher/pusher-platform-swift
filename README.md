@@ -27,22 +27,17 @@ $ gem install cocoapods
 
 Then run `pod init` to create your `Podfile` (if you don't already have one).
 
-Next, add the Pusher private pod spec repository:
-
-```
-pod repo install pusher  git@github.com:pusher/PrivatePodSpecs.git
-```
-
-Then add the following lines to it:
+Next, add the following lines to it:
 
 ```ruby
-platform :ios, '9.0' # change this if you're not making an iOS app!
+source 'https://github.com/CocoaPods/Specs.git'
+platform :ios, '10.0' # change this if you're not making an iOS app!
+use_frameworks!
 
-target 'your-app-name' do
+# Replace `<Your Target Name>` with your app's target name.
+target '<Your Target Name>' do
   pod 'PusherPlatform'
 end
-
-# the rest of the file...
 ```
 
 Then, run the following command:
