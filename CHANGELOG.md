@@ -4,7 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.1.29...HEAD)
+## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.1.30...HEAD)
+
+## [0.1.30](https://github.com/pusher/pusher-platform-swift/compare/0.1.29...0.1.30) - 2017-09-19
+
+## Added
+- `PPHTTPEndpointTokenProviderError` error description
+
+## Removed
+- ClientVersion.swift class
+
+## Changed
+- Append URL components in `PPHTTPEndpointTokenProvider`
 
 ## [0.1.29](https://github.com/pusher/pusher-platform-swift/compare/0.1.28...0.1.29) - 2017-07-03
 ### Fixed
