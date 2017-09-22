@@ -6,10 +6,6 @@
 
 ...
 
-#### How?
-
-...
-
 ----
 
 CC @pusher/sigsdk 
