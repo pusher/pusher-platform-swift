@@ -26,7 +26,6 @@
 		33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D2A5AF1E39075100EA7549 /* DummyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2A5AD1E39074800EA7549 /* DummyTests.swift */; };
-		33D486011ECB2AEB0097392D /* HTTPParameterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */; };
 		33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */; };
 		33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* PPRequest.swift */; };
 /* End PBXBuildFile section */
@@ -64,7 +63,6 @@
 		33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPBaseClient.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33D2A5AD1E39074800EA7549 /* DummyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DummyTests.swift; path = ../Tests/DummyTests.swift; sourceTree = "<group>"; };
-		33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPParameterProtocol.swift; sourceTree = "<group>"; };
 		33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultRetryStrategy.swift; sourceTree = "<group>"; };
 		33F37F771E0C20CC0048457F /* PPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -108,7 +106,6 @@
 		33831C8B1A9CF61600B124F1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */,
 				338290711DF5CEC6008CDC8F /* Instance.swift */,
 				33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */,
 				334B9A2E1ECCA295007A3D3B /* PPDefaultLogger.swift */,
@@ -294,7 +291,6 @@
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */,
 				331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */,
-				33D486011ECB2AEB0097392D /* HTTPParameterProtocol.swift in Sources */,
 				330DD21C1E0C433A00EC251F /* PPLogger.swift in Sources */,
 				33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */,
 				33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */,
