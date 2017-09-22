@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'PusherPlatform'
-  s.version          = '0.1.30'
+  s.version          = '0.1.31'
   s.summary          = 'Pusher Platform SDK in Swift'
   s.homepage         = 'https://github.com/pusher/pusher-platform-swift'
   s.license          = 'MIT'
@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.requires_arc = true
   s.source_files = 'Source/*.swift'
 
-  s.ios.deployment_target = '9.0'
+  s.ios.deployment_target = '10.0'
   s.osx.deployment_target = '10.11'
   s.tvos.deployment_target = '9.0'
   s.watchos.deployment_target = '2.0'

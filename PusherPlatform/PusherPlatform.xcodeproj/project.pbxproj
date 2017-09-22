@@ -26,9 +26,9 @@
 		33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */; };
 		33C40CB91C1DFC9C008A54E3 /* PusherPlatform.h in Headers */ = {isa = PBXBuildFile; fileRef = 33831CD61A9CFFF200B124F1 /* PusherPlatform.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		33D2A5AF1E39075100EA7549 /* DummyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D2A5AD1E39074800EA7549 /* DummyTests.swift */; };
-		33D486011ECB2AEB0097392D /* HTTPParameterProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */; };
 		33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */; };
 		33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* PPRequest.swift */; };
+		A1C545371F753E3700F15509 /* PPHTTPBodyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C545361F753E3700F15509 /* PPHTTPBodyPair.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,9 +64,9 @@
 		33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPBaseClient.swift; sourceTree = "<group>"; };
 		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
 		33D2A5AD1E39074800EA7549 /* DummyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DummyTests.swift; path = ../Tests/DummyTests.swift; sourceTree = "<group>"; };
-		33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HTTPParameterProtocol.swift; sourceTree = "<group>"; };
 		33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultRetryStrategy.swift; sourceTree = "<group>"; };
 		33F37F771E0C20CC0048457F /* PPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequest.swift; sourceTree = "<group>"; };
+		A1C545361F753E3700F15509 /* PPHTTPBodyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPHTTPBodyPair.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,28 +108,28 @@
 		33831C8B1A9CF61600B124F1 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				33935EB21DA54F9400C5C064 /* Token Providers */,
 				338290711DF5CEC6008CDC8F /* Instance.swift */,
 				33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */,
-				33816B091EB37C6F00E5A169 /* PPURLSessionDelegate.swift */,
+				334B9A2E1ECCA295007A3D3B /* PPDefaultLogger.swift */,
+				33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */,
+				33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */,
+				A1C545361F753E3700F15509 /* PPHTTPBodyPair.swift */,
+				330DD21B1E0C433A00EC251F /* PPLogger.swift */,
+				332E05E71DDCA919007A55FB /* PPMessage.swift */,
+				332E05E51DDCA3DB007A55FB /* PPMessageParser.swift */,
 				33F37F771E0C20CC0048457F /* PPRequest.swift */,
 				33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */,
 				33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */,
-				3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */,
-				33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */,
-				332E05E51DDCA3DB007A55FB /* PPMessageParser.swift */,
-				332E05E71DDCA919007A55FB /* PPMessage.swift */,
-				33935EA71DA5399A00C5C064 /* PPTokenProvider.swift */,
 				330E59061DEDD38900C92897 /* PPResumableSubscription.swift */,
 				331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */,
 				33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */,
-				33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */,
-				330DD21B1E0C433A00EC251F /* PPLogger.swift */,
-				334B9A2E1ECCA295007A3D3B /* PPDefaultLogger.swift */,
-				33D486001ECB2AEB0097392D /* HTTPParameterProtocol.swift */,
-				33BB995C1D21225B00B25C2A /* Tests */,
-				33831C8C1A9CF61600B124F1 /* Supporting Files */,
+				3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */,
+				33935EA71DA5399A00C5C064 /* PPTokenProvider.swift */,
+				33816B091EB37C6F00E5A169 /* PPURLSessionDelegate.swift */,
 				33831CD61A9CFFF200B124F1 /* PusherPlatform.h */,
+				33831C8C1A9CF61600B124F1 /* Supporting Files */,
+				33BB995C1D21225B00B25C2A /* Tests */,
+				33935EB21DA54F9400C5C064 /* Token Providers */,
 			);
 			name = Source;
 			path = ../Source;
@@ -294,12 +294,12 @@
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */,
 				331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */,
-				33D486011ECB2AEB0097392D /* HTTPParameterProtocol.swift in Sources */,
 				330DD21C1E0C433A00EC251F /* PPLogger.swift in Sources */,
 				33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */,
 				33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* PPMessageParser.swift in Sources */,
 				33816B0A1EB37C6F00E5A169 /* PPURLSessionDelegate.swift in Sources */,
+				A1C545371F753E3700F15509 /* PPHTTPBodyPair.swift in Sources */,
 				332E05E81DDCA919007A55FB /* PPMessage.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift in Sources */,
 				33816B081EB379F800E5A169 /* PPGeneralRequestDelegate.swift in Sources */,
@@ -364,7 +364,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = "";
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos appletvos iphoneos";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -405,7 +405,7 @@
 				SDKROOT = "";
 				SUPPORTED_PLATFORMS = "macosx iphonesimulator appletvsimulator watchsimulator watchos appletvos iphoneos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -468,7 +468,7 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvsimulator watchsimulator watchos appletvos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -525,7 +525,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvsimulator watchsimulator watchos appletvos";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2,3,4";
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				VALIDATE_PRODUCT = YES;
@@ -585,7 +585,7 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvsimulator appletvos watchsimulator watchos";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
 			};
@@ -633,7 +633,7 @@
 				SDKROOT = "";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx appletvsimulator appletvos watchsimulator watchos";
 				SWIFT_SWIFT3_OBJC_INFERENCE = On;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				VALIDATE_PRODUCT = YES;
 				WATCHOS_DEPLOYMENT_TARGET = 2.0;
