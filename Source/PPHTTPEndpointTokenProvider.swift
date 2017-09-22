@@ -179,10 +179,7 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
             }
 
             if let body = httpEndpointRequest!.body {
-                let queryString = body.createPairs(nil).map({ (pair) in
-                    return pair.escapedValue
-                }).joined(separator: "&")
-
+                let queryString = PPHTTPBodyPair.queryString(body: body)
                 request.httpBody = "\(grantBodyString)&\(queryString)".data(using: .utf8)
             } else {
                 request.httpBody = grantBodyString.data(using: .utf8)
@@ -210,7 +207,7 @@ public enum PPEndpointRequestGrantType: String {
 
 public class PPHTTPEndpointTokenProviderRequest {
     public var headers: [String: String] = [:]
-    public var body: HTTPParameterProtocol? = nil
+    public var body: PPHTTPBody? = []
     public var queryItems: [URLQueryItem] = []
 
     // If a header key already exists then calling this will override it
