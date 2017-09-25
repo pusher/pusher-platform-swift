@@ -6,7 +6,7 @@ has_source_changes = !git.modified_files.grep(/Source/).empty?
 # Changelog entries are required for changes to library files.
 no_changelog_entry = !git.modified_files.include?("CHANGELOG.md")
 if has_source_changes && no_changelog_entry && not_declared_trivial
-  warn("Any changes to library code should be reflected in the Changelog. Please consider adding a note there. \nYou can find it at [CHANGELOG.md](https://github.com/pusher/chatkit-swift/blob/master/CHANGELOG.md).")
+  warn("Any changes to library code should be reflected in the Changelog. Please consider adding a note there. \nYou can find it at [CHANGELOG.md](https://github.com/pusher/pusher-platform-swift/blob/master/CHANGELOG.md).")
 end
 
 # Make it more obvious that a PR is a work in progress and shouldn't be merged yet
@@ -14,7 +14,7 @@ warn("PR is classed as Work in Progress") if github.pr_title.include? "[WIP]"
 
 # Warn when either the podspec or Cartfile + Cartfile.resolved has been updated,
 # but not both.
-podspec_updated = !git.modified_files.grep(/PusherChatkit.podspec/).empty?
+podspec_updated = !git.modified_files.grep(/PusherPlatform.podspec/).empty?
 cartfile_updated = !git.modified_files.grep(/Cartfile/).empty?
 cartfile_resolved_updated = !git.modified_files.grep(/Cartfile.resolved/).empty?
 
