@@ -103,9 +103,9 @@ The tests also get run on [buddybuild](https://dashboard.buddybuild.com/apps/59c
 
 ## Communication
 
-- Found a bug? Please open an issue.
-- Have a feature request. Please open an issue.
-- If you want to contribute, please submit a pull request (preferrably with some tests 🙂 ).
+- Found a bug? Please open an [issue](https://github.com/pusher/pusher-platform-swift/issues).
+- Have a feature request. Please open an [issue](https://github.com/pusher/pusher-platform-swift/issues).
+- If you want to contribute, please submit a [pull request](https://github.com/pusher/pusher-platform-swift/pulls) (preferrably with some tests 🙂 ).
 
 
 ## License
