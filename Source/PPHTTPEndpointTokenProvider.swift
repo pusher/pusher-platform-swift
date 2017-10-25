@@ -162,7 +162,11 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
         let grantBodyString = "grant_type=\(grantType.rawValue)"
 
         if let httpEndpointRequest = httpEndpointRequest {
-            endpointURLComponents.queryItems?.append(contentsOf: httpEndpointRequest.queryItems)
+            if endpointURLComponents.queryItems != nil {
+                endpointURLComponents.queryItems!.append(contentsOf: httpEndpointRequest.queryItems)
+            } else {
+                endpointURLComponents.queryItems = httpEndpointRequest.queryItems
+            }
         }
 
         guard let endpointURL = endpointURLComponents.url else {
