@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.1.32...HEAD)
 
+## [0.2.0](https://github.com/pusher/pusher-platform-swift/compare/0.1.32...0.2.0) - 2017-10-27
+## Changed
+- `instanceId` property in `Instance` renamed to `locator`
+
 ## [0.1.32](https://github.com/pusher/pusher-platform-swift/compare/0.1.31...0.1.32) - 2017-10-25
 ## Fixed
 - Query parameters set in the `requestInjector` part of a `PPHTTPEndpointTokenProvider`, when there are no query params set through the string version of the URL, are now included in requests
