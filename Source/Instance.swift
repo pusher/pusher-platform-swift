@@ -14,16 +14,16 @@ import Foundation
     }
 
     public init(
-        instanceId: String,
+        locator: String,
         serviceName: String,
         serviceVersion: String,
         tokenProvider: PPTokenProvider? = nil,
         client: PPBaseClient? = nil,
         logger: PPLogger? = nil
     ) {
-        assert (!instanceId.isEmpty, "Expected instanceId property in Instance!")
-        let splitInstance = instanceId.components(separatedBy: ":")
-        assert(splitInstance.count == 3, "Expecting instanceId in the format of 'v1:us1:1a234-123a-1234-12a3-1234123aa12' but got this instead: '\(instanceId)'. Check the dashboard to ensure you have a properly formatted instanceId.")
+        assert (!locator.isEmpty, "Expected locator property in Instance!")
+        let splitInstance = locator.components(separatedBy: ":")
+        assert(splitInstance.count == 3, "Expecting locator to be of the form 'v1:us1:1a234-123a-1234-12a3-1234123aa12' but got this instead: '\(locator)'. Check the dashboard to ensure you have a properly formatted locator.")
         assert(!serviceName.isEmpty, "Expected serviceName property in Instance options!")
         assert(!serviceVersion.isEmpty, "Expected serviceVersion property in Instance otpions!")
 

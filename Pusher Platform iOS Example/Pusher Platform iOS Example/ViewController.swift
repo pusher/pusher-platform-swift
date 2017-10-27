@@ -10,7 +10,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         let userId = "pusherino"
-        let instanceId = "v1:api-deneb:luka-chat"
+        let instanceLocator = "v1:api-deneb:luka-chat"
         let path = "/users"
 
         let localBaseClient = PPBaseClient(
@@ -26,7 +26,7 @@ class ViewController: UIViewController {
                 req.addQueryItems(
                     [
                         URLQueryItem(name: "user_id", value: userId),
-                        URLQueryItem(name: "instance", value: instanceId)
+                        URLQueryItem(name: "instance", value: instanceLocator)
                     ]
                 )
                 return req
@@ -34,7 +34,7 @@ class ViewController: UIViewController {
         )
 
         instance = Instance(
-            instanceId: "v1:api-deneb:luka-chat",
+            locator: "v1:api-deneb:luka-chat",
             serviceName: "chatkit",
             serviceVersion: "v1",
             tokenProvider: tokenProvider,
