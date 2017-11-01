@@ -1,6 +1,8 @@
 import Foundation
 
-public class PPURLSessionDelegate: NSObject {
+public typealias TypeIdentifier = Int
+
+public class PPURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate>: NSObject {
     public let insecure: Bool
     internal let sessionQueue: DispatchQueue
     public var logger: PPLogger? = nil {
@@ -15,10 +17,10 @@ public class PPURLSessionDelegate: NSObject {
         }
     }
 
-    public var requests: [Int: PPRequest] = [:]
+    public var requests: [TypeIdentifier: AnyPPRequest<RequestTaskDelegate>] = [:]
     private let lock = NSLock()
 
-    open subscript(task: URLSessionTask) -> PPRequest? {
+    open subscript(task: URLSessionTask) -> AnyPPRequest<RequestTaskDelegate>? {
         get {
             lock.lock()
             defer { lock.unlock() }

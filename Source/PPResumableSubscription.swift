@@ -9,7 +9,7 @@ import Foundation
     public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: PPResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
-    public internal(set) var subscription: PPRequest? = nil
+    public internal(set) var subscription: PPSubscription? = nil
     public var retryStrategy: PPRetryStrategy? = nil
     var retrySubscriptionTimer: Timer? = nil
 
