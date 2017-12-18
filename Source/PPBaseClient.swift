@@ -4,22 +4,33 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
 @objc public class PPBaseClient: NSObject {
     public var port: Int?
-    internal var baseUrlComponents: URLComponents
+    var baseUrlComponents: URLComponents
 
-    // The subscriptionURLSession requires a different URLSessionConfiguration, which
-    // is why it is separated from the generalRequestURLSession
     public let subscriptionURLSession: URLSession
-    public let subscriptionSessionDelegate: PPURLSessionDelegate
-
+    public var subscriptionSessionDelegate: PPSubscriptionURLSessionDelegate
     public let generalRequestURLSession: URLSession
-    public let generalRequestSessionDelegate: PPURLSessionDelegate
+    public var generalRequestSessionDelegate: PPGeneralRequestURLSessionDelegate
+    public let downloadURLSession: URLSession
+    public let downloadSessionDelegate: PPDownloadURLSessionDelegate
+    public let uploadURLSession: URLSession
+    public let uploadSessionDelegate: PPUploadURLSessionDelegate
 
     public var logger: PPLogger? = nil {
         willSet {
             self.subscriptionSessionDelegate.logger = newValue
             self.generalRequestSessionDelegate.logger = newValue
+            self.downloadSessionDelegate.logger = newValue
+            self.uploadSessionDelegate.logger = newValue
         }
     }
+
+    // Queue used to ensure that creating directories for large upload tasks is
+    // done serially
+    let uploadQueue = DispatchQueue(label: "com.pusherplatform.swift.base-client.upload.\(UUID().uuidString)")
+
+    // Queue used to ensure that cleaning up tempfiles used for large upload tasks
+    // is done serially
+    let uploadCleanupQueue = DispatchQueue(label: "com.pusherplatform.swift.base-client.upload-cleanup.\(UUID().uuidString)")
 
     // Should be between 30 and 300
     public let heartbeatTimeout: Int
@@ -69,47 +80,78 @@ let REALLY_LONG_TIME: Double = 252_460_800
             "X-Initial-Heartbeat-Size": String(self.heartbeatInitialSize)
         ]
 
-        self.subscriptionSessionDelegate = PPURLSessionDelegate(insecure: insecure)
-        self.generalRequestSessionDelegate = PPURLSessionDelegate(insecure: insecure)
+        self.subscriptionSessionDelegate = PPSubscriptionURLSessionDelegate(insecure: insecure)
+        self.generalRequestSessionDelegate = PPGeneralRequestURLSessionDelegate(insecure: insecure)
+        self.downloadSessionDelegate = PPDownloadURLSessionDelegate(insecure: insecure)
+        self.uploadSessionDelegate = PPUploadURLSessionDelegate(insecure: insecure)
 
         self.subscriptionURLSession = URLSession(
             configuration: subscriptionSessionConfiguration,
             delegate: self.subscriptionSessionDelegate,
             delegateQueue: nil
         )
+        subscriptionURLSession.sessionDescription = "subscriptionURLSession"
 
         self.generalRequestURLSession = URLSession(
             configuration: .default,
             delegate: self.generalRequestSessionDelegate,
             delegateQueue: nil
         )
+        generalRequestURLSession.sessionDescription = "generalRequestURLSession"
+
+        self.downloadURLSession = URLSession(
+            configuration: .background(withIdentifier: "com.pusherplatform.swift.download.\(UUID().uuidString)"),
+            delegate: self.downloadSessionDelegate,
+            delegateQueue: nil
+        )
+        downloadURLSession.sessionDescription = "downloadURLSession"
+
+        self.uploadURLSession = URLSession(
+            configuration: .background(withIdentifier: "com.pusherplatform.swift.upload.\(UUID().uuidString)"),
+            delegate: self.uploadSessionDelegate,
+            delegateQueue: nil
+        )
+        uploadURLSession.sessionDescription = "uploadURLSession"
     }
 
     deinit {
         self.subscriptionURLSession.invalidateAndCancel()
         self.generalRequestURLSession.invalidateAndCancel()
+        self.downloadURLSession.invalidateAndCancel()
+        self.uploadURLSession.invalidateAndCancel()
+    }
+
+    @discardableResult
+    public func request(
+        using requestOptions: PPRequestOptions,
+        onSuccess: ((Data) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil
+    ) -> PPGeneralRequest {
+        var generalRequest = PPGeneralRequest()
+
+        self.request(
+            with: &generalRequest,
+            using: requestOptions,
+            onSuccess: onSuccess,
+            onError: onError
+        )
+        return generalRequest
     }
 
     public func request(
-        with generalRequest: inout PPRequest,
+        with generalRequest: inout PPGeneralRequest,
         using requestOptions: PPRequestOptions,
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        var mutableURLComponents = self.baseUrlComponents
-        mutableURLComponents.queryItems = requestOptions.queryItems
+        let constructURLResult = constructURL(requestOptions)
 
-        self.logger?.log(
-            "URLComponents for request in base client: \(mutableURLComponents.debugDescription)",
-            logLevel: .verbose
-        )
-
-        guard var url = mutableURLComponents.url else {
-            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
+        guard case let .success(url) = constructURLResult else {
+            if case let .error(error) = constructURLResult {
+                onError?(error)
+            }
             return
         }
-
-        url = url.appendingPathComponent(requestOptions.path)
 
         self.logger?.log("URL for request in base client: \(url)", logLevel: .verbose)
 
@@ -137,15 +179,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         generalRequest.options = requestOptions
 
-        guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
-            onError?(
-                PPBaseClientError.requestHasInvalidDelegate(
-                    request: generalRequest,
-                    delegate: generalRequest.delegate
-                )
-            )
-            return
-        }
+        let generalRequestDelegate = generalRequest.delegate
 
         // Pass through logger where required
         generalRequestDelegate.logger = self.logger
@@ -162,20 +196,14 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        var mutableURLComponents = self.baseUrlComponents
-        mutableURLComponents.queryItems = requestOptions.queryItems
+        let constructURLResult = constructURL(requestOptions)
 
-        self.logger?.log(
-            "URLComponents for requestWithRetry in base client: \(mutableURLComponents.debugDescription)",
-            logLevel: .verbose
-        )
-
-        guard var url = mutableURLComponents.url else {
-            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
+        guard case let .success(url) = constructURLResult else {
+            if case let .error(error) = constructURLResult {
+                onError?(error)
+            }
             return
         }
-
-        url = url.appendingPathComponent(requestOptions.path)
 
         self.logger?.log("URL for requestWithRetry in base client: \(url)", logLevel: .verbose)
 
@@ -197,26 +225,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
             return
         }
 
-        let generalRequest = PPRequest(type: .general)
+        let generalRequest = PPGeneralRequest()
         generalRequest.options = requestOptions
 
         self.generalRequestSessionDelegate[task] = generalRequest
 
-        guard let generalRequestDelegate = generalRequest.delegate as? PPGeneralRequestDelegate else {
-            onError?(
-                PPBaseClientError.requestHasInvalidDelegate(
-                    request: generalRequest,
-                    delegate: generalRequest.delegate
-                )
-            )
-            return
-        }
+        let generalRequestDelegate = generalRequest.delegate
 
         generalRequestDelegate.task = task
 
         retryableGeneralRequest.generalRequest = generalRequest
 
-        // Retry strategy from PPRequestOptions takes precedent, otherwise falls back to the
+        // Retry strategy from PPRequestOptions takes precedence, otherwise falls back to the
         // PPRetryStrategy set in the BaseClient, which is PPDefaultRetryStrategy unless
         // otherwise set
         if let reqOptionsRetryStrategy = requestOptions.retryStrategy {
@@ -236,7 +256,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 
     public func subscribe(
-        with subscription: inout PPRequest,
+        with subscription: inout PPSubscription,
         using requestOptions: PPRequestOptions,
         onOpening: (() -> Void)? = nil,
         onOpen: (() -> Void)? = nil,
@@ -244,20 +264,14 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        var mutableURLComponents = self.baseUrlComponents
-        mutableURLComponents.queryItems = requestOptions.queryItems
+        let constructURLResult = constructURL(requestOptions)
 
-        self.logger?.log(
-            "URLComponents for subscribe in base client: \(mutableURLComponents.debugDescription)",
-            logLevel: .verbose
-        )
-
-        guard var url = mutableURLComponents.url else {
-            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
+        guard case let .success(url) = constructURLResult else {
+            if case let .error(error) = constructURLResult {
+                onError?(error)
+            }
             return
         }
-
-        url = url.appendingPathComponent(requestOptions.path)
 
         self.logger?.log("URL for subscribe in base client: \(url)", logLevel: .verbose)
 
@@ -280,15 +294,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         subscription.options = requestOptions
 
-        guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
-            onError?(
-                PPBaseClientError.requestHasInvalidDelegate(
-                    request: subscription,
-                    delegate: subscription.delegate
-                )
-            )
-            return
-        }
+        let subscriptionDelegate = subscription.delegate
 
         subscriptionDelegate.task = task
         subscriptionDelegate.requestCleanup = self.subscriptionSessionDelegate.removeRequestPairedWithTaskId
@@ -317,20 +323,14 @@ let REALLY_LONG_TIME: Double = 252_460_800
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        var mutableURLComponents = self.baseUrlComponents
-        mutableURLComponents.queryItems = requestOptions.queryItems
+        let constructURLResult = constructURL(requestOptions)
 
-        self.logger?.log(
-            "URLComponents for subscribeWithResume in base client: \(mutableURLComponents.debugDescription)",
-            logLevel: .verbose
-        )
-
-        guard var url = mutableURLComponents.url else {
-            onError?(PPBaseClientError.invalidURL(components: mutableURLComponents))
+        guard case let .success(url) = constructURLResult else {
+            if case let .error(error) = constructURLResult {
+                onError?(error)
+            }
             return
         }
-
-        url = url.appendingPathComponent(requestOptions.path)
 
         self.logger?.log("URL for subscribeWithResume in base client: \(url)", logLevel: .verbose)
 
@@ -349,35 +349,21 @@ let REALLY_LONG_TIME: Double = 252_460_800
             return
         }
 
-        let subscription = PPRequest(type: .subscription)
-
+        let subscription = PPSubscription()
         subscription.options = requestOptions
 
         self.subscriptionSessionDelegate[task] = subscription
 
-        guard let subscriptionDelegate = subscription.delegate as? PPSubscriptionDelegate else {
-            onError?(
-                PPBaseClientError.requestHasInvalidDelegate(
-                    request: subscription,
-                    delegate: subscription.delegate
-                )
-            )
-            return
-        }
+        let subscriptionDelegate = subscription.delegate
 
         subscriptionDelegate.requestCleanup = self.subscriptionSessionDelegate.removeRequestPairedWithTaskId
         subscriptionDelegate.task = task
         subscriptionDelegate.heartbeatTimeout = Double(self.heartbeatTimeout)
 
-        // Retry strategy from PPRequestOptions takes precedent, otherwise falls back to the
+        // Retry strategy from PPRequestOptions takes precedence, otherwise falls back to the
         // PPRetryStrategy set in the BaseClient, which is PPDefaultRetryStrategy, unless
         // explicitly set to something else
-        if let reqOptionsRetryStrategy = requestOptions.retryStrategy {
-            resumableSubscription.retryStrategy = reqOptionsRetryStrategy
-        } else {
-            resumableSubscription.retryStrategy = self.retryStrategyBuilder(requestOptions)
-        }
-
+        resumableSubscription.retryStrategy = requestOptions.retryStrategy ?? self.retryStrategyBuilder(requestOptions)
         resumableSubscription.subscription = subscription
         resumableSubscription.onOpening = onOpening
         resumableSubscription.onOpen = onOpen
@@ -393,10 +379,230 @@ let REALLY_LONG_TIME: Double = 252_460_800
         task.resume()
     }
 
+    @discardableResult
+    public func download(
+        using requestOptions: PPRequestOptions,
+        to destination: PPDownloadFileDestination? = nil,
+        onSuccess: ((URL) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        progressHandler: ((Int64, Int64) -> Void)? = nil
+    ) -> PPDownload {
+        var downloadRequest = PPDownload()
+
+        self.download(
+            with: &downloadRequest,
+            using: requestOptions,
+            to: destination,
+            onSuccess: onSuccess,
+            onError: onError,
+            progressHandler: progressHandler
+        )
+        return downloadRequest
+    }
+
+    public func download(
+        with downloadRequest: inout PPDownload,
+        using requestOptions: PPRequestOptions,
+        to destination: PPDownloadFileDestination? = nil,
+        onSuccess: ((URL) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        progressHandler: ((Int64, Int64) -> Void)? = nil
+    ) {
+        // TODO: Should this all be done on an async queue?
+        let constructURLResult = constructURL(requestOptions)
+
+        guard case let .success(url) = constructURLResult else {
+            if case let .error(error) = constructURLResult {
+                onError?(error)
+            }
+            return
+        }
+
+        self.logger?.log("URL for download in base client: \(url)", logLevel: .verbose)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.GET.rawValue
+
+        for (header, value) in requestOptions.headers {
+            request.addValue(value, forHTTPHeaderField: header)
+        }
+
+        let task: URLSessionDownloadTask = self.downloadURLSession.downloadTask(with: request)
+
+        // TODO: We should really be locking the sessionDelegate's list of requests for the check
+        // and the assignment together
+        guard self.downloadSessionDelegate[task] == nil else {
+            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+            return
+        }
+
+        self.downloadSessionDelegate[task] = downloadRequest
+
+        downloadRequest.options = requestOptions
+
+        let downloadDelegate = downloadRequest.delegate
+
+        // Pass through logger where required
+        downloadDelegate.logger = self.logger
+        downloadDelegate.task = task
+        downloadDelegate.onSuccess = onSuccess
+        downloadDelegate.onError = onError
+        downloadDelegate.destination = destination
+        downloadDelegate.progressHandler = progressHandler
+
+        task.resume()
+    }
+
+    @discardableResult
+    public func upload(
+        using requestOptions: PPRequestOptions,
+        multipartFormData: @escaping (PPMultipartFormData) -> Void,
+        onSuccess: ((Data) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        progressHandler: ((Int64, Int64) -> Void)? = nil
+    ) -> PPUpload {
+        var uploadRequest = PPUpload()
+
+        self.upload(
+            with: &uploadRequest,
+            using: requestOptions,
+            multipartFormData: multipartFormData,
+            onSuccess: onSuccess,
+            onError: onError,
+            progressHandler: progressHandler
+        )
+        return uploadRequest
+    }
+
+    public func upload(
+        with uploadRequest: inout PPUpload,
+        using requestOptions: PPRequestOptions,
+        multipartFormData: @escaping (PPMultipartFormData) -> Void,
+        onSuccess: ((Data) -> Void)? = nil,
+        onError: ((Error) -> Void)? = nil,
+        progressHandler: ((Int64, Int64) -> Void)? = nil
+    ) {
+        // TODO: Should this all be done on an async queue?
+        let constructURLResult = constructURL(requestOptions)
+
+        guard case let .success(url) = constructURLResult else {
+            if case let .error(error) = constructURLResult {
+                onError?(error)
+            }
+            return
+        }
+
+        self.logger?.log("URL for upload in base client: \(url)", logLevel: .verbose)
+
+        var request = URLRequest(url: url)
+        request.httpMethod = requestOptions.method
+
+        for (header, value) in requestOptions.headers {
+            request.addValue(value, forHTTPHeaderField: header)
+        }
+
+        let formData = PPMultipartFormData()
+        multipartFormData(formData)
+
+        var tempFileURL: URL?
+
+        do {
+            request.setValue(formData.contentType, forHTTPHeaderField: "Content-Type")
+
+            // TODO: Do we want to have a version that does everything in memory? It wouldn't
+            // work with background sessions (at least not reliably) but is going to be a good
+            // deal quicker than writing out a file etc
+
+           // let isBackgroundSession = self.session.configuration.identifier != nil
+           // let multipartFormDataEncodingMemoryThreshold: UInt64 = 10_000_000
+           // let encodingMemoryThreshold = multipartFormDataEncodingMemoryThreshold
+
+            let fileManager = FileManager.default
+            let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            let directoryURL = tempDirectoryURL.appendingPathComponent("com.pusherplatform.swift.multipart.form.data")
+            let fileName = UUID().uuidString
+            let fileURL = directoryURL.appendingPathComponent(fileName)
+
+            tempFileURL = fileURL
+
+            var directoryError: Error?
+
+            // Create directory inside serial queue to ensure two threads don't do this in parallel
+            self.uploadQueue.sync {
+                do {
+                    try fileManager.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    directoryError = error
+                }
+            }
+
+            if let directoryError = directoryError { throw directoryError }
+
+            try formData.writeEncodedData(to: fileURL)
+
+            let task: URLSessionUploadTask = self.uploadURLSession.uploadTask(
+                with: request,
+                fromFile: fileURL
+            )
+
+            let wrappedOnSuccess = fileRemoverWrapper(fileURL: fileURL, onSuccess)
+            let wrappedOnError = fileRemoverWrapper(fileURL: fileURL, onError)
+
+            // TODO: We should really be locking the sessionDelegate's list of requests for the check
+            // and the assignment together
+            guard self.uploadSessionDelegate[task] == nil else {
+                onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+                return
+            }
+
+            self.uploadSessionDelegate[task] = uploadRequest
+
+            uploadRequest.options = requestOptions
+
+            let uploadDelegate = uploadRequest.delegate
+
+            // Pass through logger where required
+            uploadDelegate.logger = self.logger
+            uploadDelegate.task = task
+            uploadDelegate.onSuccess = wrappedOnSuccess
+            uploadDelegate.onError = wrappedOnError
+            uploadDelegate.progressHandler = progressHandler
+
+            task.resume()
+        } catch {
+            // Cleanup the temp file in the event that the multipart form data encoding failed
+            if let tempFileURL = tempFileURL {
+                do {
+                    try FileManager.default.removeItem(at: tempFileURL)
+                } catch {
+                    // No-op
+                }
+            }
+
+            DispatchQueue.main.async {
+                onError?(error)
+            }
+        }
+    }
+
+    func fileRemoverWrapper<T>(fileURL: URL, _ inputClosure: ((T) -> Void)?) -> (T) -> Void {
+        return { (input: T) in
+            self.uploadCleanupQueue.async(flags: .barrier) {
+                do {
+                    try FileManager.default.removeItem(at: fileURL)
+                    self.logger?.log("Cleaned up temp file at \(fileURL.absoluteString) after upload", logLevel: .verbose)
+                } catch {
+                    // No-op
+                    self.logger?.log("Failed to clean up temp file at \(fileURL.absoluteString) after upload", logLevel: .verbose)
+                }
+            }
+
+            inputClosure?(input)
+        }
+    }
+
     // TODO: Maybe need the same for cancelling general requests?
-
     // TODO: Look at this
-
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) -> Void {
         self.subscriptionURLSession.getAllTasks { tasks in
             guard tasks.count > 0 else {
@@ -423,6 +629,61 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
     }
 
+    enum URLConstructionResult {
+        case success(URL)
+        case error(_: PPBaseClientError)
+    }
+
+    fileprivate func constructURL(_ options: PPRequestOptions) -> URLConstructionResult {
+        var urlComponents: URLComponents
+
+        switch options.destination {
+        case .relative(let path):
+            guard let pathComponents = URLComponents(string: path) else {
+                return .error(PPBaseClientError.invalidPath(path))
+            }
+
+            urlComponents = self.baseUrlComponents
+            urlComponents.path = pathComponents.path
+
+            if let pathQueryItems = pathComponents.queryItems {
+                urlComponents.queryItems = pathQueryItems
+            }
+        case .absolute(let url):
+            guard let components = URLComponents(string: url) else {
+                self.logger?.log(
+                    "Invalid URL provided for request in base client: \(url)",
+                    logLevel: .verbose
+                )
+                return .error(PPBaseClientError.invalidRawURL(url))
+            }
+
+            urlComponents = components
+        }
+
+        var optionsQueryItemsComponents = URLComponents()
+        optionsQueryItemsComponents.queryItems = options.queryItems
+
+        if let optionsQueryString = optionsQueryItemsComponents.percentEncodedQuery {
+            if let query = urlComponents.percentEncodedQuery {
+                urlComponents.percentEncodedQuery = "\(query)&\(optionsQueryString)"
+            } else {
+                urlComponents.percentEncodedQuery = optionsQueryString
+            }
+        }
+
+        self.logger?.log(
+            "URLComponents for request in base client: \(urlComponents.debugDescription)",
+            logLevel: .verbose
+        )
+
+        guard let url = urlComponents.url else {
+            return .error(PPBaseClientError.invalidURL(components: urlComponents))
+        }
+
+        return .success(url)
+    }
+
     static public func methodAwareRetryStrategyGenerator(requestOptions: PPRequestOptions) -> PPRetryStrategy {
         if let httpMethod = HTTPMethod(rawValue: requestOptions.method) {
             switch httpMethod {
@@ -437,16 +698,21 @@ let REALLY_LONG_TIME: Double = 252_460_800
 }
 
 internal enum PPBaseClientError: Error {
+    case invalidPath(_: String)
+    case invalidRawURL(_: String)
     case invalidURL(components: URLComponents)
     case preExistingTaskIdentifierForRequest
     case noTasksForSubscriptionURLSession(URLSession)
     case noTaskWithMatchingTaskIdentifierFound(taskId: Int, session: URLSession)
-    case requestHasInvalidDelegate(request: PPRequest, delegate: PPRequestTaskDelegate)
 }
 
 extension PPBaseClientError: LocalizedError {
     public var errorDescription: String? {
         switch self {
+        case .invalidPath(let path):
+            return "Invalid path: \(path)"
+        case .invalidRawURL(let url):
+            return "Invalid URL: \(url)"
         case .invalidURL(let components):
             return "Invalid URL from components: \(components.debugDescription)"
         case .preExistingTaskIdentifierForRequest:
@@ -455,8 +721,6 @@ extension PPBaseClientError: LocalizedError {
             return "No tasks for URLSession: \(urlSession.debugDescription)"
         case .noTaskWithMatchingTaskIdentifierFound(let taskId, let urlSession):
             return "No task with id \(taskId) for URLSession: \(urlSession.debugDescription)"
-        case .requestHasInvalidDelegate(let request, let delegate):
-            return "Request of type \(request.type.rawValue) has delegate of type \(type(of: delegate))"
         }
     }
 }

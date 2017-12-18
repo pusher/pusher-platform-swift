@@ -9,21 +9,21 @@ import Foundation
     public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: PPResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
-    public internal(set) var subscription: PPRequest? = nil
+    public internal(set) var subscription: PPSubscription? = nil
     public var retryStrategy: PPRetryStrategy? = nil
     var retrySubscriptionTimer: Timer? = nil
 
     public var onOpen: (() -> Void)? {
         willSet {
-            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+            guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onOpen = { [weak self] in
+            subscriptionDelegate.onOpen = { [weak self] in
                 guard let strongSelf = self else {
                     print("self is nil when trying to handle onOpen in subscription delegate")
                     return
@@ -37,15 +37,15 @@ import Foundation
 
     public var onOpening: (() -> Void)? {
         willSet {
-            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+            guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onOpening = { [weak self] in
+            subscriptionDelegate.onOpening = { [weak self] in
                 guard let strongSelf = self else {
                     print("self is nil when trying to handle onOpening in subscription delegate")
                     return
@@ -62,15 +62,15 @@ import Foundation
 
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
-            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+            guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onEvent = { [weak self] eventId, headers, data in
+            subscriptionDelegate.onEvent = { [weak self] eventId, headers, data in
                 guard let strongSelf = self else {
                     print("self is nil when trying to handle onEvent in subscription delegate")
                     return
@@ -84,15 +84,15 @@ import Foundation
 
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
         willSet {
-            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+            guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onEnd = { [weak self] statusCode, headers, info in
+            subscriptionDelegate.onEnd = { [weak self] statusCode, headers, info in
                 guard let strongSelf = self else {
                     print("self is nil when trying to handle onEnd in subscription delegate")
                     return
@@ -112,15 +112,15 @@ import Foundation
 
     public var onError: ((Error) -> Void)? {
         willSet {
-            guard let subDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+            guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription))",
                     logLevel: .error
                 )
                 return
             }
 
-            subDelegate.onError = { [weak self] error in
+            subscriptionDelegate.onError = { [weak self] error in
                 guard let strongSelf = self else {
                     print("self is nil when trying to handle onError in subscription delegate")
                     return
@@ -143,9 +143,9 @@ import Foundation
     }
 
     public func end() {
-        guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+        guard let subscriptionDelegate = self.subscription?.delegate else {
             self.instance.logger.log(
-                "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                "No delegate for subscription: \(self.subscription.debugDescription))",
                 logLevel: .error
             )
             return
@@ -261,9 +261,9 @@ import Foundation
     }
 
     @objc func setupNewSubscription() {
-        guard let subscriptionDelegate = self.subscription?.delegate as? PPSubscriptionDelegate else {
+        guard let subscriptionDelegate = self.subscription?.delegate else {
             self.instance.logger.log(
-                "Invalid delegate for subscription: \(String(describing: self.subscription))",
+                "No delegate for subscription: \(self.subscription.debugDescription))",
                 logLevel: .error
             )
             return
@@ -293,7 +293,7 @@ import Foundation
 
     func cancelExistingSubscriptionTask(subscriptionDelegate: PPSubscriptionDelegate) {
         self.instance.logger.log("Cancelling subscriptionDelegate's existing task, if it exists", logLevel: .verbose)
-        subscriptionDelegate.task?.cancel()
+        subscriptionDelegate.cancelTask()
     }
 
     func cleanUpOldSubscription(subscriptionDelegate: PPSubscriptionDelegate) {

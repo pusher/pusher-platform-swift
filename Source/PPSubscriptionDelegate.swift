@@ -2,7 +2,7 @@ import Foundation
 
 public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     public internal(set) var data: Data = Data()
-    public var task: URLSessionDataTask?
+    public var task: URLSessionTask?
 
     // A subscription should only ever communicate a maximum of one error
     public internal(set) var error: Error? = nil
@@ -31,9 +31,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     public var requestCleanup: ((Int) -> Void)? = nil
 
-    public required init(task: URLSessionDataTask? = nil) {
-        self.task = task
-    }
+    public override required init() {}
 
     deinit {
         self.logger?.log("Cancelling task: \(String(describing: self.task?.taskIdentifier))", logLevel: .verbose)
@@ -199,6 +197,10 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     func handleEos(statusCode: Int, headers: [String: String], info: Any) {
+        var error: Error? = nil
+
+        // TODO: Fix this stuff with error being shadowed etc
+
         guard let errorInfo = info as? [String: String] else {
             let error = PPSubscriptionError.eosWithoutInfo(info)
             self.logger?.log(error.localizedDescription, logLevel: .verbose)
@@ -232,8 +234,17 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             return
         }
 
-        let error = PPSubscriptionError.eosWithRetryAfter(timeInterval: retryAfterTimeInterval, errorMessage: errorString)
-        self.logger?.log(error.localizedDescription, logLevel: .verbose)
+        guard error == nil else {
+            self.logger?.log(error!.localizedDescription, logLevel: .verbose)
+
+            if self.task != nil { self.cancelTask() }
+            self.cleanUpHeartbeatTimeoutTimer()
+            self.onEnd?(statusCode, headers, info)
+            return
+        }
+
+        error = PPSubscriptionError.eosWithRetryAfter(timeInterval: retryAfterTimeInterval, errorMessage: errorString)
+        self.logger?.log(error!.localizedDescription, logLevel: .verbose)
 
         self.handleCompletion(error: error)
     }

@@ -3,9 +3,21 @@ import Foundation
 // TODO: This should probably be a protocol which PPSubscribeRequestOptions
 // and PPGeneralRequestOptions conform to
 
+public enum PPDestination: CustomDebugStringConvertible {
+    case relative(_: String)
+    case absolute(_: String)
+
+    public var debugDescription: String {
+        switch self {
+        case .relative(let destination), .absolute(let destination):
+            return destination
+        }
+    }
+}
+
 public class PPRequestOptions {
     public let method: String
-    public var path: String
+    public var destination: PPDestination
     public internal(set) var queryItems: [URLQueryItem]
     public internal(set) var headers: [String: String]
     public let body: Data?
@@ -13,18 +25,36 @@ public class PPRequestOptions {
 
     public init(
         method: String,
-        path: String,
+        destination: PPDestination,
         queryItems: [URLQueryItem] = [],
         headers: [String: String] = [:],
         body: Data? = nil,
         retryStrategy: PPRetryStrategy? = nil
     ) {
         self.method = method
-        self.path = path
+        self.destination = destination
         self.queryItems = queryItems
         self.headers = headers
         self.body = body
         self.retryStrategy = retryStrategy
+    }
+
+    public convenience init(
+        method: String,
+        path: String,
+        queryItems: [URLQueryItem] = [],
+        headers: [String: String] = [:],
+        body: Data? = nil,
+        retryStrategy: PPRetryStrategy? = nil
+    ) {
+        self.init(
+            method: method,
+            destination: .relative(path),
+            queryItems: queryItems,
+            headers: headers,
+            body: body,
+            retryStrategy: retryStrategy
+        )
     }
 
     // If a header key already exists then calling this will override it
@@ -41,7 +71,7 @@ public class PPRequestOptions {
 
 extension PPRequestOptions: CustomDebugStringConvertible {
     public var debugDescription: String {
-        let debugString = "\(self.method) request to \(self.path))"
+        let debugString = "\(self.method) request to \(self.destination.debugDescription))"
         var extraInfo = [debugString]
 
         if self.queryItems.count > 0 {
