@@ -55,7 +55,7 @@ public func PPSuggestedDownloadDestination(
     for directory: FileManager.SearchPathDirectory = .documentDirectory,
     in domain: FileManager.SearchPathDomainMask = .userDomainMask,
     options: PPDownloadOptions = []
-    ) -> PPDownloadFileDestination {
+) -> PPDownloadFileDestination {
     return { temporaryURL, response in
         let directoryURLs = FileManager.default.urls(for: directory, in: domain)
 
@@ -66,4 +66,3 @@ public func PPSuggestedDownloadDestination(
         return (temporaryURL, options)
     }
 }
-
