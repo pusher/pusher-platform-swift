@@ -111,3 +111,11 @@ The tests also get run on [buddybuild](https://dashboard.buddybuild.com/apps/59c
 ## License
 
 PusherPlatform is released under the MIT license. See [LICENSE](https://github.com/pusher/pusher-platform-swift/blob/master/LICENSE.md) for details.
+
+## Credits
+
+PusherPlatform uses code from the following repositories:
+
+* [AlamoFire](https://github.com/Alamofire/Alamofire)
+
+The individual licenses for these libraries are included in the relevant source files.
