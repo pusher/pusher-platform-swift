@@ -19,6 +19,8 @@ class ViewController: UIViewController {
 //            heartbeatTimeoutInterval: 30
 //        )
 
+//        let userId = "ham"
+
         let tokenProvider = PPHTTPEndpointTokenProvider(
             url: "YOUR_TOKEN_PROVIDER_URL"
 //            requestInjector: { req -> PPHTTPEndpointTokenProviderRequest in
@@ -28,8 +30,6 @@ class ViewController: UIViewController {
         )
 
         // Testing using Chatkit service
-
-//        let userId = "ham"
 
         instance = Instance(
             locator: instanceLocator,
