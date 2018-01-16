@@ -32,6 +32,10 @@ public class PPGeneralRequestURLSessionDelegate: PPBaseURLSessionDelegate<PPGene
         request.delegate.handleCompletion(error: error)
     }
 
+    public override func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        self.logger?.log("Task \(task.taskIdentifier) sent \(bytesSent) bytes of body data taking the sent bytes to a total of \(totalBytesSent) / \(totalBytesExpectedToSend) bytes", logLevel: .verbose)
+    }
+
 
     // MARK: URLSessionDataDelegate
 
