@@ -49,32 +49,20 @@ import Foundation
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPGeneralRequest {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
         var generalRequest = PPGeneralRequest()
 
-        if self.tokenProvider != nil {
-            self.tokenProvider!.fetchToken { result in
-                switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
-                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
-                    mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-                    self.client.request(
-                        with: &generalRequest,
-                        using: mutableRequestOptions,
-                        onSuccess: onSuccess,
-                        onError: onError
-                    )
-                }
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { options in
+                self.client.request(
+                    with: &generalRequest,
+                    using: options,
+                    onSuccess: onSuccess,
+                    onError: onError
+                )
             }
-        } else {
-            self.client.request(
-                with: &generalRequest,
-                using: mutableRequestOptions,
-                onSuccess: onSuccess,
-                onError: onError
-            )
-        }
+        )
 
         return generalRequest
     }
@@ -85,32 +73,20 @@ import Foundation
         onSuccess: ((Data) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPRetryableGeneralRequest {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
         var generalRetryableRequest = PPRetryableGeneralRequest(instance: self, requestOptions: requestOptions)
 
-        if self.tokenProvider != nil {
-            self.tokenProvider!.fetchToken { result in
-                switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
-                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
-                    mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-                    self.client.requestWithRetry(
-                        with: &generalRetryableRequest,
-                        using: mutableRequestOptions,
-                        onSuccess: onSuccess,
-                        onError: onError
-                    )
-                }
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { options in
+                self.client.requestWithRetry(
+                    with: &generalRetryableRequest,
+                    using: options,
+                    onSuccess: onSuccess,
+                    onError: onError
+                )
             }
-        } else {
-            self.client.requestWithRetry(
-                with: &generalRetryableRequest,
-                using: mutableRequestOptions,
-                onSuccess: onSuccess,
-                onError: onError
-            )
-        }
+        )
 
         return generalRetryableRequest
     }
@@ -124,40 +100,21 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
-
-        if self.tokenProvider != nil {
-            // TODO: The weak here feels dangerous, also probably should be weak self
-
-            self.tokenProvider!.fetchToken { [weak subscription] result in
-                switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
-                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
-                    mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-
-                    self.client.subscribe(
-                        with: &subscription!,
-                        using: mutableRequestOptions,
-                        onOpening: onOpening,
-                        onOpen: onOpen,
-                        onEvent: onEvent,
-                        onEnd: onEnd,
-                        onError: onError
-                    )
-                }
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { [weak subscription] options in // TODO: Should it be weak?
+                self.client.subscribe(
+                    with: &subscription!,
+                    using: options,
+                    onOpening: onOpening,
+                    onOpen: onOpen,
+                    onEvent: onEvent,
+                    onEnd: onEnd,
+                    onError: onError
+                )
             }
-        } else {
-            self.client.subscribe(
-                with: &subscription,
-                using: mutableRequestOptions,
-                onOpening: onOpening,
-                onOpen: onOpen,
-                onEvent: onEvent,
-                onEnd: onEnd,
-                onError: onError
-            )
-        }
+        )
     }
 
     public func subscribeWithResume(
@@ -170,42 +127,23 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
-
-        if self.tokenProvider != nil {
-            self.tokenProvider!.fetchToken { [weak resumableSubscription] result in
-                switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
-                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
-                    mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-
-                    self.client.subscribeWithResume(
-                        with: &resumableSubscription!,
-                        using: mutableRequestOptions,
-                        instance: self,
-                        onOpening: onOpening,
-                        onOpen: onOpen,
-                        onResuming: onResuming,
-                        onEvent: onEvent,
-                        onEnd: onEnd,
-                        onError: onError
-                    )
-                }
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { [weak resumableSubscription] options in // TOOD: Should it be weak?
+                self.client.subscribeWithResume(
+                    with: &resumableSubscription!,
+                    using: options,
+                    instance: self,
+                    onOpening: onOpening,
+                    onOpen: onOpen,
+                    onResuming: onResuming,
+                    onEvent: onEvent,
+                    onEnd: onEnd,
+                    onError: onError
+                )
             }
-        } else {
-            self.client.subscribeWithResume(
-                with: &resumableSubscription,
-                using: mutableRequestOptions,
-                instance: self,
-                onOpening: onOpening,
-                onOpen: onOpen,
-                onResuming: onResuming,
-                onEvent: onEvent,
-                onEnd: onEnd,
-                onError: onError
-            )
-        }
+        )
     }
 
     public func subscribe(
@@ -216,39 +154,23 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPSubscription {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
         var subscription = PPSubscription()
 
-        if self.tokenProvider != nil {
-            self.tokenProvider!.fetchToken { result in
-                switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
-                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
-                    mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-
-                    self.client.subscribe(
-                        with: &subscription,
-                        using: mutableRequestOptions,
-                        onOpening: onOpening,
-                        onOpen: onOpen,
-                        onEvent: onEvent,
-                        onEnd: onEnd,
-                        onError: onError
-                    )
-                }
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { options in
+                self.client.subscribe(
+                    with: &subscription,
+                    using: options,
+                    onOpening: onOpening,
+                    onOpen: onOpen,
+                    onEvent: onEvent,
+                    onEnd: onEnd,
+                    onError: onError
+                )
             }
-        } else {
-            self.client.subscribe(
-                with: &subscription,
-                using: mutableRequestOptions,
-                onOpening: onOpening,
-                onOpen: onOpen,
-                onEvent: onEvent,
-                onEnd: onEnd,
-                onError: onError
-            )
-        }
+        )
 
         return subscription
     }
@@ -262,46 +184,25 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPResumableSubscription {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
+        let resumableSubscription = PPResumableSubscription(instance: self, requestOptions: requestOptions)
 
-        var resumableSubscription = PPResumableSubscription(instance: self, requestOptions: requestOptions)
-
-        if self.tokenProvider != nil {
-            // TODO: Does resumableSubscription need to be weak here?
-
-            self.tokenProvider!.fetchToken { [weak resumableSubscription] result in
-                switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
-                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
-                    mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-
-                    self.client.subscribeWithResume(
-                        with: &resumableSubscription!,
-                        using: mutableRequestOptions,
-                        instance: self,
-                        onOpening: onOpening,
-                        onOpen: onOpen,
-                        onResuming: onResuming,
-                        onEvent: onEvent,
-                        onEnd: onEnd,
-                        onError: onError
-                    )
-                }
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { [weak resumableSubscription] options in // TODO: Should it be weak?
+                self.client.subscribeWithResume(
+                    with: &resumableSubscription!,
+                    using: options,
+                    instance: self,
+                    onOpening: onOpening,
+                    onOpen: onOpen,
+                    onResuming: onResuming,
+                    onEvent: onEvent,
+                    onEnd: onEnd,
+                    onError: onError
+                )
             }
-        } else {
-            self.client.subscribeWithResume(
-                with: &resumableSubscription,
-                using: mutableRequestOptions,
-                instance: self,
-                onOpening: onOpening,
-                onOpen: onOpen,
-                onResuming: onResuming,
-                onEvent: onEvent,
-                onEnd: onEnd,
-                onError: onError
-            )
-        }
+        )
 
         return resumableSubscription
     }
@@ -314,34 +215,21 @@ import Foundation
         onError: ((Error) -> Void)? = nil,
         progressHandler: ((Int64, Int64) -> Void)? = nil
     ) -> PPDownload {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
         var downloadRequest = PPDownload()
 
-        if self.tokenProvider != nil {
-            self.tokenProvider!.fetchToken { result in
-                switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
-                    let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
-                    mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-                    self.client.download(
-                        with: &downloadRequest,
-                        using: mutableRequestOptions,
-                        to: destination,
-                        onSuccess: onSuccess,
-                        onError: onError
-                    )
-                }
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { options in
+                self.client.download(
+                    with: &downloadRequest,
+                    using: options,
+                    to: destination,
+                    onSuccess: onSuccess,
+                    onError: onError
+                )
             }
-        } else {
-            self.client.download(
-                with: &downloadRequest,
-                using: mutableRequestOptions,
-                to: destination,
-                onSuccess: onSuccess,
-                onError: onError
-            )
-        }
+        )
 
         return downloadRequest
     }
@@ -365,40 +253,48 @@ import Foundation
         onError: ((Error) -> Void)? = nil,
         progressHandler: ((Int64, Int64) -> Void)? = nil
     ) {
-        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
         var uploadRequest = PPUpload()
 
-        if self.tokenProvider != nil {
+        fetchTokenIfRequiredAndMakeRequest(
+            requestOptions: requestOptions,
+            onError: onError,
+            requestMaker: { options in
+                self.client.upload(
+                    with: &uploadRequest,
+                    using: options,
+                    multipartFormData: multipartFormData,
+                    onSuccess: onSuccess,
+                    onError: onError,
+                    progressHandler: progressHandler
+                )
+            }
+        )
+    }
+
+    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) {
+        self.client.unsubscribe(taskIdentifier: taskIdentifier, completionHandler: completionHandler)
+    }
+
+    func fetchTokenIfRequiredAndMakeRequest(
+        requestOptions: PPRequestOptions,
+        onError: ((Error) -> Void)? = nil,
+        requestMaker: @escaping (_: PPRequestOptions) -> Void
+    ) {
+        let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
+
+        if requestOptions.shouldFetchToken && self.tokenProvider != nil {
             self.tokenProvider!.fetchToken { result in
                 switch result {
                 case .error(let error): onError?(error)
                 case .success(let jwtFromTokenProvider):
                     let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
-                    self.client.upload(
-                        with: &uploadRequest,
-                        using: mutableRequestOptions,
-                        multipartFormData: multipartFormData,
-                        onSuccess: onSuccess,
-                        onError: onError,
-                        progressHandler: progressHandler
-                    )
+                    requestMaker(mutableRequestOptions)
                 }
             }
         } else {
-            self.client.upload(
-                with: &uploadRequest,
-                using: mutableRequestOptions,
-                multipartFormData: multipartFormData,
-                onSuccess: onSuccess,
-                onError: onError,
-                progressHandler: progressHandler
-            )
+            requestMaker(mutableRequestOptions)
         }
-    }
-
-    public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) {
-        self.client.unsubscribe(taskIdentifier: taskIdentifier, completionHandler: completionHandler)
     }
 
     fileprivate func namespacePathIfRelativeDestination(_ options: PPRequestOptions) -> PPRequestOptions {

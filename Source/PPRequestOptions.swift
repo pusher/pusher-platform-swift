@@ -22,6 +22,7 @@ public class PPRequestOptions {
     public internal(set) var headers: [String: String]
     public let body: Data?
     public var retryStrategy: PPRetryStrategy?
+    public let shouldFetchToken: Bool
 
     public init(
         method: String,
@@ -29,6 +30,7 @@ public class PPRequestOptions {
         queryItems: [URLQueryItem] = [],
         headers: [String: String] = [:],
         body: Data? = nil,
+        shouldFetchToken: Bool = true,
         retryStrategy: PPRetryStrategy? = nil
     ) {
         self.method = method
@@ -36,6 +38,7 @@ public class PPRequestOptions {
         self.queryItems = queryItems
         self.headers = headers
         self.body = body
+        self.shouldFetchToken = shouldFetchToken
         self.retryStrategy = retryStrategy
     }
 
@@ -72,7 +75,8 @@ public class PPRequestOptions {
 extension PPRequestOptions: CustomDebugStringConvertible {
     public var debugDescription: String {
         let debugString = "\(self.method) request to \(self.destination.debugDescription))"
-        var extraInfo = [debugString]
+        let shouldFetchTokenString = "Should fetch token: \(self.shouldFetchToken)"
+        var extraInfo = [debugString, shouldFetchTokenString]
 
         if self.queryItems.count > 0 {
             extraInfo.append("Query items: \(self.queryItems.map { $0.debugDescription }.joined(separator: ", "))")
