@@ -1,6 +1,6 @@
 import Foundation
 
-public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
+public class PPUploadDelegate: NSObject, PPRequestTaskDelegate {
     public internal(set) var data: Data = Data()
     public var task: URLSessionTask?
 
@@ -16,6 +16,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
     public var onSuccess: ((Data) -> Void)?
     public var onError: ((Error) -> Void)?
+    public var progressHandler: ((Int64, Int64) -> Void)? = nil
 
     public override required init() {}
 
@@ -24,7 +25,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
         self.task?.cancel()
     }
 
-    internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
+    func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
         guard self.task != nil else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
@@ -46,7 +47,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     @objc(handleData:)
-    internal func handle(_ data: Data) {
+    func handle(_ data: Data) {
         guard self.task != nil else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
@@ -93,13 +94,14 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     // Server errors are not reported through the error parameter here, by default.
     // The only errors received through the error parameter are client-side errors,
     // such as being unable to resolve the hostname or connect to the host.
-    internal func handleCompletion(error: Error? = nil) {
+    func handleCompletion(error: Error? = nil) {
         guard self.task != nil else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
 
         self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
+
 
         // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
 
@@ -125,5 +127,19 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
         self.error = errorToReport
         self.onError?(errorToReport)
+    }
+
+    func handleBodyDataSent(bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        guard self.task != nil else {
+            self.logger?.log("Task not set in request delegate", logLevel: .debug)
+            return
+        }
+
+        self.logger?.log(
+            "Task \(self.task!.taskIdentifier) sent \(bytesSent) bytes, taking the total to \(totalBytesSent)/\(totalBytesExpectedToSend) bytes",
+            logLevel: .verbose
+        )
+
+        self.progressHandler?(totalBytesSent, totalBytesExpectedToSend)
     }
 }

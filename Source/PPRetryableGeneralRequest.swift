@@ -5,15 +5,15 @@ import Foundation
 @objc public class PPRetryableGeneralRequest: NSObject {
     public let requestOptions: PPRequestOptions
     public internal(set) var instance: Instance
-    public internal(set) var generalRequest: PPRequest? = nil
+    public internal(set) var generalRequest: PPGeneralRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
     internal var retryRequestTimer: Timer? = nil
 
     public var onSuccess: ((Data) -> Void)? {
         willSet {
-            guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
+            guard let generalRequestDelegate = self.generalRequest?.delegate else {
                 self.instance.logger.log(
-                    "Invalid delegate for general request: \(String(describing: self.generalRequest))",
+                    "No delegate for general request: \(self.generalRequest.debugDescription))",
                     logLevel: .error
                 )
                 return
@@ -36,9 +36,9 @@ import Foundation
 
     public var onError: ((Error) -> Void)? {
         willSet {
-            guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
+            guard let generalRequestDelegate = self.generalRequest?.delegate else {
                 self.instance.logger.log(
-                    "Invalid delegate for general request: \(String(describing: self.generalRequest))",
+                    "No delegate for general request: \(self.generalRequest.debugDescription))",
                     logLevel: .error
                 )
                 return
@@ -113,9 +113,9 @@ import Foundation
     }
 
     @objc internal func retryRequest() {
-        guard let generalRequestDelegate = self.generalRequest?.delegate as? PPGeneralRequestDelegate else {
+        guard let generalRequestDelegate = self.generalRequest?.delegate else {
             self.instance.logger.log(
-                "Invalid delegate for general request: \(String(describing: self.generalRequest))",
+                "No delegate for general request: \(self.generalRequest.debugDescription))",
                 logLevel: .error
             )
             return

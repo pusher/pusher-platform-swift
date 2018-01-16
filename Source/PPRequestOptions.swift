@@ -3,15 +3,46 @@ import Foundation
 // TODO: This should probably be a protocol which PPSubscribeRequestOptions
 // and PPGeneralRequestOptions conform to
 
+public enum PPDestination: CustomDebugStringConvertible {
+    case relative(_: String)
+    case absolute(_: String)
+
+    public var debugDescription: String {
+        switch self {
+        case .relative(let destination), .absolute(let destination):
+            return destination
+        }
+    }
+}
+
 public class PPRequestOptions {
     public let method: String
-    public var path: String
+    public var destination: PPDestination
     public internal(set) var queryItems: [URLQueryItem]
     public internal(set) var headers: [String: String]
     public let body: Data?
     public var retryStrategy: PPRetryStrategy?
+    public let shouldFetchToken: Bool
 
     public init(
+        method: String,
+        destination: PPDestination,
+        queryItems: [URLQueryItem] = [],
+        headers: [String: String] = [:],
+        body: Data? = nil,
+        shouldFetchToken: Bool = true,
+        retryStrategy: PPRetryStrategy? = nil
+    ) {
+        self.method = method
+        self.destination = destination
+        self.queryItems = queryItems
+        self.headers = headers
+        self.body = body
+        self.shouldFetchToken = shouldFetchToken
+        self.retryStrategy = retryStrategy
+    }
+
+    public convenience init(
         method: String,
         path: String,
         queryItems: [URLQueryItem] = [],
@@ -19,12 +50,14 @@ public class PPRequestOptions {
         body: Data? = nil,
         retryStrategy: PPRetryStrategy? = nil
     ) {
-        self.method = method
-        self.path = path
-        self.queryItems = queryItems
-        self.headers = headers
-        self.body = body
-        self.retryStrategy = retryStrategy
+        self.init(
+            method: method,
+            destination: .relative(path),
+            queryItems: queryItems,
+            headers: headers,
+            body: body,
+            retryStrategy: retryStrategy
+        )
     }
 
     // If a header key already exists then calling this will override it
@@ -41,8 +74,9 @@ public class PPRequestOptions {
 
 extension PPRequestOptions: CustomDebugStringConvertible {
     public var debugDescription: String {
-        let debugString = "\(self.method) request to \(self.path))"
-        var extraInfo = [debugString]
+        let debugString = "\(self.method) request to \(self.destination.debugDescription))"
+        let shouldFetchTokenString = "Should fetch token: \(self.shouldFetchToken)"
+        var extraInfo = [debugString, shouldFetchTokenString]
 
         if self.queryItems.count > 0 {
             extraInfo.append("Query items: \(self.queryItems.map { $0.debugDescription }.joined(separator: ", "))")
