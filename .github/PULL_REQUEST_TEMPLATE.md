@@ -1,11 +1,10 @@
 ### What?
 
-...
 
-#### Why?
+### Why?
 
-...
+
 
 ----
 
-CC @pusher/sigsdk 
+CC @pusher/sigsdk
