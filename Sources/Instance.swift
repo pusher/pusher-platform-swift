@@ -17,9 +17,10 @@ import Foundation
         locator: String,
         serviceName: String,
         serviceVersion: String,
+        sdkInfo: PPSDKInfo,
         tokenProvider: PPTokenProvider? = nil,
         client: PPBaseClient? = nil,
-        logger: PPLogger? = nil
+        logger: PPLogger = PPDefaultLogger()
     ) {
         assert (!locator.isEmpty, "Expected locator property in Instance!")
         let splitInstance = locator.components(separatedBy: ":")
@@ -35,12 +36,12 @@ import Foundation
         let cluster = splitInstance[1]
         let host = "\(cluster).pusherplatform.io"
         self.host = host
-        self.client = client ?? PPBaseClient(host: host)
 
-        self.logger = logger ?? PPDefaultLogger()
-        if self.client.logger == nil {
-            self.client.logger = self.logger
-        }
+        self.logger = logger
+
+        self.client = client ?? PPBaseClient(host: host)
+        self.client.sdkInfo = self.client.sdkInfo ?? sdkInfo
+        self.client.logger = self.client.logger ?? logger
     }
 
     @discardableResult
