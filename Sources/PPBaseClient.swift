@@ -47,14 +47,12 @@ let REALLY_LONG_TIME: Double = 252_460_800
     // a request's options then you can use this property
     public var retryStrategyBuilder: (PPRequestOptions) -> PPRetryStrategy
 
-    public var clientName: String
-    public var clientVersion: String
+    public var sdkInfo: PPSDKInfo?
 
     public init(
         host: String,
         port: Int? = nil,
         insecure: Bool = false,
-        clientName: String = "pusher-platform-swift",
         retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrategyGenerator,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 0
@@ -66,11 +64,11 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         self.baseUrlComponents = urlComponents
         self.insecure = insecure
-        self.clientName = clientName
-        self.clientVersion = "0.1.30"
         self.retryStrategyBuilder = retryStrategyBuilder
         self.heartbeatTimeout = heartbeatTimeoutInterval
         self.heartbeatInitialSize = heartbeatInitialSize
+
+        let sdkInfoHeaders: [String: String] = sdkInfo?.headers ?? [:]
 
         let subscriptionSessionConfiguration = URLSessionConfiguration.default
         subscriptionSessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
@@ -78,7 +76,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         subscriptionSessionConfiguration.httpAdditionalHeaders = [
             "X-Heartbeat-Interval": String(self.heartbeatTimeout),
             "X-Initial-Heartbeat-Size": String(self.heartbeatInitialSize)
-        ]
+        ].merging(sdkInfoHeaders, uniquingKeysWith: { (first, _) in first })
 
         self.subscriptionSessionDelegate = PPSubscriptionURLSessionDelegate(insecure: insecure)
         self.generalRequestSessionDelegate = PPGeneralRequestURLSessionDelegate(insecure: insecure)
@@ -92,22 +90,31 @@ let REALLY_LONG_TIME: Double = 252_460_800
         )
         subscriptionURLSession.sessionDescription = "subscriptionURLSession"
 
+        let generalRequestSessionConfiguration = URLSessionConfiguration.default
+        generalRequestSessionConfiguration.httpAdditionalHeaders = sdkInfoHeaders
+
         self.generalRequestURLSession = URLSession(
-            configuration: .default,
+            configuration: generalRequestSessionConfiguration,
             delegate: self.generalRequestSessionDelegate,
             delegateQueue: nil
         )
         generalRequestURLSession.sessionDescription = "generalRequestURLSession"
 
         self.downloadURLSession = URLSession(
-            configuration: .background(withIdentifier: "com.pusherplatform.swift.download.\(UUID().uuidString)"),
+            configuration: PPBaseClient.backgroundSessionConfiguration(
+                identifier: "com.pusherplatform.swift.download",
+                sdkHeaders: sdkInfoHeaders
+            ),
             delegate: self.downloadSessionDelegate,
             delegateQueue: nil
         )
         downloadURLSession.sessionDescription = "downloadURLSession"
 
         self.uploadURLSession = URLSession(
-            configuration: .background(withIdentifier: "com.pusherplatform.swift.upload.\(UUID().uuidString)"),
+            configuration: PPBaseClient.backgroundSessionConfiguration(
+                identifier: "com.pusherplatform.swift.upload",
+                sdkHeaders: sdkInfoHeaders
+            ),
             delegate: self.uploadSessionDelegate,
             delegateQueue: nil
         )
@@ -682,6 +689,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         return .success(url)
+    }
+
+    fileprivate static func backgroundSessionConfiguration(
+        identifier: String,
+        sdkHeaders: [String: String]
+    ) -> URLSessionConfiguration {
+        let config = URLSessionConfiguration.background(
+            withIdentifier: "\(identifier).\(UUID().uuidString)"
+        )
+
+        config.httpAdditionalHeaders = sdkHeaders
+        return config
     }
 
     static public func methodAwareRetryStrategyGenerator(requestOptions: PPRequestOptions) -> PPRetryStrategy {

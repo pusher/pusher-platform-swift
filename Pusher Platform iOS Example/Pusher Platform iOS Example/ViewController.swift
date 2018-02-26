@@ -35,6 +35,7 @@ class ViewController: UIViewController {
             locator: instanceLocator,
             serviceName: "chatkit",
             serviceVersion: "v1",
+            sdkInfo: PPSDKInfo(productName: "chatkit", sdkVersion: "0.0.0"),
             tokenProvider: tokenProvider,
 //            client: localBaseClient,
             logger: TestLogger()
