@@ -1,6 +1,8 @@
 # PusherPlatform (pusher-platform-swift)
 
-[![BuddyBuild](https://dashboard.buddybuild.com/api/statusImage?appID=59c51e712ffc62000182d7c9&branch=master&build=latest)](https://dashboard.buddybuild.com/apps/59c51e712ffc62000182d7c9/build/latest?branch=master)
+[![Build status](https://www.bitrise.io/app/4d040b65af03f4e7.svg?token=-aqr6zAexbKvvGTuReHCug)](https://www.bitrise.io/app/4d040b65af03f4e7#/builds)
+[![CocoaPods](https://img.shields.io/cocoapods/v/PusherPlatform.svg)](https://cocoapods.org/pods/PusherPlatform)
+[![Carthage](https://img.shields.io/badge/carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Twitter](https://img.shields.io/badge/twitter-@Pusher-blue.svg?style=flat)](http://twitter.com/Pusher)
 [![GitHub license](https://img.shields.io/badge/license-MIT-lightgrey.svg)](https://raw.githubusercontent.com/pusher/pusher-platform-swift/master/LICENSE.md)
 
@@ -98,7 +100,7 @@ The `Instance` instance allows you to interact with the service using the Elemen
 
 There are a set of tests for the library that can be run using the standard method (Command-U in Xcode).
 
-The tests also get run on [buddybuild](https://dashboard.buddybuild.com/apps/59c51e712ffc62000182d7c9/build/latest?branch=master). See [buddybuild_postbuild.sh](https://github.com/pusher/pusher-platform-swift/blob/master/buddybuild_postbuild.sh) for details on how the tests are run.
+The tests also get run on [Bitrise](https://www.bitrise.io/app/4d040b65af03f4e7#/builds).
 
 
 ## Communication
