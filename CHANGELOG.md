@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.4.0...HEAD)
 
+## [0.4.1](https://github.com/pusher/pusher-platform-swift/compare/0.4.0...0.4.1) - 2018-02-28
+
+### Fixed
+
+- SDK info headers are now set properly
+
+### Changed
+
+- `PPMessageParser` now parses messages as soon as possible as opposed to always waiting for a complete set of fully-formed messages
+
 ## [0.4.0](https://github.com/pusher/pusher-platform-swift/compare/0.3.1...0.4.0) - 2018-02-26
 
 ### Changed
