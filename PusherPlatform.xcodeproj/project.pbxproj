@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
+		3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */; };
 		330DD21C1E0C433A00EC251F /* PPLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330DD21B1E0C433A00EC251F /* PPLogger.swift */; };
 		330E59071DEDD38900C92897 /* PPResumableSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E59061DEDD38900C92897 /* PPResumableSubscription.swift */; };
 		331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
 		330DD21B1E0C433A00EC251F /* PPLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPLogger.swift; sourceTree = "<group>"; };
 		330E59061DEDD38900C92897 /* PPResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPResumableSubscription.swift; sourceTree = "<group>"; };
 		331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRetryableGeneralRequest.swift; sourceTree = "<group>"; };
@@ -190,6 +192,7 @@
 			isa = PBXGroup;
 			children = (
 				33C2FB141F3E99C4006AB501 /* MessageParserTests.swift */,
+				3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */,
 				33BB99671D21226C00B25C2A /* Info.plist */,
 			);
 			path = Tests;
@@ -350,6 +353,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33C2FB151F3E99C4006AB501 /* MessageParserTests.swift in Sources */,
+				3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
