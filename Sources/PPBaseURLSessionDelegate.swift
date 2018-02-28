@@ -44,7 +44,17 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
     // MARK: URLSessionDelegate
 
     public func urlSession(_ session: URLSession, didBecomeInvalidWithError error: Error?) {
-        self.logger?.log("Session became invalid: \(session)", logLevel: .error)
+        if let error = error {
+            self.logger?.log(
+                "URLSession \(session.sessionDescription!) became invalid with error: \(error.localizedDescription)",
+                logLevel: .error
+            )
+        } else {
+            self.logger?.log(
+                "URLSession \(session.sessionDescription!) became invalid",
+                logLevel: .verbose
+            )
+        }
     }
 
     public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
