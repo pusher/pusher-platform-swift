@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `Instance` has a new required parameter, `sdkInfo`, of type `PPSDKInfo`, which contains information about the SDK being used to make requests to the Pusher servers. It adds the following headers to requests: `X-SDK-Product`, `X-SDK-Version`, `X-SDK-Language`, and `X-SDK-Platform`
 
-
 ## [0.3.1](https://github.com/pusher/pusher-platform-swift/compare/0.3.0...0.3.1) - 2018-02-16
 
 ### Changed
