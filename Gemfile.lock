@@ -54,7 +54,7 @@ PLATFORMS
 
 DEPENDENCIES
   danger (~> 5.0)
-  danger-swiftlint (~> 0.13.1)
+  danger-swiftlint (~> 0.13)
 
 BUNDLED WITH
    1.16.1
