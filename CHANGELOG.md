@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.4.0...HEAD)
 
+## [0.4.2](https://github.com/pusher/pusher-platform-swift/compare/0.4.1...0.4.2) - 2018-03-20
+
+### Changed
+
+- Extra logging of token provider endpoint's `absoluteString`
+- Only set `queryItems` on token provider request if any are present
+
 ## [0.4.1](https://github.com/pusher/pusher-platform-swift/compare/0.4.0...0.4.1) - 2018-02-28
 
 ### Fixed
