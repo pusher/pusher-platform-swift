@@ -162,16 +162,23 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
         let grantBodyString = "grant_type=\(grantType.rawValue)"
 
         if let httpEndpointRequest = httpEndpointRequest {
-            if endpointURLComponents.queryItems != nil {
-                endpointURLComponents.queryItems!.append(contentsOf: httpEndpointRequest.queryItems)
-            } else {
-                endpointURLComponents.queryItems = httpEndpointRequest.queryItems
+            if httpEndpointRequest.queryItems.count > 0 {
+                if endpointURLComponents.queryItems != nil {
+                    endpointURLComponents.queryItems!.append(contentsOf: httpEndpointRequest.queryItems)
+                } else  {
+                    endpointURLComponents.queryItems = httpEndpointRequest.queryItems
+                }
             }
         }
 
         guard let endpointURL = endpointURLComponents.url else {
             return (request: nil, error: PPHTTPEndpointTokenProviderError.failedToCreateURLObject(endpointURLComponents))
         }
+
+        self.logger?.log(
+            "Making token provider fetch request to \(endpointURL.absoluteString)",
+            logLevel: .verbose
+        )
 
         var request = URLRequest(url: endpointURL)
         request.httpMethod = "POST"
