@@ -97,13 +97,13 @@ extension PPMessage: Equatable {
             return true
         case (let .event(id, headers, body), let .event(id2, headers2, body2)):
             guard let bodyData = try? JSONSerialization.data(withJSONObject: body, options: []),
-                let bodyData2 = try? JSONSerialization.data(withJSONObject: body2, options: []) else {
+                  let bodyData2 = try? JSONSerialization.data(withJSONObject: body2, options: []) else {
                     return false
             }
             return id == id2 && headers == headers2 && bodyData == bodyData2
         case (let .eos(status, headers, errorBody), let .eos(status2, headers2, errorBody2)):
             guard let errorBodyData = try? JSONSerialization.data(withJSONObject: errorBody, options: []),
-                let errorBodyData2 = try? JSONSerialization.data(withJSONObject: errorBody2, options: []) else {
+                  let errorBodyData2 = try? JSONSerialization.data(withJSONObject: errorBody2, options: []) else {
                     return false
             }
             return status == status2 && headers == headers2 && errorBodyData == errorBodyData2
