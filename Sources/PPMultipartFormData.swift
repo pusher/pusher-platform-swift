@@ -506,7 +506,7 @@ public enum PPError: Error {
 }
 
 extension PPError.MultipartEncodingFailureReason: LocalizedError {
-    var errorDescription: String {
+    private var errorDescription: String {
         switch self {
         case .bodyPartURLInvalid(let url):
             return "The URL provided is not a file URL: \(url)"
