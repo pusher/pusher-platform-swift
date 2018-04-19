@@ -9,7 +9,7 @@ internal class PPMessageParser {
 
     // Parse errors are truly unexpected here - we trust the server to give us good data
     internal func parse(stringMessages: [String]) -> [PPMessage] {
-        return stringMessages.flatMap { stringMessage -> PPMessage? in
+        return stringMessages.compactMap { stringMessage -> PPMessage? in
             guard stringMessage != "" else {
                 return nil
             }
