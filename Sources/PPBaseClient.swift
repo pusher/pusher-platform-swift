@@ -687,7 +687,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
         }
 
         var optionsQueryItemsComponents = URLComponents()
-        optionsQueryItemsComponents.queryItems = options.queryItems
+
+        if options.queryItems.count > 0 {
+            optionsQueryItemsComponents.queryItems = options.queryItems
+        }
 
         if let optionsQueryString = optionsQueryItemsComponents.percentEncodedQuery {
             if let query = urlComponents.percentEncodedQuery {

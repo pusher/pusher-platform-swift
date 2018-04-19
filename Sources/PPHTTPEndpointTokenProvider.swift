@@ -7,7 +7,6 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
 
     public var requestInjector: ((PPHTTPEndpointTokenProviderRequest) -> (PPHTTPEndpointTokenProviderRequest))?
     public var accessToken: String? = nil
-    public var refreshToken: String? = nil
     public internal(set) var accessTokenExpiresAt: Double? = nil
     public var retryStrategy: PPRetryStrategy
     public var logger: PPLogger? = nil {
@@ -54,11 +53,7 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
 
         if let token = self.accessToken, let tokenExpiryTime = self.accessTokenExpiresAt {
             guard tokenExpiryTime > Date().timeIntervalSince1970 else {
-                if self.refreshToken != nil {
-                    refreshAccessToken(completionHandler: retryAwareCompletionHandler)
-                } else {
-                    getTokenPair(completionHandler: retryAwareCompletionHandler)
-                }
+                getTokenPair(completionHandler: retryAwareCompletionHandler)
                 // TODO: Is returning here correct?
                 return
             }
@@ -69,15 +64,11 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
     }
 
     fileprivate func getTokenPair(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
-        makeAuthRequest(grantType: PPEndpointRequestGrantType.clientCredentials, completionHandler: completionHandler)
+        makeAuthRequest(completionHandler: completionHandler)
     }
 
-    fileprivate func refreshAccessToken(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
-        makeAuthRequest(grantType: PPEndpointRequestGrantType.refreshToken, completionHandler: completionHandler)
-    }
-
-    fileprivate func makeAuthRequest(grantType: PPEndpointRequestGrantType, completionHandler: @escaping (PPTokenProviderResult) -> Void) {
-        let authRequestResult = prepareAuthRequest(grantType: grantType)
+    fileprivate func makeAuthRequest(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+        let authRequestResult = prepareAuthRequest()
 
         guard let request = authRequestResult.request, authRequestResult.error == nil else {
             completionHandler(PPTokenProviderResult.error(error: authRequestResult.error!))
@@ -89,7 +80,6 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
                 let tokenProviderResponse = try self.validateCompletionValues(data: data, response: response, sessionError: sessionError)
 
                 self.accessToken = tokenProviderResponse.accessToken
-                self.refreshToken = tokenProviderResponse.refreshToken
                 self.accessTokenExpiresAt = Date().timeIntervalSince1970 + tokenProviderResponse.expiresIn
 
                 self.logger?.log("Successful request to get token: \(tokenProviderResponse.accessToken)", logLevel: .verbose)
@@ -131,10 +121,6 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
             throw PPHTTPEndpointTokenProviderError.validAccessTokenNotPresentInResponseJSON(json)
         }
 
-        guard let refreshToken = json["refresh_token"] as? String else {
-            throw PPHTTPEndpointTokenProviderError.validRefreshTokenNotPresentInResponseJSON(json)
-        }
-
         // TODO: Check if Double is sensible type here
         guard let expiresIn = json["expires_in"] as? TimeInterval else {
             throw PPHTTPEndpointTokenProviderError.validExpiresInNotPresentInResponseJSON(json)
@@ -142,13 +128,12 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
 
         return PPTokenProviderResponse(
             accessToken: accessToken,
-            refreshToken: refreshToken,
             expiresIn: expiresIn
         )
     }
 
 
-    fileprivate func prepareAuthRequest(grantType: PPEndpointRequestGrantType) -> (request: URLRequest?, error: Error?) {
+    fileprivate func prepareAuthRequest() -> (request: URLRequest?, error: Error?) {
         guard var endpointURLComponents = URLComponents(string: self.url) else {
             return (request: nil, error: PPHTTPEndpointTokenProviderError.failedToCreateURLComponents(self.url))
         }
@@ -159,7 +144,7 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
             httpEndpointRequest = requestInjector!(PPHTTPEndpointTokenProviderRequest())
         }
 
-        let grantBodyString = "grant_type=\(grantType.rawValue)"
+        let grantBodyString = "grant_type=client_credentials"
 
         if let httpEndpointRequest = httpEndpointRequest {
             if httpEndpointRequest.queryItems.count > 0 {
@@ -205,13 +190,7 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
 
 fileprivate struct PPTokenProviderResponse {
     let accessToken: String
-    let refreshToken: String
     let expiresIn: TimeInterval
-}
-
-public enum PPEndpointRequestGrantType: String {
-    case clientCredentials = "client_credentials"
-    case refreshToken = "refresh_token"
 }
 
 // TODO: This should probably be replaced by PPRequestOptions
