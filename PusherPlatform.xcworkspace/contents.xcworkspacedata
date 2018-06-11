@@ -7,7 +7,4 @@
    <FileRef
       location = "group:Pusher Platform iOS Example/Pusher Platform iOS Example.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:Pusher Platform macOS Example/Pusher Platform macOS Example.xcodeproj">
-   </FileRef>
 </Workspace>
