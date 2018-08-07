@@ -6,10 +6,19 @@ public struct PPSDKInfo {
     let sdkLanguage: String = "swift"
     let platform: String
 
+    let headers: [String: String]
+
     private init(productName: String, sdkVersion: String, platform: String) {
         self.productName = productName
         self.sdkVersion = sdkVersion
         self.platform = platform
+
+        self.headers = [
+            "X-SDK-Product": self.productName,
+            "X-SDK-Version": self.sdkVersion,
+            "X-SDK-Language": self.sdkLanguage,
+            "X-SDK-Platform": self.platform
+        ]
     }
 
     #if os(macOS)
@@ -37,13 +46,4 @@ public struct PPSDKInfo {
         self.init(productName: productName, sdkVersion: sdkVersion, platform: platform)
     }
     #endif
-
-    lazy var headers: [String: String] = {
-        return [
-            "X-SDK-Product": self.productName,
-            "X-SDK-Version": self.sdkVersion,
-            "X-SDK-Language": self.sdkLanguage,
-            "X-SDK-Platform": self.platform
-        ]
-    }()
 }

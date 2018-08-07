@@ -6,78 +6,17 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public var port: Int?
     var baseUrlComponents: URLComponents
 
-    public lazy var subscriptionURLSession: URLSession = {
-        let subscriptionSessionConfiguration = URLSessionConfiguration.default
-        subscriptionSessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
-        subscriptionSessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
-        subscriptionSessionConfiguration.httpAdditionalHeaders = [
-            "X-Heartbeat-Interval": String(self.heartbeatTimeout),
-            "X-Initial-Heartbeat-Size": String(self.heartbeatInitialSize)
-        ].merging(sdkInfoHeaders, uniquingKeysWith: { (first, _) in first })
+    public var subscriptionURLSession: URLSession
+    public var subscriptionSessionDelegate: PPSubscriptionURLSessionDelegate
 
-        let subscriptionURLSession = URLSession(
-            configuration: subscriptionSessionConfiguration,
-            delegate: subscriptionSessionDelegate,
-            delegateQueue: nil
-        )
-        subscriptionURLSession.sessionDescription = "subscriptionURLSession"
-        return subscriptionURLSession
-    }()
+    public var generalRequestURLSession: URLSession
+    public var generalRequestSessionDelegate: PPGeneralRequestURLSessionDelegate
 
-    public lazy var subscriptionSessionDelegate: PPSubscriptionURLSessionDelegate = {
-        return PPSubscriptionURLSessionDelegate(insecure: insecure)
-    }()
+    public var downloadURLSession: URLSession
+    public var downloadSessionDelegate: PPDownloadURLSessionDelegate
 
-    public lazy var generalRequestURLSession: URLSession = {
-        let generalRequestSessionConfiguration = URLSessionConfiguration.default
-        generalRequestSessionConfiguration.httpAdditionalHeaders = sdkInfoHeaders
-
-        let generalRequestURLSession = URLSession(
-            configuration: generalRequestSessionConfiguration,
-            delegate: self.generalRequestSessionDelegate,
-            delegateQueue: nil
-        )
-        generalRequestURLSession.sessionDescription = "generalRequestURLSession"
-        return generalRequestURLSession
-    }()
-
-    public lazy var generalRequestSessionDelegate: PPGeneralRequestURLSessionDelegate = {
-        return PPGeneralRequestURLSessionDelegate(insecure: insecure)
-    }()
-
-    public lazy var downloadURLSession: URLSession = {
-        let downloadURLSession = URLSession(
-            configuration: PPBaseClient.backgroundSessionConfiguration(
-                identifier: "com.pusherplatform.swift.download",
-                sdkHeaders: sdkInfoHeaders
-            ),
-            delegate: downloadSessionDelegate,
-            delegateQueue: nil
-        )
-        downloadURLSession.sessionDescription = "downloadURLSession"
-        return downloadURLSession
-    }()
-
-    public lazy var downloadSessionDelegate: PPDownloadURLSessionDelegate = {
-        return PPDownloadURLSessionDelegate(insecure: insecure)
-    }()
-
-    public lazy var uploadURLSession: URLSession = {
-        let uploadURLSession = URLSession(
-            configuration: PPBaseClient.backgroundSessionConfiguration(
-                identifier: "com.pusherplatform.swift.upload",
-                sdkHeaders: sdkInfoHeaders
-            ),
-            delegate: self.uploadSessionDelegate,
-            delegateQueue: nil
-        )
-        uploadURLSession.sessionDescription = "uploadURLSession"
-        return uploadURLSession
-    }()
-
-    public lazy var uploadSessionDelegate: PPUploadURLSessionDelegate = {
-        return PPUploadURLSessionDelegate(insecure: insecure)
-    }()
+    public var uploadURLSession: URLSession
+    public var uploadSessionDelegate: PPUploadURLSessionDelegate
 
     public var logger: PPLogger? = nil {
         willSet {
@@ -85,12 +24,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
             self.generalRequestSessionDelegate.logger = newValue
             self.downloadSessionDelegate.logger = newValue
             self.uploadSessionDelegate.logger = newValue
-        }
-    }
-
-    public var sdkInfoHeaders: [String: String] {
-        get {
-            return sdkInfo?.headers ?? [:]
         }
     }
 
@@ -117,7 +50,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     // a request's options then you can use this property
     public var retryStrategyBuilder: (PPRequestOptions) -> PPRetryStrategy
 
-    public var sdkInfo: PPSDKInfo?
+    public let sdkInfo: PPSDKInfo
 
     public init(
         host: String,
@@ -125,7 +58,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
         insecure: Bool = false,
         retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrategyGenerator,
         heartbeatTimeoutInterval: Int = 60,
-        heartbeatInitialSize: Int = 0
+        heartbeatInitialSize: Int = 0,
+        sdkInfo: PPSDKInfo
     ) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
@@ -137,6 +71,60 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.retryStrategyBuilder = retryStrategyBuilder
         self.heartbeatTimeout = heartbeatTimeoutInterval
         self.heartbeatInitialSize = heartbeatInitialSize
+        self.sdkInfo = sdkInfo
+
+        self.subscriptionSessionDelegate = PPSubscriptionURLSessionDelegate(insecure: insecure)
+
+        let subscriptionSessionConfiguration = URLSessionConfiguration.default
+        subscriptionSessionConfiguration.timeoutIntervalForResource = REALLY_LONG_TIME
+        subscriptionSessionConfiguration.timeoutIntervalForRequest = REALLY_LONG_TIME
+        subscriptionSessionConfiguration.httpAdditionalHeaders = [
+            "X-Heartbeat-Interval": String(self.heartbeatTimeout),
+            "X-Initial-Heartbeat-Size": String(self.heartbeatInitialSize)
+        ].merging(sdkInfo.headers, uniquingKeysWith: { (first, _) in first })
+
+        self.subscriptionURLSession = URLSession(
+            configuration: subscriptionSessionConfiguration,
+            delegate: subscriptionSessionDelegate,
+            delegateQueue: nil
+        )
+        self.subscriptionURLSession.sessionDescription = "subscriptionURLSession"
+
+        self.generalRequestSessionDelegate = PPGeneralRequestURLSessionDelegate(insecure: insecure)
+
+        let generalRequestSessionConfiguration = URLSessionConfiguration.default
+        generalRequestSessionConfiguration.httpAdditionalHeaders = sdkInfo.headers
+
+        self.generalRequestURLSession = URLSession(
+            configuration: generalRequestSessionConfiguration,
+            delegate: self.generalRequestSessionDelegate,
+            delegateQueue: nil
+        )
+        self.generalRequestURLSession.sessionDescription = "generalRequestURLSession"
+
+        self.uploadSessionDelegate =  PPUploadURLSessionDelegate(insecure: insecure)
+
+        self.uploadURLSession = URLSession(
+            configuration: PPBaseClient.backgroundSessionConfiguration(
+                identifier: "com.pusherplatform.swift.upload",
+                sdkHeaders: sdkInfo.headers
+            ),
+            delegate: self.uploadSessionDelegate,
+            delegateQueue: nil
+        )
+        uploadURLSession.sessionDescription = "uploadURLSession"
+
+        self.downloadSessionDelegate = PPDownloadURLSessionDelegate(insecure: insecure)
+
+        self.downloadURLSession = URLSession(
+            configuration: PPBaseClient.backgroundSessionConfiguration(
+                identifier: "com.pusherplatform.swift.download",
+                sdkHeaders: sdkInfo.headers
+            ),
+            delegate: downloadSessionDelegate,
+            delegateQueue: nil
+        )
+        downloadURLSession.sessionDescription = "downloadURLSession"
     }
 
     deinit {

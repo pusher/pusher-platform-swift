@@ -9,10 +9,9 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
 
     public var logger: PPLogger? = nil {
         willSet {
-            // TODO: Do we want to set the logger on the requests' delegates here?
             self.requests.forEach { arg in
                 let (_, req) = arg
-                req.setLoggerOnDelegate(newValue)
+                req.delegate.logger = newValue
             }
         }
     }
@@ -38,7 +37,17 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
     public func removeRequestPairedWithTaskId(_ taskId: Int) {
         lock.lock()
         defer { lock.unlock() }
-        requests.removeValue(forKey: taskId)
+        if let _ = requests.removeValue(forKey: taskId) {
+            self.logger?.log(
+                "Successfully removed request with taskId: \(taskId)",
+                logLevel: .verbose
+            )
+        } else {
+            self.logger?.log(
+                "Failed to remove request with taskId: \(taskId)",
+                logLevel: .verbose
+            )
+        }
     }
 
     // MARK: URLSessionDelegate

@@ -1,7 +1,6 @@
 import Foundation
 
 public class PPRequest<Delegate: PPRequestTaskDelegate> {
-    // TODO: Should this be weak?
     var delegate: Delegate
 
     // TODO: Could this be an associatedtype? Different options needed for different types of
@@ -11,10 +10,6 @@ public class PPRequest<Delegate: PPRequestTaskDelegate> {
 
     public init(delegate: Delegate? = nil) {
         self.delegate = delegate ?? Delegate.init()
-    }
-
-    func setLoggerOnDelegate(_ logger: PPLogger?) {
-        self.delegate.logger = logger
     }
 }
 

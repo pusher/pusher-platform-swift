@@ -67,8 +67,10 @@ import Foundation
         self.retryRequestTimer?.invalidate()
     }
 
-    // TODO: Is this necessary in general?
-    public func handleOnSuccess(_ data: Data) {}
+    public func handleOnSuccess(_ data: Data) {
+        self.retryRequestTimer?.invalidate()
+        self.retryRequestTimer = nil
+    }
 
     public func handleOnError(error: Error) {
 //        TODO: Do we need something like this?
@@ -88,6 +90,7 @@ import Foundation
 //         TODO: Check which errors to pass to RetryStrategy
 
         self.retryRequestTimer?.invalidate()
+        self.retryRequestTimer = nil
 
         let shouldRetryResult = retryStrategy.shouldRetry(given: error)
 

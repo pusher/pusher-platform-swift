@@ -52,7 +52,6 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             self.handleCompletion(error: PPRequestTaskDelegateError.invalidHTTPResponse(response: response))
 
             // TODO: Should this be cancel?
-
             completionHandler(.cancel)
             return
         }
@@ -60,9 +59,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         if 200..<300 ~= httpResponse.statusCode {
             self.onOpen?()
         } else {
-
             // TODO: What do we do if no data is eventually received?
-
             self.badResponse = httpResponse
         }
 
@@ -75,8 +72,6 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
-
-        // TODO: Timer stuff below
 
         guard self.badResponse == nil else {
             let error = PPRequestTaskDelegateError.badResponseStatusCode(response: self.badResponse!)

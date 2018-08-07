@@ -4,8 +4,7 @@ import Foundation
     public let requestOptions: PPRequestOptions
 
     // TODO: Should instance be a weak reference here?
-
-    public internal(set) var instance: Instance
+    public internal(set) unowned var instance: Instance
     public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: PPResumableSubscriptionState = .opening
     public internal(set) var lastEventIdReceived: String? = nil
@@ -17,7 +16,7 @@ import Foundation
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "No delegate for subscription: \(self.subscription.debugDescription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
                 return
@@ -64,7 +63,7 @@ import Foundation
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "No delegate for subscription: \(self.subscription.debugDescription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
                 return
@@ -86,7 +85,7 @@ import Foundation
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "No delegate for subscription: \(self.subscription.debugDescription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
                 return
@@ -114,7 +113,7 @@ import Foundation
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
                 self.instance.logger.log(
-                    "No delegate for subscription: \(self.subscription.debugDescription))",
+                    "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
                 return
@@ -139,17 +138,29 @@ import Foundation
     }
 
     deinit {
+        self.subscription?.delegate.cleanUpHeartbeatTimeoutTimer()
+
+        // TODO: Don't think this makes sense as timer will already be keeping
+        // a strong reference to self so deinit is impossible to occur unless
+        // timer is invalidated
         self.retrySubscriptionTimer?.invalidate()
+
+        // TODO: Do we need to add in some of the stuff that's in end in order
+        // to make sure things get cleaned up properly even if end() isn't called
+        // but reference count hits 0?
     }
 
     public func end() {
         guard let subscriptionDelegate = self.subscription?.delegate else {
             self.instance.logger.log(
-                "No delegate for subscription: \(self.subscription.debugDescription))",
+                "No delegate for subscription: \(self.subscription.debugDescription)",
                 logLevel: .error
             )
             return
         }
+
+        self.retrySubscriptionTimer?.invalidate()
+        self.retrySubscriptionTimer = nil
 
         self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
         subscriptionDelegate.endSubscription()
@@ -263,7 +274,7 @@ import Foundation
     @objc func setupNewSubscription() {
         guard let subscriptionDelegate = self.subscription?.delegate else {
             self.instance.logger.log(
-                "No delegate for subscription: \(self.subscription.debugDescription))",
+                "No delegate for subscription: \(self.subscription.debugDescription)",
                 logLevel: .error
             )
             return
@@ -313,8 +324,6 @@ import Foundation
         reqCleanupClosure(taskId)
     }
 }
-
-// TODO: I don't think this is being used nor is it being set properly 
 
 public enum PPResumableSubscriptionState {
     case opening

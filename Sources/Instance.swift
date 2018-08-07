@@ -4,7 +4,6 @@ import Foundation
     public let id: String
     public var serviceName: String
     public var serviceVersion: String
-    public var host: String
     public var tokenProvider: PPTokenProvider?
     public var client: PPBaseClient
     public var logger: PPLogger {
@@ -13,15 +12,54 @@ import Foundation
         }
     }
 
-    public init(
+    public convenience init(
         locator: String,
         serviceName: String,
         serviceVersion: String,
         sdkInfo: PPSDKInfo,
         tokenProvider: PPTokenProvider? = nil,
-        client: PPBaseClient? = nil,
         logger: PPLogger = PPDefaultLogger()
     ) {
+        self.init(
+            locator: locator,
+            serviceName: serviceName,
+            serviceVersion: serviceVersion,
+            client: nil,
+            sdkInfo: sdkInfo,
+            tokenProvider: tokenProvider,
+            logger: logger
+        )
+    }
+
+    public convenience init(
+        locator: String,
+        serviceName: String,
+        serviceVersion: String,
+        client: PPBaseClient,
+        tokenProvider: PPTokenProvider? = nil,
+        logger: PPLogger = PPDefaultLogger()
+    ) {
+        self.init(
+            locator: locator,
+            serviceName: serviceName,
+            serviceVersion: serviceVersion,
+            client: client,
+            sdkInfo: nil,
+            tokenProvider: tokenProvider,
+            logger: logger
+        )
+    }
+
+    fileprivate init(
+        locator: String,
+        serviceName: String,
+        serviceVersion: String,
+        client: PPBaseClient?,
+        sdkInfo: PPSDKInfo?,
+        tokenProvider: PPTokenProvider? = nil,
+        logger: PPLogger = PPDefaultLogger()
+    ) {
+        assert(client != nil || sdkInfo != nil, "You must provide at least one of client and sdkInfo")
         assert (!locator.isEmpty, "Expected locator property in Instance!")
         let splitInstance = locator.components(separatedBy: ":")
         assert(splitInstance.count == 3, "Expecting locator to be of the form 'v1:us1:1a234-123a-1234-12a3-1234123aa12' but got this instead: '\(locator)'. Check the dashboard to ensure you have a properly formatted locator.")
@@ -33,14 +71,17 @@ import Foundation
         self.serviceVersion = serviceVersion
         self.tokenProvider = tokenProvider
 
-        let cluster = splitInstance[1]
-        let host = "\(cluster).pusherplatform.io"
-        self.host = host
-
         self.logger = logger
 
-        self.client = client ?? PPBaseClient(host: host)
-        self.client.sdkInfo = self.client.sdkInfo ?? sdkInfo
+        if client == nil {
+            let cluster = splitInstance[1]
+            let host = "\(cluster).pusherplatform.io"
+
+            self.client = PPBaseClient(host: host, sdkInfo: sdkInfo!)
+        } else {
+            self.client = client!
+        }
+
         self.client.logger = self.client.logger ?? logger
     }
 
@@ -185,14 +226,14 @@ import Foundation
         onEnd: ((Int?, [String: String]?, Any?) -> Void)? = nil,
         onError: ((Error) -> Void)? = nil
     ) -> PPResumableSubscription {
-        let resumableSubscription = PPResumableSubscription(instance: self, requestOptions: requestOptions)
+        var resumableSubscription = PPResumableSubscription(instance: self, requestOptions: requestOptions)
 
         fetchTokenIfRequiredAndMakeRequest(
             requestOptions: requestOptions,
             onError: onError,
-            requestMaker: { [weak resumableSubscription] options in // TODO: Should it be weak?
+            requestMaker: { options in // TODO: Should it be weak?
                 self.client.subscribeWithResume(
-                    with: &resumableSubscription!,
+                    with: &resumableSubscription,
                     using: options,
                     instance: self,
                     onOpening: onOpening,
