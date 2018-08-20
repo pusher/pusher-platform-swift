@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
 		3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */; };
+		33025C07212B346800C12249 /* PPRepeater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33025C06212B346800C12249 /* PPRepeater.swift */; };
 		330DD21C1E0C433A00EC251F /* PPLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330DD21B1E0C433A00EC251F /* PPLogger.swift */; };
 		330E59071DEDD38900C92897 /* PPResumableSubscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330E59061DEDD38900C92897 /* PPResumableSubscription.swift */; };
 		331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */; };
@@ -53,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
+		33025C06212B346800C12249 /* PPRepeater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRepeater.swift; sourceTree = "<group>"; };
 		330DD21B1E0C433A00EC251F /* PPLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPLogger.swift; sourceTree = "<group>"; };
 		330E59061DEDD38900C92897 /* PPResumableSubscription.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPResumableSubscription.swift; sourceTree = "<group>"; };
 		331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRetryableGeneralRequest.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 				33935EA71DA5399A00C5C064 /* PPTokenProvider.swift */,
 				33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */,
 				33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */,
+				33025C06212B346800C12249 /* PPRepeater.swift */,
 				330DD21B1E0C433A00EC251F /* PPLogger.swift */,
 				334B9A2E1ECCA295007A3D3B /* PPDefaultLogger.swift */,
 				3337CF642035E9FD000892B6 /* PPSDKInfo.swift */,
@@ -330,6 +333,7 @@
 				3382024E1FFCFF2E00DC9664 /* PPDownloadURLSessionDelegate.swift in Sources */,
 				336F2A391FFBF1510098687B /* PPGeneralRequestURLSessionDelegate.swift in Sources */,
 				33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */,
+				33025C07212B346800C12249 /* PPRepeater.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* PPMessageParser.swift in Sources */,
 				3337CF652035E9FD000892B6 /* PPSDKInfo.swift in Sources */,
 				336F2A3B1FFBF17E0098687B /* PPSubscriptionURLSessionDelegate.swift in Sources */,

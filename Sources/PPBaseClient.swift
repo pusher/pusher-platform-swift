@@ -592,9 +592,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 }
             }
 
-            DispatchQueue.main.async {
-                onError?(error)
-            }
+            // TODO: Can this be dispatched on any queue?
+            onError?(error)
         }
     }
 

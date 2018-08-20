@@ -10,7 +10,7 @@ import Foundation
     public internal(set) var lastEventIdReceived: String? = nil
     public internal(set) var subscription: PPSubscription? = nil
     public var retryStrategy: PPRetryStrategy? = nil
-    var retrySubscriptionTimer: Timer? = nil
+    var retrySubscriptionTimer: PPRepeater? = nil
 
     public var onOpen: (() -> Void)? {
         willSet {
@@ -140,10 +140,7 @@ import Foundation
     deinit {
         self.subscription?.delegate.cleanUpHeartbeatTimeoutTimer()
 
-        // TODO: Don't think this makes sense as timer will already be keeping
-        // a strong reference to self so deinit is impossible to occur unless
-        // timer is invalidated
-        self.retrySubscriptionTimer?.invalidate()
+        self.retrySubscriptionTimer = nil
 
         // TODO: Do we need to add in some of the stuff that's in end in order
         // to make sure things get cleaned up properly even if end() isn't called
@@ -159,7 +156,6 @@ import Foundation
             return
         }
 
-        self.retrySubscriptionTimer?.invalidate()
         self.retrySubscriptionTimer = nil
 
         self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
@@ -211,7 +207,7 @@ import Foundation
             return
         }
 
-        self.retrySubscriptionTimer?.invalidate()
+        self.retrySubscriptionTimer = nil
 
         if let err = error as? PPSubscriptionError, case let .eosWithRetryAfter(eosWithRetryError) = err {
             let retryWaitTimeInterval = eosWithRetryError.timeInterval
@@ -244,19 +240,15 @@ import Foundation
     }
 
     func setupRetrySubscriptionTimer(retryWaitTimeInterval: TimeInterval) {
-        DispatchQueue.main.async { [weak self] in
+        self.retrySubscriptionTimer = PPRepeater.once(
+            after: .seconds(retryWaitTimeInterval)
+        ) { [weak self] _ in
             guard let strongSelf = self else {
                 print("self is nil when setting up retry subscription timer")
                 return
             }
 
-            strongSelf.retrySubscriptionTimer = Timer.scheduledTimer(
-                timeInterval: retryWaitTimeInterval,
-                target: strongSelf,
-                selector: #selector(strongSelf.setupNewSubscription),
-                userInfo: nil,
-                repeats: false
-            )
+            strongSelf.setupNewSubscription()
         }
     }
 
@@ -267,11 +259,11 @@ import Foundation
 //            return
 //        }
 
-        self.retrySubscriptionTimer?.invalidate()
+        self.retrySubscriptionTimer = nil
         self.changeState(to: .ended)
     }
 
-    @objc func setupNewSubscription() {
+    func setupNewSubscription() {
         guard let subscriptionDelegate = self.subscription?.delegate else {
             self.instance.logger.log(
                 "No delegate for subscription: \(self.subscription.debugDescription)",

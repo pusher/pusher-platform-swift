@@ -38,7 +38,7 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
                 case .retry(let retryWaitTimeInterval):
                     // TODO: [unowned self] here as well?
 
-                    DispatchQueue.main.asyncAfter(deadline: .now() + retryWaitTimeInterval, execute: { [unowned self] in
+                    DispatchQueue.global().asyncAfter(deadline: .now() + retryWaitTimeInterval, execute: { [unowned self] in
                         self.fetchToken(completionHandler: completionHandler)
                     })
                 case .doNotRetry(let reasonErr):

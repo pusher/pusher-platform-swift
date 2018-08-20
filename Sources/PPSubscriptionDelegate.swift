@@ -20,7 +20,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     // TODO: Check this is being set properly
     var heartbeatTimeout: Double = 60.0
-    var heartbeatTimeoutTimer: Timer? = nil
+    var heartbeatTimeoutTimer: PPRepeater? = nil
 
     public var logger: PPLogger? = nil
 
@@ -37,7 +37,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.logger?.log("Cancelling task: \(String(describing: self.task?.taskIdentifier))", logLevel: .verbose)
         self.task?.cancel()
         self.logger?.log("Invalidating heartbeatTimeoutTimer: \(String(describing: self.heartbeatTimeoutTimer))", logLevel: .verbose)
-        self.heartbeatTimeoutTimer?.invalidate()
+        self.heartbeatTimeoutTimer = nil
     }
 
     func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
@@ -260,7 +260,6 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     func cleanUpHeartbeatTimeoutTimer() {
-        self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
     }
 
@@ -269,7 +268,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         self.task!.cancel()
     }
 
-    @objc fileprivate func endSubscriptionAfterHeartbeatTimeout() {
+    fileprivate func endSubscriptionAfterHeartbeatTimeout() {
         self.logger?.log("Ending subscription after heartbeat timeout", logLevel: .verbose)
         self.handleCompletion(error: PPSubscriptionError.heartbeatTimeoutReached)
     }
@@ -277,23 +276,17 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     fileprivate func resetHeartbeatTimeoutTimer() {
         self.logger?.log("Resetting heartbeat timeout timer", logLevel: .verbose)
 
-        self.heartbeatTimeoutTimer?.invalidate()
         self.heartbeatTimeoutTimer = nil
 
-        // TODO: Is this correct?
-        DispatchQueue.main.async { [weak self] in
+        self.heartbeatTimeoutTimer = PPRepeater.once(
+            after: .seconds(heartbeatTimeout + 2) // Give the timeout a small amount of leeway
+        ) { [weak self] _ in
             guard let strongSelf = self else {
                 print("self is nil when trying to reset a heartbeat timeout timer")
                 return
             }
 
-            strongSelf.heartbeatTimeoutTimer = Timer.scheduledTimer(
-                timeInterval: strongSelf.heartbeatTimeout + 2,  // Give the timeout a small amount of leeway
-                target: strongSelf,
-                selector: #selector(strongSelf.endSubscriptionAfterHeartbeatTimeout),
-                userInfo: nil,
-                repeats: false
-            )
+            strongSelf.endSubscriptionAfterHeartbeatTimeout()
         }
     }
 }

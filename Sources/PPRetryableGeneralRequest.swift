@@ -7,7 +7,7 @@ import Foundation
     public internal(set) var instance: Instance
     public internal(set) var generalRequest: PPGeneralRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
-    internal var retryRequestTimer: Timer? = nil
+    internal var retryRequestTimer: PPRepeater? = nil
 
     public var onSuccess: ((Data) -> Void)? {
         willSet {
@@ -20,7 +20,7 @@ import Foundation
             }
 
             // TODO: Not using a weak self here because a request, unlike a subscription,
-            // is notexpected to be referenced and stored for its lifecycle, so we do in
+            // is not expected to be referenced and stored for its lifecycle, so we do in
             // fact want to capture self here - this isn't ideal though, so we need a
             // better way of handling with cleanup. Could just be a function that gets
             // called after success / error and sets the onSuccess and onError closures
@@ -64,11 +64,10 @@ import Foundation
     }
 
     deinit {
-        self.retryRequestTimer?.invalidate()
+        self.retryRequestTimer = nil
     }
 
     public func handleOnSuccess(_ data: Data) {
-        self.retryRequestTimer?.invalidate()
         self.retryRequestTimer = nil
     }
 
@@ -89,33 +88,28 @@ import Foundation
 
 //         TODO: Check which errors to pass to RetryStrategy
 
-        self.retryRequestTimer?.invalidate()
         self.retryRequestTimer = nil
 
         let shouldRetryResult = retryStrategy.shouldRetry(given: error)
 
         switch shouldRetryResult {
         case .retry(let retryWaitTimeInterval):
-            DispatchQueue.main.async { [weak self] in
+            self.retryRequestTimer = PPRepeater.once(
+                after: .seconds(retryWaitTimeInterval)
+            ) { [weak self] _ in
                 guard let strongSelf = self else {
-                    print("self is nil when setting up retry subscription timer")
+                    print("self is nil when setting up retry request timer")
                     return
                 }
 
-                strongSelf.retryRequestTimer = Timer.scheduledTimer(
-                    timeInterval: retryWaitTimeInterval,
-                    target: strongSelf,
-                    selector: #selector(strongSelf.retryRequest),
-                    userInfo: nil,
-                    repeats: false
-                )
+                strongSelf.retryRequest()
             }
         case .doNotRetry(let reasonErr):
             self._onError?(reasonErr)
         }
     }
 
-    @objc internal func retryRequest() {
+    internal func retryRequest() {
         guard let generalRequestDelegate = self.generalRequest?.delegate else {
             self.instance.logger.log(
                 "No delegate for general request: \(self.generalRequest.debugDescription))",
