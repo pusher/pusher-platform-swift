@@ -121,7 +121,6 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
             throw PPHTTPEndpointTokenProviderError.validAccessTokenNotPresentInResponseJSON(json)
         }
 
-        // TODO: Check if Double is sensible type here
         guard let expiresIn = json["expires_in"] as? TimeInterval else {
             throw PPHTTPEndpointTokenProviderError.validExpiresInNotPresentInResponseJSON(json)
         }

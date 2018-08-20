@@ -84,7 +84,7 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
 
     // MARK: URLSessionTaskDelegate
 
-    // TOOD: Should this be communicated somehow? Only used by the background session(s) by default
+    // TODO: Should this be communicated somehow? Only used by the background session(s) by default
     public func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSessionTask) {
         self.logger?.log("Task with taskIdentifier \(task.taskIdentifier) is waiting for connectivity", logLevel: .verbose)
     }

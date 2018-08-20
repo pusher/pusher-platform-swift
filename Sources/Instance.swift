@@ -172,7 +172,7 @@ import Foundation
         fetchTokenIfRequiredAndMakeRequest(
             requestOptions: requestOptions,
             onError: onError,
-            requestMaker: { [weak resumableSubscription] options in // TOOD: Should it be weak?
+            requestMaker: { [weak resumableSubscription] options in // TODO: Should it be weak?
                 self.client.subscribeWithResume(
                     with: &resumableSubscription!,
                     using: options,
