@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.6.1...HEAD)
 
-## [0.6.1](https://github.com/pusher/pusher-platform-swift/compare/0.6.0...0.6.1) - 2018-08-21
+## [0.6.1](https://github.com/pusher/pusher-platform-swift/compare/0.6.0...0.6.1) - 2018-08-20
 
 ### Changed
 
