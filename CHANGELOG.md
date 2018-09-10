@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.6.1...HEAD)
+## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.6.2...HEAD)
+
+## [0.6.2](https://github.com/pusher/pusher-platform-swift/compare/0.6.1...0.6.2) - 2018-09-10
+
+### Fixed
+
+- When a token provider `fetchToken` request completes as part of a subscription being started the subscription object provided is now ensured to not be nil
 
 ## [0.6.1](https://github.com/pusher/pusher-platform-swift/compare/0.6.0...0.6.1) - 2018-08-20
 
