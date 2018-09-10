@@ -145,7 +145,13 @@ import Foundation
         fetchTokenIfRequiredAndMakeRequest(
             requestOptions: requestOptions,
             onError: onError,
-            requestMaker: { [weak subscription] options in // TODO: Should it be weak?
+            requestMaker: { [weak subscription] options in
+                guard subscription != nil else {
+                    // The token request has completed (successfully, presumably) but
+                    // something else has cleaned up the subscription, so now this is
+                    // really just a no-op
+                    return
+                }
                 self.client.subscribe(
                     with: &subscription!,
                     using: options,
@@ -172,7 +178,13 @@ import Foundation
         fetchTokenIfRequiredAndMakeRequest(
             requestOptions: requestOptions,
             onError: onError,
-            requestMaker: { [weak resumableSubscription] options in // TODO: Should it be weak?
+            requestMaker: { [weak resumableSubscription] options in
+                guard resumableSubscription != nil else {
+                    // The token request has completed (successfully, presumably) but
+                    // something else has cleaned up the resumableSubscription, so
+                    // now this is really just a no-op
+                    return
+                }
                 self.client.subscribeWithResume(
                     with: &resumableSubscription!,
                     using: options,
@@ -231,7 +243,7 @@ import Foundation
         fetchTokenIfRequiredAndMakeRequest(
             requestOptions: requestOptions,
             onError: onError,
-            requestMaker: { options in // TODO: Should it be weak?
+            requestMaker: { options in
                 self.client.subscribeWithResume(
                     with: &resumableSubscription,
                     using: options,
