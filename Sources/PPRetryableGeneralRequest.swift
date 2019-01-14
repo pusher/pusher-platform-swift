@@ -9,6 +9,8 @@ import Foundation
     public var retryStrategy: PPRetryStrategy? = nil
     internal var retryRequestTimer: PPRepeater? = nil
 
+    internal var _onSuccess: ((Data) -> Void)? = nil
+
     public var onSuccess: ((Data) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate else {
@@ -27,8 +29,9 @@ import Foundation
             // on the delegate to be nil so that the references to this are gone
             generalRequestDelegate.onSuccess = { data in
                 self.handleOnSuccess(data)
-                newValue?(data)
             }
+
+            self._onSuccess = newValue
         }
     }
 
@@ -68,6 +71,7 @@ import Foundation
     }
 
     public func handleOnSuccess(_ data: Data) {
+        self._onSuccess?(data)
         self.retryRequestTimer = nil
     }
 
