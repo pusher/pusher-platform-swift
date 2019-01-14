@@ -4,7 +4,7 @@ import Foundation
 
 @objc public class PPRetryableGeneralRequest: NSObject {
     public let requestOptions: PPRequestOptions
-    public internal(set) var instance: Instance
+    public internal(set) unowned var instance: Instance
     public internal(set) var generalRequest: PPGeneralRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
     internal var retryRequestTimer: PPRepeater? = nil
