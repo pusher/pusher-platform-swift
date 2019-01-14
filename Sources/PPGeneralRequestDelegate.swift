@@ -108,6 +108,14 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
         guard let errorToReport = err else {
             self.onSuccess?(self.data)
+
+            // We need to nil out the onSuccess AND onError references here once
+            // we've called either of them because they hold a reference back to
+            // the PPRetryableGeneralRequest, which itself holds a reference to
+            // the PPGeneralRequest, which holds a reference to the
+            // PPGeneralRequestDelegate, i.e. this object
+            self.onSuccess = nil
+            self.onError = nil
             return
         }
 
@@ -126,5 +134,13 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
         self.error = errorToReport
         self.onError?(errorToReport)
+
+        // We need to nil out the onSuccess AND onError references here once
+        // we've called either of them because they hold a reference back to
+        // the PPRetryableGeneralRequest, which itself holds a reference to
+        // the PPGeneralRequest, which holds a reference to the
+        // PPGeneralRequestDelegate, i.e. this object
+        self.onSuccess = nil
+        self.onError = nil
     }
 }
