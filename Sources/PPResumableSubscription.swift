@@ -3,7 +3,6 @@ import Foundation
 @objc public class PPResumableSubscription: NSObject {
     public let requestOptions: PPRequestOptions
 
-    // TODO: Should instance be a weak reference here?
     public internal(set) unowned var instance: Instance
     public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: PPResumableSubscriptionState = .opening
