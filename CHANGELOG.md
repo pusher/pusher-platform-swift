@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.6.2...HEAD)
+## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.6.3...HEAD)
+
+## [0.6.3](https://github.com/pusher/pusher-platform-swift/compare/0.6.2...0.6.3) - 2019-01-14
+
+### Fixed
+
+- Fixed some reference cycles
 
 ## [0.6.2](https://github.com/pusher/pusher-platform-swift/compare/0.6.1...0.6.2) - 2018-09-10
 
