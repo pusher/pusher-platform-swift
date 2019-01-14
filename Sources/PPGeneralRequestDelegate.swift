@@ -14,6 +14,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
     public var logger: PPLogger? = nil
 
+    // Only one of onSuccess or onError will ever be called
     public var onSuccess: ((Data) -> Void)?
     public var onError: ((Error) -> Void)?
 
