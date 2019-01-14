@@ -4,10 +4,12 @@ import Foundation
 
 @objc public class PPRetryableGeneralRequest: NSObject {
     public let requestOptions: PPRequestOptions
-    public internal(set) var instance: Instance
+    public internal(set) unowned var instance: Instance
     public internal(set) var generalRequest: PPGeneralRequest? = nil
     public var retryStrategy: PPRetryStrategy? = nil
     internal var retryRequestTimer: PPRepeater? = nil
+
+    internal var _onSuccess: ((Data) -> Void)? = nil
 
     public var onSuccess: ((Data) -> Void)? {
         willSet {
@@ -19,16 +21,25 @@ import Foundation
                 return
             }
 
-            // TODO: Not using a weak self here because a request, unlike a subscription,
-            // is not expected to be referenced and stored for its lifecycle, so we do in
-            // fact want to capture self here - this isn't ideal though, so we need a
-            // better way of handling with cleanup. Could just be a function that gets
-            // called after success / error and sets the onSuccess and onError closures
-            // on the delegate to be nil so that the references to this are gone
+            // Not using a weak self here because a request, unlike a subscription, is
+            // not expected to be referenced and stored for its lifecycle, so we do in
+            // fact want to capture self here - this isn't ideal though. What we have
+            // to do is after the request has succeede / errored, the onSuccess and
+            // onError closures on the delegate get set to nil so that the references
+            // to this are gone. If we want to allow request cancellation, for example,
+            // then the consumer of this SDK would likely be responsible for storing
+            // this PPRetryableGeneralRequest object (like we expect the consumer of
+            // PPResumableSubscriptions to store them) and so we could change the
+            // contract at that point so that it's then their responsibility to hold
+            // on to the request for as long as they want / need to. At that point
+            // we'd be able to stop taking a strong reference to self here, as well
+            // as then not being required to nil out the onSuccess and onError closures
+            // in the handleCompletion function of the delegate.
             generalRequestDelegate.onSuccess = { data in
                 self.handleOnSuccess(data)
-                newValue?(data)
             }
+
+            self._onSuccess = newValue
         }
     }
 
@@ -44,12 +55,20 @@ import Foundation
                 return
             }
 
-            // TODO: Not using a weak self here because a request, unlike a subscription,
-            // is notexpected to be referenced and stored for its lifecycle, so we do in
-            // fact want to capture self here - this isn't ideal though, so we need a
-            // better way of handling with cleanup. Could just be a function that gets
-            // called after success / error and sets the onSuccess and onError closures
-            // on the delegate to be nil so that the references to this are gone
+            // Not using a weak self here because a request, unlike a subscription, is
+            // not expected to be referenced and stored for its lifecycle, so we do in
+            // fact want to capture self here - this isn't ideal though. What we have
+            // to do is after the request has succeede / errored, the onSuccess and
+            // onError closures on the delegate get set to nil so that the references
+            // to this are gone. If we want to allow request cancellation, for example,
+            // then the consumer of this SDK would likely be responsible for storing
+            // this PPRetryableGeneralRequest object (like we expect the consumer of
+            // PPResumableSubscriptions to store them) and so we could change the
+            // contract at that point so that it's then their responsibility to hold
+            // on to the request for as long as they want / need to. At that point
+            // we'd be able to stop taking a strong reference to self here, as well
+            // as then not being required to nil out the onSuccess and onError closures
+            // in the handleCompletion function of the delegate.
             generalRequestDelegate.onError = { error in
                 self.handleOnError(error: error)
             }
@@ -68,11 +87,12 @@ import Foundation
     }
 
     public func handleOnSuccess(_ data: Data) {
+        self._onSuccess?(data)
         self.retryRequestTimer = nil
     }
 
     public func handleOnError(error: Error) {
-//        TODO: Do we need something like this?
+        // TODO: Do we need something like this?
 
 //        guard !self.cancelled else {
 //            // TODO: Really? Does this make sense?
@@ -86,7 +106,7 @@ import Foundation
             return
         }
 
-//         TODO: Check which errors to pass to RetryStrategy
+        // TODO: Check which errors to pass to RetryStrategy
 
         self.retryRequestTimer = nil
 

@@ -3,7 +3,6 @@ import Foundation
 @objc public class PPResumableSubscription: NSObject {
     public let requestOptions: PPRequestOptions
 
-    // TODO: Should instance be a weak reference here?
     public internal(set) unowned var instance: Instance
     public internal(set) var unsubscribed: Bool = false
     public internal(set) var state: PPResumableSubscriptionState = .opening
@@ -168,7 +167,7 @@ import Foundation
     }
 
     public func changeState(to newState: PPResumableSubscriptionState) {
-//        TODO: Potentially add an onStateChange handlers property
+        // TODO: Potentially add an onStateChange handlers property
 //        let oldState = self.state
 //        self.onStateChangeHandlers.
         self.state = newState
@@ -273,6 +272,7 @@ import Foundation
         }
 
         self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
+        self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
 
         if let eventId = self.lastEventIdReceived {
             self.instance.logger.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
@@ -291,7 +291,6 @@ import Foundation
         )
 
         self.subscription = newSubscription
-        self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
     }
 
     func cancelExistingSubscriptionTask(subscriptionDelegate: PPSubscriptionDelegate) {

@@ -614,7 +614,6 @@ let REALLY_LONG_TIME: Double = 252_460_800
     }
 
     // TODO: Maybe need the same for cancelling general requests?
-    // TODO: Look at this
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) -> Void {
         self.subscriptionURLSession.getAllTasks { tasks in
             guard tasks.count > 0 else {
