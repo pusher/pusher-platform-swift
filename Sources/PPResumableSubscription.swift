@@ -272,6 +272,7 @@ import Foundation
         }
 
         self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
+        self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
 
         if let eventId = self.lastEventIdReceived {
             self.instance.logger.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
@@ -290,7 +291,6 @@ import Foundation
         )
 
         self.subscription = newSubscription
-        self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
     }
 
     func cancelExistingSubscriptionTask(subscriptionDelegate: PPSubscriptionDelegate) {
