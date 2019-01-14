@@ -72,7 +72,7 @@ import Foundation
     }
 
     public func handleOnError(error: Error) {
-//        TODO: Do we need something like this?
+        // TODO: Do we need something like this?
 
 //        guard !self.cancelled else {
 //            // TODO: Really? Does this make sense?
@@ -86,7 +86,7 @@ import Foundation
             return
         }
 
-//         TODO: Check which errors to pass to RetryStrategy
+        // TODO: Check which errors to pass to RetryStrategy
 
         self.retryRequestTimer = nil
 

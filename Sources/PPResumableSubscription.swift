@@ -167,7 +167,7 @@ import Foundation
     }
 
     public func changeState(to newState: PPResumableSubscriptionState) {
-//        TODO: Potentially add an onStateChange handlers property
+        // TODO: Potentially add an onStateChange handlers property
 //        let oldState = self.state
 //        self.onStateChangeHandlers.
         self.state = newState
