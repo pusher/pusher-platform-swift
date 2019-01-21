@@ -24,7 +24,7 @@ import Foundation
             // Not using a weak self here because a request, unlike a subscription, is
             // not expected to be referenced and stored for its lifecycle, so we do in
             // fact want to capture self here - this isn't ideal though. What we have
-            // to do is after the request has succeede / errored, the onSuccess and
+            // to do is after the request has succeeded / errored, the onSuccess and
             // onError closures on the delegate get set to nil so that the references
             // to this are gone. If we want to allow request cancellation, for example,
             // then the consumer of this SDK would likely be responsible for storing
@@ -58,7 +58,7 @@ import Foundation
             // Not using a weak self here because a request, unlike a subscription, is
             // not expected to be referenced and stored for its lifecycle, so we do in
             // fact want to capture self here - this isn't ideal though. What we have
-            // to do is after the request has succeede / errored, the onSuccess and
+            // to do is after the request has succeeded / errored, the onSuccess and
             // onError closures on the delegate get set to nil so that the references
             // to this are gone. If we want to allow request cancellation, for example,
             // then the consumer of this SDK would likely be responsible for storing
