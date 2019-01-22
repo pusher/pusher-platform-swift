@@ -655,7 +655,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
             }
 
             urlComponents = self.baseUrlComponents
-            urlComponents.path = pathComponents.path
+            urlComponents.percentEncodedPath = pathComponents.percentEncodedPath
 
             if let pathQueryItems = pathComponents.queryItems {
                 urlComponents.queryItems = pathQueryItems
