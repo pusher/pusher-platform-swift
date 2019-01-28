@@ -264,8 +264,9 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     func cancelTask() {
-        self.logger?.log("Cancelling task \(self.task!.taskIdentifier)", logLevel: .verbose)
-        self.task!.cancel()
+        guard let task = self.task else { return }
+        self.logger?.log("Cancelling task \(task.taskIdentifier)", logLevel: .verbose)
+        task.cancel()
     }
 
     fileprivate func endSubscriptionAfterHeartbeatTimeout() {
