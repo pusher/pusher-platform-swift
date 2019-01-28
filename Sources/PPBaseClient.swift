@@ -628,16 +628,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     // TODO: Maybe need the same for cancelling general requests?
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) -> Void {
         self.subscriptionURLSession.getAllTasks { tasks in
-            guard tasks.count > 0 else {
-                completionHandler?(
-                    PPBaseClientError.noTasksForSubscriptionURLSession(self.subscriptionURLSession)
-                )
-                return
-            }
-
-            let filteredTasks = tasks.filter { $0.taskIdentifier == taskIdentifier }
-
-            guard filteredTasks.count == 1 else {
+            guard let task = tasks.first(where: { $0.taskIdentifier == taskIdentifier }) else {
                 completionHandler?(
                     PPBaseClientError.noTaskWithMatchingTaskIdentifierFound(
                         taskId: taskIdentifier,
@@ -647,7 +638,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 return
             }
 
-            filteredTasks.first!.cancel()
+            task.cancel()
             completionHandler?(nil)
         }
     }
@@ -740,7 +731,6 @@ internal enum PPBaseClientError: Error {
     case invalidRawURL(_: String)
     case invalidURL(components: URLComponents)
     case preExistingTaskIdentifierForRequest
-    case noTasksForSubscriptionURLSession(URLSession)
     case noTaskWithMatchingTaskIdentifierFound(taskId: Int, session: URLSession)
 }
 
@@ -755,8 +745,6 @@ extension PPBaseClientError: LocalizedError {
             return "Invalid URL from components: \(components.debugDescription)"
         case .preExistingTaskIdentifierForRequest:
             return "Task identifier already in use for another request"
-        case .noTasksForSubscriptionURLSession(let urlSession):
-            return "No tasks for URLSession: \(urlSession.debugDescription)"
         case .noTaskWithMatchingTaskIdentifierFound(let taskId, let urlSession):
             return "No task with id \(taskId) for URLSession: \(urlSession.debugDescription)"
         }
