@@ -5,7 +5,10 @@ public typealias TaskIdentifier = Int
 public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate>: NSObject, URLSessionDelegate, URLSessionTaskDelegate, URLSessionDataDelegate, URLSessionDownloadDelegate {
     public var insecure: Bool
     public var requests: [TaskIdentifier: PPRequest<RequestTaskDelegate>] = [:]
-    public let lock = NSLock()
+    private let requestAccessQueue = DispatchQueue(
+        label: "com.pusherplatform.swift.session-requests.\(UUID().uuidString)",
+        attributes: .concurrent
+    )
 
     public var logger: PPLogger? = nil {
         willSet {
@@ -18,15 +21,15 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
 
     public subscript(task: URLSessionTask) -> PPRequest<RequestTaskDelegate>? {
         get {
-            lock.lock()
-            defer { lock.unlock() }
-            return requests[task.taskIdentifier]
+            return requestAccessQueue.sync {
+                return requests[task.taskIdentifier]
+            }
         }
 
         set {
-            lock.lock()
-            defer { lock.unlock() }
-            requests[task.taskIdentifier] = newValue
+            requestAccessQueue.sync {
+                requests[task.taskIdentifier] = newValue
+            }
         }
     }
 
@@ -35,18 +38,29 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
     }
 
     public func removeRequestPairedWithTaskId(_ taskId: Int) {
-        lock.lock()
-        defer { lock.unlock() }
-        if let _ = requests.removeValue(forKey: taskId) {
-            self.logger?.log(
-                "Successfully removed request with taskId: \(taskId)",
-                logLevel: .verbose
-            )
-        } else {
-            self.logger?.log(
-                "Failed to remove request with taskId: \(taskId)",
-                logLevel: .verbose
-            )
+        requestAccessQueue.sync {
+            if let _ = requests.removeValue(forKey: taskId) {
+                self.logger?.log(
+                    "Successfully removed request with taskId: \(taskId)",
+                    logLevel: .verbose
+                )
+            } else {
+                self.logger?.log(
+                    "Failed to remove request with taskId: \(taskId)",
+                    logLevel: .verbose
+                )
+            }
+        }
+    }
+
+    public func addRequest(_ req: PPRequest<RequestTaskDelegate>, withTaskID taskID: TaskIdentifier) -> Error? {
+        return requestAccessQueue.sync {
+            guard self.requests[taskID] == nil else {
+                return PPBaseClientError.preExistingTaskIdentifierForRequest
+            }
+
+            self.requests[taskID] = req
+            return nil
         }
     }
 

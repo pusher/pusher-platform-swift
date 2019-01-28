@@ -181,14 +181,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
 
-        // TODO: We should really be locking the sessionDelegate's list of requests for the check
-        // and the assignment together
-        guard self.generalRequestSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+        let err = self.generalRequestSessionDelegate.addRequest(
+            generalRequest,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
             return
         }
-
-        self.generalRequestSessionDelegate[task] = generalRequest
 
         generalRequest.options = requestOptions
 
@@ -233,15 +234,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
 
-        guard self.generalRequestSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
-            return
-        }
-
         let generalRequest = PPGeneralRequest()
         generalRequest.options = requestOptions
 
-        self.generalRequestSessionDelegate[task] = generalRequest
+        let err = self.generalRequestSessionDelegate.addRequest(
+            generalRequest,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
+            return
+        }
 
         let generalRequestDelegate = generalRequest.delegate
 
@@ -298,12 +302,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
-        guard self.subscriptionSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+        let err = self.subscriptionSessionDelegate.addRequest(
+            subscription,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
             return
         }
-
-        self.subscriptionSessionDelegate[task] = subscription
 
         subscription.options = requestOptions
 
@@ -357,15 +364,18 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
-        guard self.subscriptionSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
-            return
-        }
-
         let subscription = PPSubscription()
         subscription.options = requestOptions
 
-        self.subscriptionSessionDelegate[task] = subscription
+        let err = self.subscriptionSessionDelegate.addRequest(
+            subscription,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
+            return
+        }
 
         let subscriptionDelegate = subscription.delegate
 
@@ -442,14 +452,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         let task: URLSessionDownloadTask = self.downloadURLSession.downloadTask(with: request)
 
-        // TODO: We should really be locking the sessionDelegate's list of requests for the check
-        // and the assignment together
-        guard self.downloadSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+        let err = self.downloadSessionDelegate.addRequest(
+            downloadRequest,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
             return
         }
-
-        self.downloadSessionDelegate[task] = downloadRequest
 
         downloadRequest.options = requestOptions
 
@@ -561,14 +572,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
             let wrappedOnSuccess = fileRemoverWrapper(fileURL: fileURL, onSuccess)
             let wrappedOnError = fileRemoverWrapper(fileURL: fileURL, onError)
 
-            // TODO: We should really be locking the sessionDelegate's list of requests for the check
-            // and the assignment together
-            guard self.uploadSessionDelegate[task] == nil else {
-                onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+            let err = self.uploadSessionDelegate.addRequest(
+                uploadRequest,
+                withTaskID: task.taskIdentifier
+            )
+
+            guard err == nil else {
+                onError?(err!)
                 return
             }
-
-            self.uploadSessionDelegate[task] = uploadRequest
 
             uploadRequest.options = requestOptions
 
