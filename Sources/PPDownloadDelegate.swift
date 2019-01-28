@@ -28,7 +28,7 @@ public class PPDownloadDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     func handleFinishedDownload(tempURL: URL, response: URLResponse?) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
@@ -39,7 +39,7 @@ public class PPDownloadDelegate: NSObject, PPRequestTaskDelegate {
         }
 
         self.logger?.log(
-            "Task with taskIdentifier \(self.task!.taskIdentifier) finished downloading to \(tempURL.absoluteString) with response: \(response.debugDescription)",
+            "Task with taskIdentifier \(task.taskIdentifier) finished downloading to \(tempURL.absoluteString) with response: \(response.debugDescription)",
             logLevel: .verbose
         )
 
@@ -85,12 +85,12 @@ public class PPDownloadDelegate: NSObject, PPRequestTaskDelegate {
     // The only errors received through the error parameter are client-side errors,
     // such as being unable to resolve the hostname or connect to the host.
     internal func handleCompletion(error: Error? = nil) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
 
-        self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
+        self.logger?.log("Task \(task.taskIdentifier) handling completion", logLevel: .verbose)
 
         // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
 
@@ -105,7 +105,7 @@ public class PPDownloadDelegate: NSObject, PPRequestTaskDelegate {
                 self.logger?.log("Request cancelled", logLevel: .verbose)
             } else {
                 self.logger?.log(
-                    "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
+                    "Request has already communicated an error: \(self.error!.localizedDescription). New error: \(errorToReport.localizedDescription)",
                     logLevel: .debug
                 )
             }
@@ -118,13 +118,13 @@ public class PPDownloadDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     func handleDataWritten(bytesWritten: Int64, totalBytesWritten: Int64, totalBytesExpectedToWrite: Int64) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
 
         self.logger?.log(
-            "Task with taskIdentifier \(self.task!.taskIdentifier) wrote \(bytesWritten) bytes, taking the total to \(totalBytesWritten)/\(totalBytesExpectedToWrite) bytes",
+            "Task with taskIdentifier \(task.taskIdentifier) wrote \(bytesWritten) bytes, taking the total to \(totalBytesWritten)/\(totalBytesExpectedToWrite) bytes",
             logLevel: .verbose
         )
 

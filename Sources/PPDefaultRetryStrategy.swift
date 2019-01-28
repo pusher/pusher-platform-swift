@@ -21,9 +21,9 @@ public class PPDefaultRetryStrategy: PPRetryStrategy {
     public func shouldRetry(given error: Error) -> PPRetryStrategyResult {
         self.numberOfAttempts += 1
 
-        guard self.maxNumberOfAttempts != nil && self.numberOfAttempts < self.maxNumberOfAttempts! else {
+        if let maxNumAttempts = self.maxNumberOfAttempts, self.numberOfAttempts >= maxNumAttempts {
             self.logger?.log(
-                "Maximum number of attempts (\(self.maxNumberOfAttempts!)) made. Latest error: \(error.localizedDescription)",
+                "Maximum number of attempts (\(self.numberOfAttempts)) made. Latest error: \(error.localizedDescription)",
                 logLevel: .debug
             )
             return PPRetryStrategyResult.doNotRetry(
@@ -37,9 +37,9 @@ public class PPDefaultRetryStrategy: PPRetryStrategy {
                                   ? min(timeIntervalBeforeNextAttempt, self.maxTimeIntervalBetweenAttempts!)
                                   : timeIntervalBeforeNextAttempt
 
-        if self.maxNumberOfAttempts != nil {
+        if let maxAttempts = self.maxNumberOfAttempts {
             self.logger?.log(
-                "Making attempt \(self.numberOfAttempts + 1) of \(self.maxNumberOfAttempts!) in \(timeBeforeNextAttempt)s. Error was: \(error.localizedDescription)",
+                "Making attempt \(self.numberOfAttempts + 1) of \(maxAttempts) in \(timeBeforeNextAttempt)s. Error was: \(error.localizedDescription)",
                 logLevel: .debug
             )
         } else {
