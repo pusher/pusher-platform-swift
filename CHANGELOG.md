@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.6.4...HEAD)
 
+### Changed
+
+- Requests that receive a 4XX response status code will now not retry, by default
+
+### Added
+
+- `BaseClient` supports `enableTracing` flag so that all requests will have a client-specified request ID added to force tracing
+
+### Fixed
+
+- `requests` object belonging to `PPBaseURLSessionDelegate` now uses a `DispatchQueue` for proper synchronised access
+
 ## [0.6.4](https://github.com/pusher/pusher-platform-swift/compare/0.6.3...0.6.4) - 2019-01-22
 
 ### Fixed
