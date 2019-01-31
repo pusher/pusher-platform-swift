@@ -52,6 +52,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
     public let sdkInfo: PPSDKInfo
 
+    // If you want every request to have the X-Client-Request-ID header set
+    // then set this to true
+    let enableTracing: Bool
+
     public init(
         host: String,
         port: Int? = nil,
@@ -59,7 +63,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
         retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrategyGenerator,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 0,
-        sdkInfo: PPSDKInfo
+        sdkInfo: PPSDKInfo,
+        enableTracing: Bool = false
     ) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
@@ -72,6 +77,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.heartbeatTimeout = heartbeatTimeoutInterval
         self.heartbeatInitialSize = heartbeatInitialSize
         self.sdkInfo = sdkInfo
+        self.enableTracing = enableTracing
 
         self.subscriptionSessionDelegate = PPSubscriptionURLSessionDelegate(insecure: insecure)
 
@@ -175,6 +181,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
+        }
+
         if let body = requestOptions.body {
             request.httpBody = body
         }
@@ -226,6 +236,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         for (header, value) in requestOptions.headers {
             request.addValue(value, forHTTPHeaderField: header)
+        }
+
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
         }
 
         if let body = requestOptions.body {
@@ -300,6 +314,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
+        }
+
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
         let err = self.subscriptionSessionDelegate.addRequest(
@@ -360,6 +378,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         for (header, value) in requestOptions.headers {
             request.addValue(value, forHTTPHeaderField: header)
+        }
+
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
         }
 
         let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
@@ -450,6 +472,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
+        }
+
         let task: URLSessionDownloadTask = self.downloadURLSession.downloadTask(with: request)
 
         let err = self.downloadSessionDelegate.addRequest(
@@ -523,6 +549,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
         for (header, value) in requestOptions.headers {
             request.addValue(value, forHTTPHeaderField: header)
+        }
+
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
         }
 
         let formData = PPMultipartFormData()
