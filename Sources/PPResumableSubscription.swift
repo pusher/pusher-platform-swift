@@ -137,13 +137,15 @@ import Foundation
     }
 
     deinit {
-        self.subscription?.delegate.cleanUpHeartbeatTimeoutTimer()
-
         self.retrySubscriptionTimer = nil
 
-        // TODO: Do we need to add in some of the stuff that's in end in order
-        // to make sure things get cleaned up properly even if end() isn't called
-        // but reference count hits 0?
+        guard let subDelegate = self.subscription?.delegate else {
+            return
+        }
+
+        subDelegate.cleanUpHeartbeatTimeoutTimer()
+        subDelegate.cancelTask()
+        self.cleanUpOldSubscription(subscriptionDelegate: subDelegate)
     }
 
     public func end() {

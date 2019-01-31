@@ -139,8 +139,8 @@ public class PPHTTPEndpointTokenProvider: PPTokenProvider {
 
         var httpEndpointRequest: PPHTTPEndpointTokenProviderRequest? = nil
 
-        if requestInjector != nil {
-            httpEndpointRequest = requestInjector!(PPHTTPEndpointTokenProviderRequest())
+        if let reqInjector = requestInjector {
+            httpEndpointRequest = reqInjector(PPHTTPEndpointTokenProviderRequest())
         }
 
         let grantBodyString = "grant_type=client_credentials"

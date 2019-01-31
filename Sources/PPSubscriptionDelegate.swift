@@ -34,19 +34,23 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     public override required init() {}
 
     deinit {
-        self.logger?.log("Cancelling task: \(String(describing: self.task?.taskIdentifier))", logLevel: .verbose)
+        if let task = self.task {
+            self.logger?.log("Cancelling task with ID: \(task.taskIdentifier)", logLevel: .verbose)
+        } else {
+            self.logger?.log("Cancelling task with unkown ID", logLevel: .verbose)
+        }
         self.task?.cancel()
-        self.logger?.log("Invalidating heartbeatTimeoutTimer: \(String(describing: self.heartbeatTimeoutTimer))", logLevel: .verbose)
+        self.logger?.log("Invalidating heartbeatTimeoutTimer: \(self.heartbeatTimeoutTimer.debugDescription)", logLevel: .verbose)
         self.heartbeatTimeoutTimer = nil
     }
 
     func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
 
-        self.logger?.log("Task \(self.task!.taskIdentifier) handling response: \(response.debugDescription)", logLevel: .verbose)
+        self.logger?.log("Task \(task.taskIdentifier) handling response: \(response.debugDescription)", logLevel: .verbose)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             self.handleCompletion(error: PPRequestTaskDelegateError.invalidHTTPResponse(response: response))
@@ -68,7 +72,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
     @objc(handleData:)
     func handle(_ data: Data) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
@@ -107,13 +111,13 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
 
         guard let dataString = String(data: self.data, encoding: .utf8) else {
             self.logger?.log(
-                "Failed to convert received Data to String for task id \(String(describing: self.task?.taskIdentifier))",
+                "Failed to convert received Data to String for task id \(task.taskIdentifier)",
                 logLevel: .verbose
             )
             return
         }
 
-        self.logger?.log("Task \(self.task!.taskIdentifier) handling dataString: \(dataString)", logLevel: .verbose)
+        self.logger?.log("Task \(task.taskIdentifier) handling dataString: \(dataString)", logLevel: .verbose)
 
         var stringMessages = dataString.components(separatedBy: "\n")
 
@@ -150,8 +154,8 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     func handleCompletion(error: Error? = nil) {
-        if self.task != nil {
-            self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
+        if let task = self.task {
+            self.logger?.log("Task \(task.taskIdentifier) handling completion", logLevel: .verbose)
             self.cancelTask()
         } else {
             self.logger?.log("Task with unknown id handling completion", logLevel: .verbose)
@@ -173,7 +177,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
                 self.logger?.log("Request cancelled; likely due to an explicit call to end it, or a heartbeat timeout", logLevel: .verbose)
             } else {
                 self.logger?.log(
-                    "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
+                    "Request has already communicated an error: \(self.error!.localizedDescription). New error: \(errorToReport.localizedDescription)",
                     logLevel: .debug
                 )
             }
@@ -208,7 +212,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             let error = PPSubscriptionError.eosWithoutInfo(info)
             self.logger?.log(error.localizedDescription, logLevel: .verbose)
 
-            if self.task != nil { self.cancelTask() }
+            self.cancelTask()
             self.cleanUpHeartbeatTimeoutTimer()
             self.onEnd?(statusCode, headers, info)
             return
@@ -218,7 +222,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             let error = PPSubscriptionError.eosWithoutErrorInformation(errorInfo: errorInfo)
             self.logger?.log(error.localizedDescription, logLevel: .verbose)
 
-            if self.task != nil { self.cancelTask() }
+            self.cancelTask()
             self.cleanUpHeartbeatTimeoutTimer()
             self.onEnd?(statusCode, headers, info)
             return
@@ -231,7 +235,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
             let error = PPSubscriptionError.eosWithoutRetryAfter(errorMessage: errorString)
             self.logger?.log(error.localizedDescription, logLevel: .verbose)
 
-            if self.task != nil { self.cancelTask() }
+            self.cancelTask()
             self.cleanUpHeartbeatTimeoutTimer()
             self.onEnd?(statusCode, headers, info)
             return
@@ -240,7 +244,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
         guard error == nil else {
             self.logger?.log(error!.localizedDescription, logLevel: .verbose)
 
-            if self.task != nil { self.cancelTask() }
+            self.cancelTask()
             self.cleanUpHeartbeatTimeoutTimer()
             self.onEnd?(statusCode, headers, info)
             return
@@ -264,8 +268,9 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     func cancelTask() {
-        self.logger?.log("Cancelling task \(self.task!.taskIdentifier)", logLevel: .verbose)
-        self.task!.cancel()
+        guard let task = self.task else { return }
+        self.logger?.log("Cancelling task \(task.taskIdentifier)", logLevel: .verbose)
+        task.cancel()
     }
 
     fileprivate func endSubscriptionAfterHeartbeatTimeout() {

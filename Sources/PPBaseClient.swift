@@ -52,6 +52,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
 
     public let sdkInfo: PPSDKInfo
 
+    // If you want every request to have the X-Client-Request-ID header set
+    // then set this to true
+    let enableTracing: Bool
+
     public init(
         host: String,
         port: Int? = nil,
@@ -59,7 +63,8 @@ let REALLY_LONG_TIME: Double = 252_460_800
         retryStrategyBuilder: @escaping (PPRequestOptions) -> PPRetryStrategy = PPBaseClient.methodAwareRetryStrategyGenerator,
         heartbeatTimeoutInterval: Int = 60,
         heartbeatInitialSize: Int = 0,
-        sdkInfo: PPSDKInfo
+        sdkInfo: PPSDKInfo,
+        enableTracing: Bool = false
     ) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
@@ -72,6 +77,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
         self.heartbeatTimeout = heartbeatTimeoutInterval
         self.heartbeatInitialSize = heartbeatInitialSize
         self.sdkInfo = sdkInfo
+        self.enableTracing = enableTracing
 
         self.subscriptionSessionDelegate = PPSubscriptionURLSessionDelegate(insecure: insecure)
 
@@ -175,20 +181,25 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
+        }
+
         if let body = requestOptions.body {
             request.httpBody = body
         }
 
         let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
 
-        // TODO: We should really be locking the sessionDelegate's list of requests for the check
-        // and the assignment together
-        guard self.generalRequestSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+        let err = self.generalRequestSessionDelegate.addRequest(
+            generalRequest,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
             return
         }
-
-        self.generalRequestSessionDelegate[task] = generalRequest
 
         generalRequest.options = requestOptions
 
@@ -227,21 +238,28 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
+        }
+
         if let body = requestOptions.body {
             request.httpBody = body
         }
 
         let task: URLSessionDataTask = self.generalRequestURLSession.dataTask(with: request)
 
-        guard self.generalRequestSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
-            return
-        }
-
         let generalRequest = PPGeneralRequest()
         generalRequest.options = requestOptions
 
-        self.generalRequestSessionDelegate[task] = generalRequest
+        let err = self.generalRequestSessionDelegate.addRequest(
+            generalRequest,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
+            return
+        }
 
         let generalRequestDelegate = generalRequest.delegate
 
@@ -296,14 +314,21 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
-        let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
-
-        guard self.subscriptionSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
-            return
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
         }
 
-        self.subscriptionSessionDelegate[task] = subscription
+        let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
+
+        let err = self.subscriptionSessionDelegate.addRequest(
+            subscription,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
+            return
+        }
 
         subscription.options = requestOptions
 
@@ -355,17 +380,24 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
-        let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
-
-        guard self.subscriptionSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
-            return
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
         }
+
+        let task: URLSessionDataTask = self.subscriptionURLSession.dataTask(with: request)
 
         let subscription = PPSubscription()
         subscription.options = requestOptions
 
-        self.subscriptionSessionDelegate[task] = subscription
+        let err = self.subscriptionSessionDelegate.addRequest(
+            subscription,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
+            return
+        }
 
         let subscriptionDelegate = subscription.delegate
 
@@ -440,16 +472,21 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
-        let task: URLSessionDownloadTask = self.downloadURLSession.downloadTask(with: request)
-
-        // TODO: We should really be locking the sessionDelegate's list of requests for the check
-        // and the assignment together
-        guard self.downloadSessionDelegate[task] == nil else {
-            onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
-            return
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
         }
 
-        self.downloadSessionDelegate[task] = downloadRequest
+        let task: URLSessionDownloadTask = self.downloadURLSession.downloadTask(with: request)
+
+        let err = self.downloadSessionDelegate.addRequest(
+            downloadRequest,
+            withTaskID: task.taskIdentifier
+        )
+
+        guard err == nil else {
+            onError?(err!)
+            return
+        }
 
         downloadRequest.options = requestOptions
 
@@ -514,6 +551,10 @@ let REALLY_LONG_TIME: Double = 252_460_800
             request.addValue(value, forHTTPHeaderField: header)
         }
 
+        if self.enableTracing {
+            request.addValue(UUID().uuidString, forHTTPHeaderField: "X-Client-Request-ID")
+        }
+
         let formData = PPMultipartFormData()
         multipartFormData(formData)
 
@@ -561,14 +602,15 @@ let REALLY_LONG_TIME: Double = 252_460_800
             let wrappedOnSuccess = fileRemoverWrapper(fileURL: fileURL, onSuccess)
             let wrappedOnError = fileRemoverWrapper(fileURL: fileURL, onError)
 
-            // TODO: We should really be locking the sessionDelegate's list of requests for the check
-            // and the assignment together
-            guard self.uploadSessionDelegate[task] == nil else {
-                onError?(PPBaseClientError.preExistingTaskIdentifierForRequest)
+            let err = self.uploadSessionDelegate.addRequest(
+                uploadRequest,
+                withTaskID: task.taskIdentifier
+            )
+
+            guard err == nil else {
+                onError?(err!)
                 return
             }
-
-            self.uploadSessionDelegate[task] = uploadRequest
 
             uploadRequest.options = requestOptions
 
@@ -616,16 +658,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     // TODO: Maybe need the same for cancelling general requests?
     public func unsubscribe(taskIdentifier: Int, completionHandler: ((Error?) -> Void)? = nil) -> Void {
         self.subscriptionURLSession.getAllTasks { tasks in
-            guard tasks.count > 0 else {
-                completionHandler?(
-                    PPBaseClientError.noTasksForSubscriptionURLSession(self.subscriptionURLSession)
-                )
-                return
-            }
-
-            let filteredTasks = tasks.filter { $0.taskIdentifier == taskIdentifier }
-
-            guard filteredTasks.count == 1 else {
+            guard let task = tasks.first(where: { $0.taskIdentifier == taskIdentifier }) else {
                 completionHandler?(
                     PPBaseClientError.noTaskWithMatchingTaskIdentifierFound(
                         taskId: taskIdentifier,
@@ -635,7 +668,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
                 return
             }
 
-            filteredTasks.first!.cancel()
+            task.cancel()
             completionHandler?(nil)
         }
     }
@@ -728,7 +761,6 @@ internal enum PPBaseClientError: Error {
     case invalidRawURL(_: String)
     case invalidURL(components: URLComponents)
     case preExistingTaskIdentifierForRequest
-    case noTasksForSubscriptionURLSession(URLSession)
     case noTaskWithMatchingTaskIdentifierFound(taskId: Int, session: URLSession)
 }
 
@@ -743,8 +775,6 @@ extension PPBaseClientError: LocalizedError {
             return "Invalid URL from components: \(components.debugDescription)"
         case .preExistingTaskIdentifierForRequest:
             return "Task identifier already in use for another request"
-        case .noTasksForSubscriptionURLSession(let urlSession):
-            return "No tasks for URLSession: \(urlSession.debugDescription)"
         case .noTaskWithMatchingTaskIdentifierFound(let taskId, let urlSession):
             return "No task with id \(taskId) for URLSession: \(urlSession.debugDescription)"
         }

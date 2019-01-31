@@ -336,8 +336,8 @@ import Foundation
     ) {
         let mutableRequestOptions = namespacePathIfRelativeDestination(requestOptions)
 
-        if requestOptions.shouldFetchToken && self.tokenProvider != nil {
-            self.tokenProvider!.fetchToken { result in
+        if requestOptions.shouldFetchToken, let tokenProvider = self.tokenProvider {
+            tokenProvider.fetchToken { result in
                 switch result {
                 case .error(let error): onError?(error)
                 case .success(let jwtFromTokenProvider):

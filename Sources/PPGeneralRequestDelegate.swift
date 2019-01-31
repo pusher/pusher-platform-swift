@@ -26,12 +26,12 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     }
 
     internal func handle(_ response: URLResponse, completionHandler: (URLSession.ResponseDisposition) -> Void) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
 
-        self.logger?.log("Task \(self.task!.taskIdentifier) handling response: \(response.debugDescription)", logLevel: .verbose)
+        self.logger?.log("Task \(task.taskIdentifier) handling response: \(response.debugDescription)", logLevel: .verbose)
 
         guard let httpResponse = response as? HTTPURLResponse else {
             self.handleCompletion(error: PPRequestTaskDelegateError.invalidHTTPResponse(response: response))
@@ -48,15 +48,15 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
 
     @objc(handleData:)
     internal func handle(_ data: Data) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
 
         if let dataString = String(data: data, encoding: .utf8) {
-            self.logger?.log("Task \(self.task!.taskIdentifier) handling dataString: \(dataString)", logLevel: .verbose)
+            self.logger?.log("Task \(task.taskIdentifier) handling dataString: \(dataString)", logLevel: .verbose)
         } else {
-            self.logger?.log("Task \(self.task!.taskIdentifier) handling data", logLevel: .verbose)
+            self.logger?.log("Task \(task.taskIdentifier) handling data", logLevel: .verbose)
         }
 
         guard self.badResponse == nil else {
@@ -95,12 +95,12 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     // The only errors received through the error parameter are client-side errors,
     // such as being unable to resolve the hostname or connect to the host.
     internal func handleCompletion(error: Error? = nil) {
-        guard self.task != nil else {
+        guard let task = self.task else {
             self.logger?.log("Task not set in request delegate", logLevel: .debug)
             return
         }
 
-        self.logger?.log("Task \(self.task!.taskIdentifier) handling completion", logLevel: .verbose)
+        self.logger?.log("Task \(task.taskIdentifier) handling completion", logLevel: .verbose)
 
         // TODO: The request is probably DONE DONE so we can tear it all down? Yeah?
 
@@ -124,7 +124,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
                 self.logger?.log("Request cancelled", logLevel: .verbose)
             } else {
                 self.logger?.log(
-                    "Request has already communicated an error: \(String(describing: self.error!.localizedDescription)). New error: \(String(describing: error))",
+                    "Request has already communicated an error: \(self.error!.localizedDescription). New error: \(errorToReport.localizedDescription))",
                     logLevel: .debug
                 )
             }
