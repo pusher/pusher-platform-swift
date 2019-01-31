@@ -21,14 +21,37 @@ public class PPDefaultRetryStrategy: PPRetryStrategy {
     public func shouldRetry(given error: Error) -> PPRetryStrategyResult {
         self.numberOfAttempts += 1
 
+        if let statusError = error as? PPRequestTaskDelegateError {
+            var resWithMessage: (response: HTTPURLResponse, message: String?)? = nil
+
+            switch statusError {
+            case .badResponseStatusCode(let res):
+                resWithMessage = (response: res, message: nil)
+            case .badResponseStatusCodeWithMessage(let res, let msg):
+                resWithMessage = (response: res, message: msg)
+            default:
+                break
+            }
+
+            if let resWithMessage = resWithMessage {
+                let err = PPDefaultRetryStrategyError.statusCode4XXReceived(
+                    response: resWithMessage.response,
+                    message: resWithMessage.message
+                )
+                if 400..<500 ~= resWithMessage.response.statusCode {
+                    self.logger?.log(err.localizedDescription, logLevel: .debug)
+                    return PPRetryStrategyResult.doNotRetry(reason: err)
+                }
+            }
+        }
+
         if let maxNumAttempts = self.maxNumberOfAttempts, self.numberOfAttempts >= maxNumAttempts {
-            self.logger?.log(
-                "Maximum number of attempts (\(self.numberOfAttempts)) made. Latest error: \(error.localizedDescription)",
-                logLevel: .debug
+            let err = PPDefaultRetryStrategyError.maximumNumberOfAttemptsMade(
+                attemptsMade: self.numberOfAttempts,
+                latestErrorReceived: error
             )
-            return PPRetryStrategyResult.doNotRetry(
-                reason: PPDefaultRetryStrategyError.maximumNumberOfAttemptsMade(latestErrorReceived: error)
-            )
+            self.logger?.log(err.localizedDescription, logLevel: .debug)
+            return PPRetryStrategyResult.doNotRetry(reason: err)
         }
 
         let timeIntervalBeforeNextAttempt = TimeInterval(self.numberOfAttempts * self.numberOfAttempts)
@@ -55,14 +78,18 @@ public class PPDefaultRetryStrategy: PPRetryStrategy {
 }
 
 public enum PPDefaultRetryStrategyError: Error {
-    case maximumNumberOfAttemptsMade(latestErrorReceived: Error)
+    case maximumNumberOfAttemptsMade(attemptsMade: Int, latestErrorReceived: Error)
+    case statusCode4XXReceived(response: HTTPURLResponse, message: String?)
 }
 
 extension PPDefaultRetryStrategyError: LocalizedError {
     public var errorDescription: String? {
         switch self {
-        case .maximumNumberOfAttemptsMade(let latestErrorReceived):
-            return "Maximum number of attempts made. The last error receieved was: \(latestErrorReceived.localizedDescription)"
+        case .maximumNumberOfAttemptsMade(let attemptsMade, let latestErrorReceived):
+            return "Maximum number of attempts (\(attemptsMade)) made. Last error receieved was: \(latestErrorReceived.localizedDescription)"
+        case .statusCode4XXReceived(let response, let message):
+            let errMessage = message ?? ""
+            return "Response received with status code \(response.statusCode). Error message: \(errMessage). Response: \(response.description)"
         }
     }
 }
