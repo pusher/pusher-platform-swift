@@ -144,7 +144,7 @@ import Foundation
         }
 
         subDelegate.cleanUpHeartbeatTimeoutTimer()
-        self.cancelExistingSubscriptionTask(subscriptionDelegate: subDelegate)
+        subDelegate.cancelTask()
         self.cleanUpOldSubscription(subscriptionDelegate: subDelegate)
     }
 
