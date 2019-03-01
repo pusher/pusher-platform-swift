@@ -6,8 +6,7 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
     public var insecure: Bool
     public var requests: [TaskIdentifier: PPRequest<RequestTaskDelegate>] = [:]
     private let requestAccessQueue = DispatchQueue(
-        label: "com.pusherplatform.swift.session-requests.\(UUID().uuidString)",
-        attributes: .concurrent
+        label: "com.pusherplatform.swift.session-requests.\(UUID().uuidString)"
     )
 
     public var logger: PPLogger? = nil {
