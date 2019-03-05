@@ -265,14 +265,15 @@ import Foundation
     }
 
     func setupNewSubscription() {
-        guard let subscriptionDelegate = self.subscription?.delegate else {
+        guard let subscription = self.subscription else {
             self.instance.logger.log(
-                "No delegate for subscription: \(self.subscription.debugDescription)",
+                "Subscription is nil for resumable subscription: \(self.debugDescription)",
                 logLevel: .error
             )
             return
         }
 
+        let subscriptionDelegate = subscription.delegate
         self.cancelExistingSubscriptionTask(subscriptionDelegate: subscriptionDelegate)
         self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
 
