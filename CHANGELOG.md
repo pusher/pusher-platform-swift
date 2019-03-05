@@ -4,7 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.7.0...HEAD)
+## [Unreleased](https://github.com/pusher/pusher-platform-swift/compare/0.7.1...HEAD)
+
+## [0.7.1](https://github.com/pusher/pusher-platform-swift/compare/0.7.0...0.7.1) - 2019-03-05
+
+### Fixed
+
+- PPBaseURLSessionDelegate uses a serial queue instead of a concurrent queue. Previously
+  the concurrent queue was not appropriately guarded so we could get outdated values.
 
 ## [0.7.0](https://github.com/pusher/pusher-platform-swift/compare/0.6.4...0.7.0) - 2019-01-31
 
