@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		222BAAEB22F453310050B196 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAEA22F453310050B196 /* PersistenceController.swift */; };
+		222BAAEE22F489180050B196 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAED22F489180050B196 /* PersistenceError.swift */; };
+		22F0A46F22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */; };
+		22F0A47122F822E400787225 /* ErrorRecoveryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47022F822E400787225 /* ErrorRecoveryPolicy.swift */; };
 		22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */; };
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
 		3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */; };
@@ -54,6 +58,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		222BAAEA22F453310050B196 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		222BAAED22F489180050B196 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
+		22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistentStoreDescription+RLBErrorRecovery.swift"; sourceTree = "<group>"; };
+		22F0A47022F822E400787225 /* ErrorRecoveryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRecoveryPolicy.swift; sourceTree = "<group>"; };
 		22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchSemaphore.swift; sourceTree = "<group>"; };
 		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
 		33025C06212B346800C12249 /* PPRepeater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRepeater.swift; sourceTree = "<group>"; };
@@ -112,6 +120,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		222BAAE822F4531B0050B196 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				222BAAE922F453250050B196 /* Controller */,
+				222BAAEC22F489010050B196 /* Error Handling */,
+			);
+			name = Persistence;
+			sourceTree = "<group>";
+		};
+		222BAAE922F453250050B196 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				222BAAEA22F453310050B196 /* PersistenceController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
+		222BAAEC22F489010050B196 /* Error Handling */ = {
+			isa = PBXGroup;
+			children = (
+				22F0A46D22F8223100787225 /* Error Recovery */,
+				222BAAED22F489180050B196 /* PersistenceError.swift */,
+			);
+			name = "Error Handling";
+			sourceTree = "<group>";
+		};
+		22F0A46D22F8223100787225 /* Error Recovery */ = {
+			isa = PBXGroup;
+			children = (
+				22F0A47022F822E400787225 /* ErrorRecoveryPolicy.swift */,
+				22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */,
+			);
+			name = "Error Recovery";
+			sourceTree = "<group>";
+		};
 		3301FDD7204597A900AE591A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -142,6 +185,7 @@
 		33831C8B1A9CF61600B124F1 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				222BAAE822F4531B0050B196 /* Persistence */,
 				338290711DF5CEC6008CDC8F /* Instance.swift */,
 				33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */,
 				338202491FFCF02B00DC9664 /* PPBaseURLSessionDelegate.swift */,
@@ -286,6 +330,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 33831C491A9CEDF800B124F1;
@@ -330,6 +375,8 @@
 				33DD99701FE195DF00A15211 /* PPMultipartFormData.swift in Sources */,
 				3382024A1FFCF02B00DC9664 /* PPBaseURLSessionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */,
+				22F0A47122F822E400787225 /* ErrorRecoveryPolicy.swift in Sources */,
+				222BAAEB22F453310050B196 /* PersistenceController.swift in Sources */,
 				331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */,
 				330DD21C1E0C433A00EC251F /* PPLogger.swift in Sources */,
 				33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */,
@@ -339,6 +386,7 @@
 				33025C07212B346800C12249 /* PPRepeater.swift in Sources */,
 				22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* PPMessageParser.swift in Sources */,
+				22F0A46F22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift in Sources */,
 				3337CF652035E9FD000892B6 /* PPSDKInfo.swift in Sources */,
 				336F2A3B1FFBF17E0098687B /* PPSubscriptionURLSessionDelegate.swift in Sources */,
 				334ED1F01FE96CE20041A9CA /* PPDownloadDelegate.swift in Sources */,
@@ -346,6 +394,7 @@
 				332E05E81DDCA919007A55FB /* PPMessage.swift in Sources */,
 				338202501FFCFF3B00DC9664 /* PPUploadURLSessionDelegate.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift in Sources */,
+				222BAAEE22F489180050B196 /* PersistenceError.swift in Sources */,
 				33816B081EB379F800E5A169 /* PPGeneralRequestDelegate.swift in Sources */,
 				33816B061EB375AA00E5A169 /* PPRequestTaskDelegate.swift in Sources */,
 				3382024C1FFCFEBB00DC9664 /* PPUploadDelegate.swift in Sources */,
