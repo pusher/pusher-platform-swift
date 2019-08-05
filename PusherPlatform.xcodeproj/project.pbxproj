@@ -11,6 +11,8 @@
 		222BAAEE22F489180050B196 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAED22F489180050B196 /* PersistenceError.swift */; };
 		22F0A46F22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */; };
 		22F0A47122F822E400787225 /* ErrorRecoveryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47022F822E400787225 /* ErrorRecoveryPolicy.swift */; };
+		22F0A47422F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47322F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift */; };
+		22F0A47722F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */; };
 		22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */; };
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
 		3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */; };
@@ -62,6 +64,8 @@
 		222BAAED22F489180050B196 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistentStoreDescription+RLBErrorRecovery.swift"; sourceTree = "<group>"; };
 		22F0A47022F822E400787225 /* ErrorRecoveryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRecoveryPolicy.swift; sourceTree = "<group>"; };
+		22F0A47322F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPersistentStoreDescription+StoreTypes.swift"; sourceTree = "<group>"; };
+		22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSPersistentStoreDescription_StoreTypesTests.swift; sourceTree = "<group>"; };
 		22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchSemaphore.swift; sourceTree = "<group>"; };
 		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
 		33025C06212B346800C12249 /* PPRepeater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRepeater.swift; sourceTree = "<group>"; };
@@ -125,6 +129,7 @@
 			children = (
 				222BAAE922F453250050B196 /* Controller */,
 				222BAAEC22F489010050B196 /* Error Handling */,
+				22F0A47222F8599700787225 /* Store Description */,
 			);
 			name = Persistence;
 			sourceTree = "<group>";
@@ -153,6 +158,22 @@
 				22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */,
 			);
 			name = "Error Recovery";
+			sourceTree = "<group>";
+		};
+		22F0A47222F8599700787225 /* Store Description */ = {
+			isa = PBXGroup;
+			children = (
+				22F0A47322F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift */,
+			);
+			name = "Store Description";
+			sourceTree = "<group>";
+		};
+		22F0A47522F8629500787225 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */,
+			);
+			path = Persistence;
 			sourceTree = "<group>";
 		};
 		3301FDD7204597A900AE591A /* Frameworks */ = {
@@ -241,6 +262,7 @@
 		33BB995C1D21225B00B25C2A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				22F0A47522F8629500787225 /* Persistence */,
 				33C2FB141F3E99C4006AB501 /* MessageParserTests.swift */,
 				3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */,
 				33BB99671D21226C00B25C2A /* Info.plist */,
@@ -389,6 +411,7 @@
 				22F0A46F22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift in Sources */,
 				3337CF652035E9FD000892B6 /* PPSDKInfo.swift in Sources */,
 				336F2A3B1FFBF17E0098687B /* PPSubscriptionURLSessionDelegate.swift in Sources */,
+				22F0A47422F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift in Sources */,
 				334ED1F01FE96CE20041A9CA /* PPDownloadDelegate.swift in Sources */,
 				A1C545371F753E3700F15509 /* PPHTTPBodyPair.swift in Sources */,
 				332E05E81DDCA919007A55FB /* PPMessage.swift in Sources */,
@@ -408,6 +431,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33C2FB151F3E99C4006AB501 /* MessageParserTests.swift in Sources */,
+				22F0A47722F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift in Sources */,
 				3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
