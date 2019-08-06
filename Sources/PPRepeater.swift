@@ -155,10 +155,28 @@ public class PPRepeater: Equatable {
     /// Token assigned to the observer
     typealias ObserverToken = UInt64
 
+    /// Semaphore used to synchronize access to state
+    private let lock = DispatchSemaphore(value: 1)
+    
     /// Current state of the timer
-    private(set) var state: State = .paused {
+    private(set) var state: State {
+        get {
+            return self.lock.synchronized {
+                self._state
+            }
+        }
+        
+        set(newValue) {
+            self.lock.synchronized {
+                self._state = newValue
+            }
+        }
+    }
+    
+    /// Backing variable used to for synchronized access to state
+    private var _state: State = .paused {
         didSet {
-            self.onStateChanged?(self, state)
+            self.onStateChanged?(self, _state)
         }
     }
 
