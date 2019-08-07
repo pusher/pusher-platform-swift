@@ -88,7 +88,7 @@ public class PersistenceController {
     
     // MARK: - Public methods
     
-    public func performBackgroundTask(backgroundTask: @escaping BackgroundTask) {
+    public func performBackgroundTask(_ backgroundTask: @escaping BackgroundTask) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.automaticallyMergesChangesFromParent = true
         context.parent = privateContext
