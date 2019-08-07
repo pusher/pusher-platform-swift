@@ -11,11 +11,13 @@
 		222BAAEB22F453310050B196 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAEA22F453310050B196 /* PersistenceController.swift */; };
 		222BAAEE22F489180050B196 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAED22F489180050B196 /* PersistenceError.swift */; };
 		22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */; };
+		2296D72422F9DC1D00921EDA /* TestModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2296D72122F9DB6300921EDA /* TestModel.xcdatamodeld */; };
 		22F0A46F22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */; };
 		22F0A47122F822E400787225 /* ErrorRecoveryPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47022F822E400787225 /* ErrorRecoveryPolicy.swift */; };
 		22F0A47422F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47322F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift */; };
 		22F0A47722F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */; };
 		22F0A47B22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47A22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift */; };
+		22F0A47D22F879AA00787225 /* PersistenceControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22F0A47C22F879AA00787225 /* PersistenceControllerTests.swift */; };
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
 		3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */; };
 		33025C07212B346800C12249 /* PPRepeater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33025C06212B346800C12249 /* PPRepeater.swift */; };
@@ -66,11 +68,13 @@
 		222BAAEA22F453310050B196 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		222BAAED22F489180050B196 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
 		22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchSemaphore.swift; sourceTree = "<group>"; };
+		2296D72222F9DB6300921EDA /* TestModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestModel.xcdatamodel; sourceTree = "<group>"; };
 		22F0A46E22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistentStoreDescription+RLBErrorRecovery.swift"; sourceTree = "<group>"; };
 		22F0A47022F822E400787225 /* ErrorRecoveryPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorRecoveryPolicy.swift; sourceTree = "<group>"; };
 		22F0A47322F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSPersistentStoreDescription+StoreTypes.swift"; sourceTree = "<group>"; };
 		22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSPersistentStoreDescription_StoreTypesTests.swift; sourceTree = "<group>"; };
 		22F0A47A22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSPersistentStoreDescription_RecoveryTests.swift; sourceTree = "<group>"; };
+		22F0A47C22F879AA00787225 /* PersistenceControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceControllerTests.swift; sourceTree = "<group>"; };
 		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
 		33025C06212B346800C12249 /* PPRepeater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRepeater.swift; sourceTree = "<group>"; };
 		330DD21B1E0C433A00EC251F /* PPLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPLogger.swift; sourceTree = "<group>"; };
@@ -101,7 +105,7 @@
 		33935EA71DA5399A00C5C064 /* PPTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPTokenProvider.swift; sourceTree = "<group>"; };
 		33935EAB1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPHTTPEndpointTokenProvider.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPBaseClient.swift; sourceTree = "<group>"; };
-		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../Tests/Info.plist; sourceTree = "<group>"; };
+		33BB99671D21226C00B25C2A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		33C2FB141F3E99C4006AB501 /* MessageParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MessageParserTests.swift; path = ../Tests/MessageParserTests.swift; sourceTree = "<group>"; };
 		33DD996F1FE195DE00A15211 /* PPMultipartFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PPMultipartFormData.swift; sourceTree = "<group>"; };
 		33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultRetryStrategy.swift; sourceTree = "<group>"; };
@@ -134,6 +138,14 @@
 				220E87CD22FACA11008B3B95 /* NSManagedObjectContext+Persistence.swift */,
 			);
 			name = Context;
+			sourceTree = "<group>";
+		};
+		220E87CF22FAF62B008B3B95 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2296D72122F9DB6300921EDA /* TestModel.xcdatamodeld */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		222BAAE822F4531B0050B196 /* Persistence */ = {
@@ -186,6 +198,7 @@
 			children = (
 				22F0A47A22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift */,
 				22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */,
+				22F0A47C22F879AA00787225 /* PersistenceControllerTests.swift */,
 			);
 			path = Persistence;
 			sourceTree = "<group>";
@@ -276,6 +289,7 @@
 		33BB995C1D21225B00B25C2A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				220E87CF22FAF62B008B3B95 /* Model */,
 				22F0A47522F8629500787225 /* Persistence */,
 				33C2FB141F3E99C4006AB501 /* MessageParserTests.swift */,
 				3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */,
@@ -447,6 +461,8 @@
 			files = (
 				33C2FB151F3E99C4006AB501 /* MessageParserTests.swift in Sources */,
 				22F0A47722F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift in Sources */,
+				22F0A47D22F879AA00787225 /* PersistenceControllerTests.swift in Sources */,
+				2296D72422F9DC1D00921EDA /* TestModel.xcdatamodeld in Sources */,
 				3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */,
 				22F0A47B22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift in Sources */,
 			);
@@ -803,6 +819,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		2296D72122F9DB6300921EDA /* TestModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				2296D72222F9DB6300921EDA /* TestModel.xcdatamodel */,
+			);
+			currentVersion = 2296D72222F9DB6300921EDA /* TestModel.xcdatamodel */;
+			path = TestModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 33831C4A1A9CEDF800B124F1 /* Project object */;
 }
