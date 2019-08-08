@@ -26,37 +26,28 @@ class PersistenceControllerTests: XCTestCase {
         
         let instantiationExpectation = self.expectation(description: "Instantiation")
         
-        let optionalPersistenceController = PersistenceController(model: self.testModel, storeDescriptions: [self.testStoreDescription], logger: PPDefaultLogger()) { error in
-            if error != nil {
-                assertionFailure("Failed to create in-memory store.")
+        do {
+            self.persistenceController = try PersistenceController(model: self.testModel, storeDescriptions: [self.testStoreDescription], logger: PPDefaultLogger()) { error in
+                if error != nil {
+                    assertionFailure("Failed to create in-memory store.")
+                }
+                
+                instantiationExpectation.fulfill()
             }
-            
+        } catch {
+            assertionFailure("Failed to instantiat persistence controller.")
             instantiationExpectation.fulfill()
         }
         
         waitForExpectations(timeout: 5.0)
-        
-        guard let persistenceController = optionalPersistenceController else {
-            assertionFailure("Failed to instantiat persistence controller.")
-            return
-        }
-        
-        self.persistenceController = persistenceController
     }
     
     // MARK: - Tests
     
     func testShouldNotInstantiatePersistenceControllerWithoutStoreDescriptions() {
-        let persistenceController = PersistenceController(storeDescriptions: []) { error in
-            guard let error = error as? PersistenceError else {
-                XCTFail("Missing error object.")
-                return
-            }
-            
-            XCTAssertEqual(error, PersistenceError.persistentStoreDescriptionMissing)
+        XCTAssertThrowsError(try PersistenceController(storeDescriptions: [])) { error in
+            XCTAssertEqual(error as? PersistenceError, PersistenceError.persistentStoreDescriptionMissing)
         }
-        
-        XCTAssertNil(persistenceController)
     }
     
     func testShouldNotInstantiatePersistenceControllerFromThreadOtherThanMainThread() {
@@ -65,16 +56,13 @@ class PersistenceControllerTests: XCTestCase {
         DispatchQueue.global(qos: .background).async { [weak self] in
             guard let self = self else { return }
             
-            let persistenceController = PersistenceController(storeDescriptions: [self.testStoreDescription]) { error in
-                guard let error = error as? PersistenceError else {
-                    XCTFail("Missing error object.")
-                    return
-                }
-                
-                XCTAssertEqual(error, PersistenceError.threadConfinementViolation)
+            do {
+                // This should be implemented using a simple XCTAssertThrowsError(expression:, errorHandler:), but due to a compiler issue it cannot be at the moment. Please see Swift issue SR-487 for more details.
+                XCTAssertThrowsError(try PersistenceController(storeDescriptions: [self.testStoreDescription]))
+                let _ = try PersistenceController(storeDescriptions: [self.testStoreDescription])
+            } catch {
+                XCTAssertEqual(error as? PersistenceError, PersistenceError.threadConfinementViolation)
             }
-            
-            XCTAssertNil(persistenceController)
             
             expectation.fulfill()
         }

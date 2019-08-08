@@ -22,22 +22,22 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         
         let instantiationExpectation = self.expectation(description: "Instantiation")
         
-        let optionalPersistenceController = PersistenceController(model: model, storeDescriptions: [storeDescription]) { error in
-            if error != nil {
-                assertionFailure("Failed to create in-memory store.")
+        do {
+            self.persistenceController = try PersistenceController(model: model, storeDescriptions: [storeDescription]) { error in
+                if error != nil {
+                    assertionFailure("Failed to create in-memory store.")
+                }
+                
+                instantiationExpectation.fulfill()
             }
-            
+        } catch {
+            assertionFailure("Failed to instantiat persistence controller.")
             instantiationExpectation.fulfill()
         }
         
         waitForExpectations(timeout: 5.0)
         
-        guard let persistenceController = optionalPersistenceController else {
-            assertionFailure("Failed to instantiat persistence controller.")
-            return
-        }
-        
-        let mainContext = persistenceController.mainContext
+        let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
             let firstEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: TestEntity.self), into: mainContext) as! TestEntity
@@ -56,9 +56,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
             fifthEntity.name = "fifth"
         }
         
-        persistenceController.save()
-        
-        self.persistenceController = persistenceController
+        self.persistenceController.save()
     }
     
     // MARK: - Tests

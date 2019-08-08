@@ -30,27 +30,17 @@ public class PersistenceController {
     
     // MARK: - Initializers
     
-    public init?(model: NSManagedObjectModel, storeDescriptions: [NSPersistentStoreDescription], logger: PPLogger? = nil, completionHandler: CompletionHandler? = nil) {
+    public init(model: NSManagedObjectModel, storeDescriptions: [NSPersistentStoreDescription], logger: PPLogger? = nil, storesInitializationCompletionHandler: CompletionHandler? = nil) throws {
         self.logger = logger
         
         guard storeDescriptions.count > 0 else {
             self.logger?.log("At least one persistent store description is required to instantiated PersistenceController.", logLevel: .error)
-            
-            if let completionHandler = completionHandler {
-                completionHandler(PersistenceError.persistentStoreDescriptionMissing)
-            }
-            
-            return nil
+            throw PersistenceError.persistentStoreDescriptionMissing
         }
         
         guard Thread.isMainThread else {
             self.logger?.log("Due to thread confinement PersistenceController should always be instantiated on the main thread.", logLevel: .error)
-            
-            if let completionHandler = completionHandler {
-                completionHandler(PersistenceError.threadConfinementViolation)
-            }
-            
-            return nil
+            throw PersistenceError.threadConfinementViolation
         }
         
         self.model = model
@@ -69,21 +59,16 @@ public class PersistenceController {
         self.shouldSaveWhenApplicationWillTerminate = true
         
         registerForApplicationLifecycleNotifications()
-        addStores(for: storeDescriptions, completionHandler: completionHandler)
+        addStores(for: storeDescriptions, completionHandler: storesInitializationCompletionHandler)
     }
     
-    public convenience init?(storeDescriptions: [NSPersistentStoreDescription], logger: PPLogger? = nil, completionHandler: CompletionHandler? = nil) {
+    public convenience init(storeDescriptions: [NSPersistentStoreDescription], logger: PPLogger? = nil, storesInitializationCompletionHandler: CompletionHandler? = nil) throws {
         guard let model = NSManagedObjectModel.mergedModel(from: nil) else {
             logger?.log("Failed to locate object model in the main bundle.", logLevel: .error)
-            
-            if let completionHandler = completionHandler {
-                completionHandler(PersistenceError.objectModelNotFound)
-            }
-            
-            return nil
+            throw PersistenceError.objectModelNotFound
         }
         
-        self.init(model: model, storeDescriptions: storeDescriptions, logger: logger, completionHandler: completionHandler)
+        try self.init(model: model, storeDescriptions: storeDescriptions, logger: logger, storesInitializationCompletionHandler: storesInitializationCompletionHandler)
     }
     
     // MARK: - Public methods
