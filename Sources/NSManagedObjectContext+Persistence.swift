@@ -26,7 +26,12 @@ public extension NSManagedObjectContext {
     }
     
     func deleteAll<T: NSManagedObject>(_ entity: T.Type, predicateFormat: String, _ predicateArguments: CVarArg...) {
-        let predicate = NSPredicate(format: predicateFormat, predicateArguments)
+        var predicate: NSPredicate? = nil
+        
+        withVaList(predicateArguments) { arguments in
+            predicate = NSPredicate(format: predicateFormat, arguments: arguments)
+        }
+        
         deleteAll(entity, predicate: predicate)
     }
     
@@ -35,7 +40,12 @@ public extension NSManagedObjectContext {
     }
     
     func fetch<T: NSManagedObject>(_ entity: T.Type, sortDescriptors: [NSSortDescriptor]? = nil, predicateFormat: String, _ predicateArguments: CVarArg...) -> T? {
-        let predicate = NSPredicate(format: predicateFormat, predicateArguments)
+        var predicate: NSPredicate? = nil
+        
+        withVaList(predicateArguments) { arguments in
+            predicate = NSPredicate(format: predicateFormat, arguments: arguments)
+        }
+        
         return fetch(entity, sortDescriptors: sortDescriptors, predicate: predicate)
     }
     
@@ -49,7 +59,12 @@ public extension NSManagedObjectContext {
     }
     
     func fetchAll<T: NSManagedObject>(_ entity: T.Type, sortDescriptors: [NSSortDescriptor]? = nil, fetchLimit: Int = 0, predicateFormat: String, _ predicateArguments: CVarArg...) -> [T] {
-        let predicate = NSPredicate(format: predicateFormat, predicateArguments)
+        var predicate: NSPredicate? = nil
+        
+        withVaList(predicateArguments) { arguments in
+            predicate = NSPredicate(format: predicateFormat, arguments: arguments)
+        }
+        
         return fetchAll(entity, sortDescriptors: sortDescriptors, fetchLimit: fetchLimit, predicate: predicate)
     }
     
@@ -61,7 +76,12 @@ public extension NSManagedObjectContext {
     }
     
     func count<T: NSManagedObject>(_ entity: T.Type, predicateFormat: String, _ predicateArguments: CVarArg...) -> Int {
-        let predicate = NSPredicate(format: predicateFormat, predicateArguments)
+        var predicate: NSPredicate? = nil
+        
+        withVaList(predicateArguments) { arguments in
+            predicate = NSPredicate(format: predicateFormat, arguments: arguments)
+        }
+        
         return count(entity, predicate: predicate)
     }
     
