@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		22029BAC22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22029BAB22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift */; };
 		220E87CE22FACA11008B3B95 /* NSManagedObjectContext+Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220E87CD22FACA11008B3B95 /* NSManagedObjectContext+Persistence.swift */; };
 		222BAAEB22F453310050B196 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAEA22F453310050B196 /* PersistenceController.swift */; };
 		222BAAEE22F489180050B196 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAED22F489180050B196 /* PersistenceError.swift */; };
@@ -64,6 +65,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		22029BAB22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObjectContext_PersistenceTests.swift; sourceTree = "<group>"; };
 		220E87CD22FACA11008B3B95 /* NSManagedObjectContext+Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Persistence.swift"; sourceTree = "<group>"; };
 		222BAAEA22F453310050B196 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		222BAAED22F489180050B196 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 		22F0A47522F8629500787225 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				22029BAB22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift */,
 				22F0A47A22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift */,
 				22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */,
 				22F0A47C22F879AA00787225 /* PersistenceControllerTests.swift */,
@@ -460,6 +463,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				33C2FB151F3E99C4006AB501 /* MessageParserTests.swift in Sources */,
+				22029BAC22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift in Sources */,
 				22F0A47722F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift in Sources */,
 				22F0A47D22F879AA00787225 /* PersistenceControllerTests.swift in Sources */,
 				2296D72422F9DC1D00921EDA /* TestModel.xcdatamodeld in Sources */,
