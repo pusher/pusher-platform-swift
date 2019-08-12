@@ -38,11 +38,6 @@ public class PersistenceController {
             throw PersistenceError.persistentStoreDescriptionMissing
         }
         
-        guard Thread.isMainThread else {
-            self.logger?.log("Due to thread confinement PersistenceController should always be instantiated on the main thread.", logLevel: .error)
-            throw PersistenceError.threadConfinementViolation
-        }
-        
         self.model = model
         self.storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.model)
         

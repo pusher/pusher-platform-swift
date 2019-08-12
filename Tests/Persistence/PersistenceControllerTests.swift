@@ -45,29 +45,9 @@ class PersistenceControllerTests: XCTestCase {
     // MARK: - Tests
     
     func testShouldNotInstantiatePersistenceControllerWithoutStoreDescriptions() {
-        XCTAssertThrowsError(try PersistenceController(storeDescriptions: [])) { error in
+        XCTAssertThrowsError(try PersistenceController(model: self.testModel, storeDescriptions: [])) { error in
             XCTAssertEqual(error as? PersistenceError, PersistenceError.persistentStoreDescriptionMissing)
         }
-    }
-    
-    func testShouldNotInstantiatePersistenceControllerFromThreadOtherThanMainThread() {
-        let expectation = self.expectation(description: "Asynchronous instantiation")
-        
-        DispatchQueue.global(qos: .background).async { [weak self] in
-            guard let self = self else { return }
-            
-            do {
-                // This should be implemented using a simple XCTAssertThrowsError(expression:, errorHandler:), but due to a compiler issue it cannot be at the moment. Please see Swift issue SR-487 for more details.
-                XCTAssertThrowsError(try PersistenceController(storeDescriptions: [self.testStoreDescription]))
-                let _ = try PersistenceController(storeDescriptions: [self.testStoreDescription])
-            } catch {
-                XCTAssertEqual(error as? PersistenceError, PersistenceError.threadConfinementViolation)
-            }
-            
-            expectation.fulfill()
-        }
-        
-        waitForExpectations(timeout: 1.0)
     }
     
     func testShouldHaveModelWithCorrectNumberOfEntities() {
