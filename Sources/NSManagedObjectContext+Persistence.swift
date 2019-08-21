@@ -18,10 +18,8 @@ public extension NSManagedObjectContext {
     }
     
     func deleteAll<T: NSManagedObject>(_ entity: T.Type, filteredBy predicate: NSPredicate? = nil) {
-        let objects = fetchAll(entity, filteredBy: predicate)
-        
-        for object in objects {
-            delete(object)
+        fetchAll(entity, filteredBy: predicate).forEach {
+            delete($0)
         }
     }
     
