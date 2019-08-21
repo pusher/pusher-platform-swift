@@ -79,7 +79,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         
         mainContext.performAndWait {
             let fetchRequest = NSFetchRequest<TestEntity>(entityName: String(describing: TestEntity.self))
-            fetchRequest.predicate = NSPredicate(format: "name = %@", "fourth")
+            fetchRequest.predicate = NSPredicate(format: "%K = %@", #keyPath(TestEntity.name), "fourth")
             fetchRequest.fetchLimit = 1
             
             let entity = try! mainContext.fetch(fetchRequest).first!
@@ -114,7 +114,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let predicate = NSPredicate(format: "name = %@ OR name = %@", "second", "fifth")
+            let predicate = NSPredicate(format: "%K = %@ OR %K = %@", #keyPath(TestEntity.name), "second", #keyPath(TestEntity.name), "fifth")
             
             mainContext.deleteAll(TestEntity.self, predicate: predicate)
             
@@ -129,7 +129,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            mainContext.deleteAll(TestEntity.self, predicateFormat: "name = %@ OR name = %@ OR name = %@", "first", "second", "fifth")
+            mainContext.deleteAll(TestEntity.self, predicateFormat: "%K = %@ OR %K = %@ OR %K = %@", #keyPath(TestEntity.name), "first", #keyPath(TestEntity.name), "second", #keyPath(TestEntity.name), "fifth")
             
             let countRequest = NSFetchRequest<TestEntity>(entityName: String(describing: TestEntity.self))
             let count = try! mainContext.count(for: countRequest)
@@ -152,7 +152,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: false)
             let entity = mainContext.fetch(TestEntity.self, sortDescriptors: [sortDescriptor])
             
             XCTAssertEqual(entity?.name, "third")
@@ -163,7 +163,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let predicate = NSPredicate(format: "name = %@", "second")
+            let predicate = NSPredicate(format: "%K = %@", #keyPath(TestEntity.name), "second")
             let entity = mainContext.fetch(TestEntity.self, predicate: predicate)
             
             XCTAssertEqual(entity?.name, "second")
@@ -174,7 +174,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let entity = mainContext.fetch(TestEntity.self, predicateFormat: "name = %@", "fifth")
+            let entity = mainContext.fetch(TestEntity.self, predicateFormat: "%K = %@", #keyPath(TestEntity.name), "fifth")
             
             XCTAssertEqual(entity?.name, "fifth")
         }
@@ -184,8 +184,8 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let predicate = NSPredicate(format: "name BEGINSWITH[c] %@", "f")
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
+            let predicate = NSPredicate(format: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: false)
             let entity = mainContext.fetch(TestEntity.self, sortDescriptors: [sortDescriptor], predicate: predicate)
             
             XCTAssertEqual(entity?.name, "fourth")
@@ -196,8 +196,8 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-            let entity = mainContext.fetch(TestEntity.self, sortDescriptors: [sortDescriptor], predicateFormat: "name BEGINSWITH[c] %@", "f")
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: true)
+            let entity = mainContext.fetch(TestEntity.self, sortDescriptors: [sortDescriptor], predicateFormat: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             
             XCTAssertEqual(entity?.name, "fifth")
         }
@@ -217,7 +217,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: true)
             let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor])
             
             XCTAssertEqual(entities.count, 5)
@@ -244,7 +244,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let predicate = NSPredicate(format: "name BEGINSWITH[c] %@", "f")
+            let predicate = NSPredicate(format: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             let entities = mainContext.fetchAll(TestEntity.self, predicate: predicate)
             
             XCTAssertEqual(entities.count, 3)
@@ -255,7 +255,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let entities = mainContext.fetchAll(TestEntity.self, predicateFormat: "name ENDSWITH[c] %@", "h")
+            let entities = mainContext.fetchAll(TestEntity.self, predicateFormat: "%K ENDSWITH[c] %@", #keyPath(TestEntity.name), "h")
             
             XCTAssertEqual(entities.count, 2)
         }
@@ -265,7 +265,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: false)
             let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor], fetchLimit: 2)
             
             XCTAssertEqual(entities.count, 2)
@@ -279,8 +279,8 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
-            let predicate = NSPredicate(format: "name BEGINSWITH[c] %@", "f")
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: false)
+            let predicate = NSPredicate(format: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor], predicate: predicate)
             
             XCTAssertEqual(entities.count, 3)
@@ -295,8 +295,8 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: true)
-            let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor], predicateFormat: "name BEGINSWITH[c] %@", "f")
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: true)
+            let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor], predicateFormat: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             
             XCTAssertEqual(entities.count, 3)
             
@@ -310,7 +310,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let predicate = NSPredicate(format: "name BEGINSWITH[c] %@", "f")
+            let predicate = NSPredicate(format: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             let entities = mainContext.fetchAll(TestEntity.self, fetchLimit: 2, predicate: predicate)
             
             XCTAssertEqual(entities.count, 2)
@@ -331,7 +331,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let entities = mainContext.fetchAll(TestEntity.self, fetchLimit: 2, predicateFormat: "name CONTAINS[c] %@", "h")
+            let entities = mainContext.fetchAll(TestEntity.self, fetchLimit: 2, predicateFormat: "%K CONTAINS[c] %@", #keyPath(TestEntity.name), "h")
             
             XCTAssertEqual(entities.count, 2)
             
@@ -351,8 +351,8 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
-            let predicate = NSPredicate(format: "name BEGINSWITH[c] %@", "f")
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: false)
+            let predicate = NSPredicate(format: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor], fetchLimit: 2, predicate: predicate)
             
             XCTAssertEqual(entities.count, 2)
@@ -366,8 +366,8 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let sortDescriptor = NSSortDescriptor(key: "name", ascending: false)
-            let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor], fetchLimit: 2, predicateFormat: "name CONTAINS[c] %@", "h")
+            let sortDescriptor = NSSortDescriptor(key: #keyPath(TestEntity.name), ascending: false)
+            let entities = mainContext.fetchAll(TestEntity.self, sortDescriptors: [sortDescriptor], fetchLimit: 2, predicateFormat: "%K CONTAINS[c] %@", #keyPath(TestEntity.name), "h")
             
             XCTAssertEqual(entities.count, 2)
             
@@ -390,7 +390,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let predicate = NSPredicate(format: "name BEGINSWITH[c] %@", "f")
+            let predicate = NSPredicate(format: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             let count = mainContext.count(TestEntity.self, predicate: predicate)
             
             XCTAssertEqual(count, 3)
@@ -401,7 +401,7 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
         let mainContext = self.persistenceController.mainContext
         
         mainContext.performAndWait {
-            let count = mainContext.count(TestEntity.self, predicateFormat: "name CONTAINS[c] %@", "o")
+            let count = mainContext.count(TestEntity.self, predicateFormat: "%K CONTAINS[c] %@", #keyPath(TestEntity.name), "o")
             
             XCTAssertEqual(count, 2)
         }
