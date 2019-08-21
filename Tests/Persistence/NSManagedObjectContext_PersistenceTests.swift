@@ -51,9 +51,11 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
             
             let fourthEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: TestEntity.self), into: mainContext) as! TestEntity
             fourthEntity.name = "fourth"
+            fourthEntity.relatedEntity = secondEntity
             
             let fifthEntity = NSEntityDescription.insertNewObject(forEntityName: String(describing: TestEntity.self), into: mainContext) as! TestEntity
             fifthEntity.name = "fifth"
+            fifthEntity.relatedEntity = thirdEntity
         }
         
         self.persistenceController.save()
@@ -200,6 +202,21 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
             let entity = mainContext.fetch(TestEntity.self, sortDescriptors: [sortDescriptor], predicateFormat: "%K BEGINSWITH[c] %@", #keyPath(TestEntity.name), "f")
             
             XCTAssertEqual(entity?.name, "fifth")
+        }
+    }
+    
+    func testShouldFetchEntityWithFetchedRelationships() {
+        let mainContext = self.persistenceController.mainContext
+        
+        mainContext.performAndWait {
+            let entity = mainContext.fetch(TestEntity.self, withRelationships: [#keyPath(TestEntity.relatedEntity)], predicateFormat: "%K = %@", #keyPath(TestEntity.name), "second")
+            
+            guard let relatedEntity = entity?.relatedEntity else {
+                XCTFail("Fetched entity should have a realted entity.")
+                return
+            }
+            
+            XCTAssertFalse(relatedEntity.isFault)
         }
     }
     
@@ -373,6 +390,30 @@ class NSManagedObjectContext_PersistenceTests: XCTestCase {
             
             XCTAssertEqual(entities[0].name, "third")
             XCTAssertEqual(entities[1].name, "fourth")
+        }
+    }
+    
+    func testShouldFetchAllEntitiesWithFetchedRelationships() {
+        let mainContext = self.persistenceController.mainContext
+        
+        mainContext.performAndWait {
+            let entities = mainContext.fetchAll(TestEntity.self, withRelationships: [#keyPath(TestEntity.relatedEntity)], predicateFormat: "%K != NULL", #keyPath(TestEntity.relatedEntity))
+            
+            XCTAssertEqual(entities.count, 4)
+            
+            guard let firstRelatedEntity = entities[0].relatedEntity,
+                let secondRelatedEntity = entities[1].relatedEntity,
+                let thirdRelatedEntity = entities[2].relatedEntity,
+                let fourthRelatedEntity = entities[3].relatedEntity else {
+                XCTFail("Fetched entities should have a realted entity.")
+                return
+            }
+            
+            XCTAssertFalse(firstRelatedEntity.isFault)
+            XCTAssertFalse(secondRelatedEntity.isFault)
+            XCTAssertFalse(thirdRelatedEntity.isFault)
+            XCTAssertFalse(fourthRelatedEntity.isFault)
+            
         }
     }
     

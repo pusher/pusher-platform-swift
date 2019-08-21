@@ -35,22 +35,23 @@ public extension NSManagedObjectContext {
         deleteAll(entity, predicate: predicate)
     }
     
-    func fetch<T: NSManagedObject>(_ entity: T.Type, sortDescriptors: [NSSortDescriptor]? = nil, predicate: NSPredicate? = nil) -> T? {
-        return fetchAll(entity, sortDescriptors: sortDescriptors, predicate: predicate).first
+    func fetch<T: NSManagedObject>(_ entity: T.Type, withRelationships relationships: [String]? = nil, sortDescriptors: [NSSortDescriptor]? = nil, predicate: NSPredicate? = nil) -> T? {
+        return fetchAll(entity, withRelationships: relationships, sortDescriptors: sortDescriptors, predicate: predicate).first
     }
     
-    func fetch<T: NSManagedObject>(_ entity: T.Type, sortDescriptors: [NSSortDescriptor]? = nil, predicateFormat: String, _ predicateArguments: CVarArg...) -> T? {
+    func fetch<T: NSManagedObject>(_ entity: T.Type, withRelationships relationships: [String]? = nil, sortDescriptors: [NSSortDescriptor]? = nil, predicateFormat: String, _ predicateArguments: CVarArg...) -> T? {
         var predicate: NSPredicate? = nil
         
         withVaList(predicateArguments) { arguments in
             predicate = NSPredicate(format: predicateFormat, arguments: arguments)
         }
         
-        return fetch(entity, sortDescriptors: sortDescriptors, predicate: predicate)
+        return fetch(entity, withRelationships: relationships, sortDescriptors: sortDescriptors, predicate: predicate)
     }
     
-    func fetchAll<T: NSManagedObject>(_ entity: T.Type, sortDescriptors: [NSSortDescriptor]? = nil, fetchLimit: Int = 0, predicate: NSPredicate? = nil) -> [T] {
+    func fetchAll<T: NSManagedObject>(_ entity: T.Type, withRelationships relationships: [String]? = nil, sortDescriptors: [NSSortDescriptor]? = nil, fetchLimit: Int = 0, predicate: NSPredicate? = nil) -> [T] {
         let fetchRequest = NSFetchRequest<T>(entityName: String(describing: T.self))
+        fetchRequest.relationshipKeyPathsForPrefetching = relationships
         fetchRequest.sortDescriptors = sortDescriptors
         fetchRequest.fetchLimit = fetchLimit
         fetchRequest.predicate = predicate
@@ -58,14 +59,14 @@ public extension NSManagedObjectContext {
         return (try? fetch(fetchRequest)) ?? [T]()
     }
     
-    func fetchAll<T: NSManagedObject>(_ entity: T.Type, sortDescriptors: [NSSortDescriptor]? = nil, fetchLimit: Int = 0, predicateFormat: String, _ predicateArguments: CVarArg...) -> [T] {
+    func fetchAll<T: NSManagedObject>(_ entity: T.Type, withRelationships relationships: [String]? = nil, sortDescriptors: [NSSortDescriptor]? = nil, fetchLimit: Int = 0, predicateFormat: String, _ predicateArguments: CVarArg...) -> [T] {
         var predicate: NSPredicate? = nil
         
         withVaList(predicateArguments) { arguments in
             predicate = NSPredicate(format: predicateFormat, arguments: arguments)
         }
         
-        return fetchAll(entity, sortDescriptors: sortDescriptors, fetchLimit: fetchLimit, predicate: predicate)
+        return fetchAll(entity, withRelationships: relationships, sortDescriptors: sortDescriptors, fetchLimit: fetchLimit, predicate: predicate)
     }
     
     func count<T: NSManagedObject>(_ entity: T.Type, predicate: NSPredicate? = nil) -> Int {

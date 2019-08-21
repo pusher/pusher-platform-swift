@@ -2,8 +2,9 @@
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="18G87" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="TestEntity" representedClassName="TestEntity" syncable="YES" codeGenerationType="class">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="relatedEntity" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TestEntity" inverseName="relatedEntity" inverseEntity="TestEntity" syncable="YES"/>
     </entity>
     <elements>
-        <element name="TestEntity" positionX="-63" positionY="-18" width="128" height="60"/>
+        <element name="TestEntity" positionX="-63" positionY="-18" width="128" height="75"/>
     </elements>
 </model>
