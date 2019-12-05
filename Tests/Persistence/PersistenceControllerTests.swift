@@ -60,7 +60,9 @@ class PersistenceControllerTests: XCTestCase {
         
         XCTAssertNotNil(self.persistenceController.mainContext)
         XCTAssertEqual(self.persistenceController.mainContext.concurrencyType, NSManagedObjectContextConcurrencyType.mainQueueConcurrencyType)
-        XCTAssertTrue(self.persistenceController.mainContext.automaticallyMergesChangesFromParent)
+        XCTAssertFalse(self.persistenceController.mainContext.automaticallyMergesChangesFromParent)
+        XCTAssertEqual(self.persistenceController.mainContext.mergePolicy as? NSMergePolicy, NSMergePolicy.mergeByPropertyObjectTrump)
+        XCTAssertEqual(self.persistenceController.mainContext.name, "Pusher Main Context")
         XCTAssertNotNil(privateContext)
     }
     
@@ -70,7 +72,8 @@ class PersistenceControllerTests: XCTestCase {
         XCTAssertNotNil(privateContext)
         XCTAssertNotNil(privateContext?.persistentStoreCoordinator)
         XCTAssertEqual(privateContext?.concurrencyType, NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
-        XCTAssertEqual(privateContext?.mergePolicy as? NSMergePolicy, NSMergeByPropertyObjectTrumpMergePolicy as? NSMergePolicy)
+        XCTAssertEqual(privateContext?.mergePolicy as? NSMergePolicy, NSMergePolicy.mergeByPropertyStoreTrump)
+        XCTAssertEqual(privateContext?.name, "Pusher Private Context")
         XCTAssertNil(privateContext?.parent)
     }
     
@@ -96,14 +99,16 @@ class PersistenceControllerTests: XCTestCase {
     }
     
     func testCreateBackgroundContextWithCorrectSetup() {
-        let privateContext = self.persistenceController.mainContext.parent
+        let mainContext = self.persistenceController.mainContext
         
         let expectation = self.expectation(description: "Background task")
         
         self.persistenceController.performBackgroundTask { backgroundContext in
-            XCTAssertEqual(backgroundContext.parent, privateContext)
             XCTAssertEqual(backgroundContext.concurrencyType, NSManagedObjectContextConcurrencyType.privateQueueConcurrencyType)
-            XCTAssertTrue(backgroundContext.automaticallyMergesChangesFromParent)
+            XCTAssertFalse(backgroundContext.automaticallyMergesChangesFromParent)
+            XCTAssertEqual(backgroundContext.mergePolicy as? NSMergePolicy, NSMergePolicy.mergeByPropertyStoreTrump)
+            XCTAssertEqual(backgroundContext.name, "Pusher Background Task Context")
+            XCTAssertEqual(backgroundContext.parent, mainContext)
             
             expectation.fulfill()
         }
@@ -221,20 +226,8 @@ class PersistenceControllerTests: XCTestCase {
         
         waitForExpectations(timeout: 1.0)
         
-        privateContext.performAndWait {
-            XCTAssertTrue(privateContext.hasChanges)
-            XCTAssertEqual(privateContext.count(TestEntity.self), 1)
-            
-            guard let result = privateContext.fetch(TestEntity.self) else {
-                XCTFail("Private context should contain test entity.")
-                return
-            }
-            
-            XCTAssertEqual(result.name, "backgroundContextTest")
-        }
-        
         mainContext.performAndWait {
-            XCTAssertFalse(mainContext.hasChanges)
+            XCTAssertTrue(mainContext.hasChanges)
             XCTAssertEqual(mainContext.count(TestEntity.self), 1)
             
             guard let result = mainContext.fetch(TestEntity.self) else {
@@ -243,6 +236,11 @@ class PersistenceControllerTests: XCTestCase {
             }
             
             XCTAssertEqual(result.name, "backgroundContextTest")
+        }
+        
+        privateContext.performAndWait {
+            XCTAssertFalse(privateContext.hasChanges)
+            XCTAssertEqual(privateContext.count(TestEntity.self), 0)
         }
     }
     
@@ -266,7 +264,15 @@ class PersistenceControllerTests: XCTestCase {
             XCTAssertEqual(mainContext.count(TestEntity.self), 1)
         }
         
-        persistenceController.save()
+        let expectation = self.expectation(description: "Save")
+        
+        persistenceController.save() { error in
+            XCTAssertNil(error)
+            
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1.0)
         
         mainContext.performAndWait {
             XCTAssertFalse(mainContext.hasChanges)
@@ -299,7 +305,61 @@ class PersistenceControllerTests: XCTestCase {
             XCTAssertEqual(privateContext.count(TestEntity.self), 1)
         }
         
-        persistenceController.save()
+        let expectation = self.expectation(description: "Save")
+        
+        persistenceController.save() { error in
+            XCTAssertNil(error)
+            
+            expectation.fulfill()
+        }
+        
+        waitForExpectations(timeout: 1.0)
+        
+        mainContext.performAndWait {
+            XCTAssertFalse(mainContext.hasChanges)
+            XCTAssertEqual(mainContext.count(TestEntity.self), 1)
+        }
+        
+        privateContext.performAndWait {
+            XCTAssertFalse(privateContext.hasChanges)
+            XCTAssertEqual(privateContext.count(TestEntity.self), 1)
+        }
+    }
+    
+    func testShouldSaveBackgroundTaskContextAlongWithOtherContexts() {
+        let mainContext = self.persistenceController.mainContext
+        
+        guard let privateContext = mainContext.parent else {
+            XCTFail("Persistence controller should have a private context.")
+            return
+        }
+        
+        mainContext.performAndWait {
+            XCTAssertFalse(mainContext.hasChanges)
+            XCTAssertEqual(mainContext.count(TestEntity.self), 0)
+        }
+        
+        privateContext.performAndWait {
+            XCTAssertFalse(privateContext.hasChanges)
+            XCTAssertEqual(privateContext.count(TestEntity.self), 0)
+        }
+        
+        let expectation = self.expectation(description: "Save")
+        
+        self.persistenceController.performBackgroundTask { backgroundContext in
+            let _ = backgroundContext.create(TestEntity.self)
+            
+            XCTAssertTrue(backgroundContext.hasChanges)
+            XCTAssertEqual(backgroundContext.count(TestEntity.self), 1)
+            
+            self.persistenceController.save(includingBackgroundTaskContext: backgroundContext) { error in
+                XCTAssertNil(error)
+                
+                expectation.fulfill()
+            }
+        }
+        
+        waitForExpectations(timeout: 1.0)
         
         mainContext.performAndWait {
             XCTAssertFalse(mainContext.hasChanges)

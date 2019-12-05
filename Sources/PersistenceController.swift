@@ -42,12 +42,14 @@ public class PersistenceController {
         self.storeCoordinator = NSPersistentStoreCoordinator(managedObjectModel: self.model)
         
         self.privateContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        self.privateContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        self.privateContext.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
         self.privateContext.persistentStoreCoordinator = self.storeCoordinator
+        self.privateContext.name = "Pusher Private Context"
         
         self.mainContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        self.mainContext.automaticallyMergesChangesFromParent = true
+        self.mainContext.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         self.mainContext.parent = self.privateContext
+        self.mainContext.name = "Pusher Main Context"
         
         self.shouldSaveWhenApplicationWillResignActive = false
         self.shouldSaveWhenApplicationDidEnterBackground = true
@@ -70,34 +72,66 @@ public class PersistenceController {
     
     public func performBackgroundTask(_ backgroundTask: @escaping BackgroundTask) {
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.automaticallyMergesChangesFromParent = true
-        context.parent = privateContext
+        context.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
+        context.parent = mainContext
+        context.name = "Pusher Background Task Context"
         
         context.perform {
-            backgroundTask(context)
+            autoreleasepool {
+                backgroundTask(context)
+            }
         }
     }
     
-    public func save() {
-        guard mainContext.hasChanges || privateContext.hasChanges else {
-            return
-        }
-        
-        mainContext.performAndWait {
-            do {
-                try mainContext.save()
-            } catch {
-                logger?.log("Failed to save main context with error: \(error.localizedDescription)", logLevel: .warning)
-            }
+    public func save(completionHandler: CompletionHandler? = nil) {
+        mainContext.save(shouldWait: true) { [weak self] error in
+            guard let self = self else { return }
             
-            privateContext.perform { [weak self] in
-                guard let self = self else { return }
+            if let error = error {
+                self.logger?.log("Failed to save main context with error: \(error.localizedDescription)", logLevel: .warning)
                 
-                do {
-                    try self.privateContext.save()
-                } catch {
-                    self.logger?.log("Failed to save to persistent stores with error: \(error.localizedDescription)", logLevel: .warning)
+                if let completionHandler = completionHandler {
+                    completionHandler(error)
                 }
+            }
+            else {
+                self.privateContext.save(shouldWait: false) { [weak self] error in
+                    guard let self = self else { return }
+                    
+                    if let error = error {
+                        self.logger?.log("Failed to save to persistent stores with error: \(error.localizedDescription)", logLevel: .warning)
+                        
+                        if let completionHandler = completionHandler {
+                            DispatchQueue.main.async {
+                                completionHandler(error)
+                            }
+                        }
+                    }
+                    else if let completionHandler = completionHandler {
+                        DispatchQueue.main.async {
+                            completionHandler(error)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public func save(includingBackgroundTaskContext backgroundTaskContext: NSManagedObjectContext, completionHandler: CompletionHandler? = nil) {
+        backgroundTaskContext.save(shouldWait: true) { [weak self] error in
+            guard let self = self else { return }
+            
+            if let error = error {
+                self.logger?.log("Failed to save background task context with error: \(error.localizedDescription)", logLevel: .warning)
+                
+                if let completionHandler = completionHandler {
+                    DispatchQueue.main.async {
+                        completionHandler(error)
+                    }
+                }
+            }
+            else {
+                self.save(completionHandler: completionHandler)
             }
         }
     }
@@ -165,19 +199,19 @@ public class PersistenceController {
     // MARK: - Notifications
     
     @objc private func applicationWillResignActive(notfication: NSNotification) {
-        if self.shouldSaveWhenApplicationWillResignActive {
+        if shouldSaveWhenApplicationWillResignActive {
             save()
         }
     }
     
     @objc private func applicationDidEnterBackground(notfication: NSNotification) {
-        if self.shouldSaveWhenApplicationDidEnterBackground {
+        if shouldSaveWhenApplicationDidEnterBackground {
             save()
         }
     }
     
     @objc private func applicationWillTerminate(notfication: NSNotification) {
-        if self.shouldSaveWhenApplicationWillTerminate {
+        if shouldSaveWhenApplicationWillTerminate {
             save()
         }
     }

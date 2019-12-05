@@ -84,4 +84,31 @@ public extension NSManagedObjectContext {
         return count(entity, filteredBy: predicate)
     }
     
+    // MARK: - Internal methods
+    
+    internal func save(shouldWait: Bool, completionHandler: @escaping (Error?) -> Void) {
+        let saveTask = { [weak self] in
+            guard let self = self else { return }
+            
+            guard self.hasChanges else {
+                completionHandler(nil)
+                return
+            }
+            
+            do {
+                try self.save()
+                completionHandler(nil)
+            } catch {
+                completionHandler(error)
+            }
+        }
+        
+        if shouldWait {
+            performAndWait(saveTask)
+        }
+        else {
+            perform(saveTask)
+        }
+    }
+    
 }
