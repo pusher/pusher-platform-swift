@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		22029BAC22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22029BAB22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift */; };
+		220A34D12399433700520D06 /* ChangeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220A34D02399433700520D06 /* ChangeController.swift */; };
+		220A34D42399434F00520D06 /* FetchedResultsControllerWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220A34D32399434F00520D06 /* FetchedResultsControllerWrapper.swift */; };
+		220A34D6239944D700520D06 /* ChangeControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220A34D5239944D700520D06 /* ChangeControllerTests.swift */; };
+		220A34DA2399582600520D06 /* TestChangeControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220A34D82399582300520D06 /* TestChangeControllerDelegate.swift */; };
 		220E87CE22FACA11008B3B95 /* NSManagedObjectContext+Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 220E87CD22FACA11008B3B95 /* NSManagedObjectContext+Persistence.swift */; };
 		222BAAEB22F453310050B196 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAEA22F453310050B196 /* PersistenceController.swift */; };
 		222BAAEE22F489180050B196 /* PersistenceError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222BAAED22F489180050B196 /* PersistenceError.swift */; };
@@ -66,6 +70,10 @@
 
 /* Begin PBXFileReference section */
 		22029BAB22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSManagedObjectContext_PersistenceTests.swift; sourceTree = "<group>"; };
+		220A34D02399433700520D06 /* ChangeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeController.swift; sourceTree = "<group>"; };
+		220A34D32399434F00520D06 /* FetchedResultsControllerWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchedResultsControllerWrapper.swift; sourceTree = "<group>"; };
+		220A34D5239944D700520D06 /* ChangeControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeControllerTests.swift; sourceTree = "<group>"; };
+		220A34D82399582300520D06 /* TestChangeControllerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChangeControllerDelegate.swift; sourceTree = "<group>"; };
 		220E87CD22FACA11008B3B95 /* NSManagedObjectContext+Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Persistence.swift"; sourceTree = "<group>"; };
 		222BAAEA22F453310050B196 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
 		222BAAED22F489180050B196 /* PersistenceError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceError.swift; sourceTree = "<group>"; };
@@ -134,6 +142,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		220A34CF2399432800520D06 /* Change Controller */ = {
+			isa = PBXGroup;
+			children = (
+				220A34D22399434900520D06 /* Wrapper */,
+				220A34D02399433700520D06 /* ChangeController.swift */,
+			);
+			name = "Change Controller";
+			sourceTree = "<group>";
+		};
+		220A34D22399434900520D06 /* Wrapper */ = {
+			isa = PBXGroup;
+			children = (
+				220A34D32399434F00520D06 /* FetchedResultsControllerWrapper.swift */,
+			);
+			name = Wrapper;
+			sourceTree = "<group>";
+		};
+		220A34D72399580700520D06 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				220A34D82399582300520D06 /* TestChangeControllerDelegate.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		220E87CC22FAC9E4008B3B95 /* Context */ = {
 			isa = PBXGroup;
 			children = (
@@ -153,6 +186,7 @@
 		222BAAE822F4531B0050B196 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				220A34CF2399432800520D06 /* Change Controller */,
 				220E87CC22FAC9E4008B3B95 /* Context */,
 				222BAAEC22F489010050B196 /* Error Handling */,
 				222BAAE922F453250050B196 /* Persistence Controller */,
@@ -198,6 +232,7 @@
 		22F0A47522F8629500787225 /* Persistence */ = {
 			isa = PBXGroup;
 			children = (
+				220A34D5239944D700520D06 /* ChangeControllerTests.swift */,
 				22029BAB22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift */,
 				22F0A47A22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift */,
 				22F0A47622F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift */,
@@ -292,11 +327,12 @@
 		33BB995C1D21225B00B25C2A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				220A34D72399580700520D06 /* Helpers */,
 				220E87CF22FAF62B008B3B95 /* Model */,
 				22F0A47522F8629500787225 /* Persistence */,
+				33BB99671D21226C00B25C2A /* Info.plist */,
 				33C2FB141F3E99C4006AB501 /* MessageParserTests.swift */,
 				3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */,
-				33BB99671D21226C00B25C2A /* Info.plist */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -439,12 +475,14 @@
 				33025C07212B346800C12249 /* PPRepeater.swift in Sources */,
 				22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* PPMessageParser.swift in Sources */,
+				220A34D42399434F00520D06 /* FetchedResultsControllerWrapper.swift in Sources */,
 				22F0A46F22F8224600787225 /* PersistentStoreDescription+RLBErrorRecovery.swift in Sources */,
 				3337CF652035E9FD000892B6 /* PPSDKInfo.swift in Sources */,
 				336F2A3B1FFBF17E0098687B /* PPSubscriptionURLSessionDelegate.swift in Sources */,
 				22F0A47422F85AB700787225 /* NSPersistentStoreDescription+StoreTypes.swift in Sources */,
 				334ED1F01FE96CE20041A9CA /* PPDownloadDelegate.swift in Sources */,
 				A1C545371F753E3700F15509 /* PPHTTPBodyPair.swift in Sources */,
+				220A34D12399433700520D06 /* ChangeController.swift in Sources */,
 				332E05E81DDCA919007A55FB /* PPMessage.swift in Sources */,
 				338202501FFCFF3B00DC9664 /* PPUploadURLSessionDelegate.swift in Sources */,
 				33935EAC1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift in Sources */,
@@ -465,7 +503,9 @@
 				33C2FB151F3E99C4006AB501 /* MessageParserTests.swift in Sources */,
 				22029BAC22FB1FDE00E9EC23 /* NSManagedObjectContext_PersistenceTests.swift in Sources */,
 				22F0A47722F862AB00787225 /* NSPersistentStoreDescription_StoreTypesTests.swift in Sources */,
+				220A34D6239944D700520D06 /* ChangeControllerTests.swift in Sources */,
 				22F0A47D22F879AA00787225 /* PersistenceControllerTests.swift in Sources */,
+				220A34DA2399582600520D06 /* TestChangeControllerDelegate.swift in Sources */,
 				2296D72422F9DC1D00921EDA /* TestModel.xcdatamodeld in Sources */,
 				3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */,
 				22F0A47B22F870F100787225 /* NSPersistentStoreDescription_RecoveryTests.swift in Sources */,
