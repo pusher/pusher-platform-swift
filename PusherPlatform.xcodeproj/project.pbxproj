@@ -154,19 +154,19 @@
 			isa = PBXGroup;
 			children = (
 				220E87CC22FAC9E4008B3B95 /* Context */,
-				222BAAE922F453250050B196 /* Controller */,
 				222BAAEC22F489010050B196 /* Error Handling */,
+				222BAAE922F453250050B196 /* Persistence Controller */,
 				22F0A47222F8599700787225 /* Store Description */,
 			);
 			name = Persistence;
 			sourceTree = "<group>";
 		};
-		222BAAE922F453250050B196 /* Controller */ = {
+		222BAAE922F453250050B196 /* Persistence Controller */ = {
 			isa = PBXGroup;
 			children = (
 				222BAAEA22F453310050B196 /* PersistenceController.swift */,
 			);
-			name = Controller;
+			name = "Persistence Controller";
 			sourceTree = "<group>";
 		};
 		222BAAEC22F489010050B196 /* Error Handling */ = {
@@ -366,25 +366,25 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1120;
 				TargetAttributes = {
 					33831C881A9CF61600B124F1 = {
 						CreatedOnToolsVersion = 6.3;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1120;
 					};
 					33831C931A9CF61600B124F1 = {
 						CreatedOnToolsVersion = 6.3;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1120;
 					};
 				};
 			};
 			buildConfigurationList = 33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "PusherPlatform" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = 33831C491A9CEDF800B124F1;
 			productRefGroup = 33831C8A1A9CF61600B124F1 /* Products */;
@@ -487,6 +487,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
@@ -531,6 +532,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
