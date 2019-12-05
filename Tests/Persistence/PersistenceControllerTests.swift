@@ -2,8 +2,6 @@ import XCTest
 import CoreData
 @testable import PusherPlatform
 
-import XCTest
-
 class PersistenceControllerTests: XCTestCase {
     
     // MARK: - Properties
@@ -18,8 +16,7 @@ class PersistenceControllerTests: XCTestCase {
         super.setUp()
         
         guard let url = Bundle(for: type(of: self)).url(forResource: "TestModel", withExtension: "momd"), let model = NSManagedObjectModel(contentsOf: url) else {
-            assertionFailure("Unable to locate test model.")
-            return
+            fatalError("Unable to locate test model.")
         }
         
         self.testModel = model
@@ -28,15 +25,14 @@ class PersistenceControllerTests: XCTestCase {
         
         do {
             self.persistenceController = try PersistenceController(model: self.testModel, storeDescriptions: [self.testStoreDescription], logger: PPDefaultLogger()) { error in
-                if error != nil {
-                    assertionFailure("Failed to create in-memory store.")
+                guard error == nil else {
+                    fatalError("Failed to create in-memory store.")
                 }
                 
                 instantiationExpectation.fulfill()
             }
         } catch {
-            assertionFailure("Failed to instantiat persistence controller.")
-            instantiationExpectation.fulfill()
+            fatalError("Failed to instantiat persistence controller.")
         }
         
         waitForExpectations(timeout: 5.0)
