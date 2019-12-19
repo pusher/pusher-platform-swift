@@ -80,7 +80,7 @@
 		338290711DF5CEC6008CDC8F /* Instance.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Instance.swift; sourceTree = "<group>"; };
 		33831C891A9CF61600B124F1 /* PusherPlatform.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PusherPlatform.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		33831C8D1A9CF61600B124F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		33831C941A9CF61600B124F1 /* PusherPlatformTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PusherPlatformTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		33831C941A9CF61600B124F1 /* PlatformTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PlatformTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSubscriptionDelegate.swift; sourceTree = "<group>"; };
 		33935EA71DA5399A00C5C064 /* PPTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPTokenProvider.swift; sourceTree = "<group>"; };
 		33935EAB1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPHTTPEndpointTokenProvider.swift; sourceTree = "<group>"; };
@@ -126,7 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				33831C891A9CF61600B124F1 /* PusherPlatform.framework */,
-				33831C941A9CF61600B124F1 /* PusherPlatformTests.xctest */,
+				33831C941A9CF61600B124F1 /* PlatformTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -217,9 +217,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		33831C881A9CF61600B124F1 /* PusherPlatform */ = {
+		33831C881A9CF61600B124F1 /* Platform */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatform" */;
+			buildConfigurationList = 33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "Platform" */;
 			buildPhases = (
 				33831C841A9CF61600B124F1 /* Sources */,
 				50355EA8A07B4B8038A4DDF1 /* Frameworks */,
@@ -230,14 +230,14 @@
 			);
 			dependencies = (
 			);
-			name = PusherPlatform;
+			name = Platform;
 			productName = PusherSwift;
 			productReference = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		33831C931A9CF61600B124F1 /* PusherPlatformTests */ = {
+		33831C931A9CF61600B124F1 /* PlatformTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatformTests" */;
+			buildConfigurationList = 33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PlatformTests" */;
 			buildPhases = (
 				33831C911A9CF61600B124F1 /* Frameworks */,
 				33831C901A9CF61600B124F1 /* Sources */,
@@ -249,9 +249,9 @@
 			dependencies = (
 				33831C971A9CF61600B124F1 /* PBXTargetDependency */,
 			);
-			name = PusherPlatformTests;
+			name = PlatformTests;
 			productName = PusherSwiftTests;
-			productReference = 33831C941A9CF61600B124F1 /* PusherPlatformTests.xctest */;
+			productReference = 33831C941A9CF61600B124F1 /* PlatformTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -275,7 +275,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "PusherPlatform" */;
+			buildConfigurationList = 33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "Platform" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -288,8 +288,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				33831C881A9CF61600B124F1 /* PusherPlatform */,
-				33831C931A9CF61600B124F1 /* PusherPlatformTests */,
+				33831C881A9CF61600B124F1 /* Platform */,
+				33831C931A9CF61600B124F1 /* PlatformTests */,
 			);
 		};
 /* End PBXProject section */
@@ -363,7 +363,7 @@
 /* Begin PBXTargetDependency section */
 		33831C971A9CF61600B124F1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 33831C881A9CF61600B124F1 /* PusherPlatform */;
+			target = 33831C881A9CF61600B124F1 /* Platform */;
 			targetProxy = 33831C961A9CF61600B124F1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -532,6 +532,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.platform.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = PlatformTests;
 			};
 			name = Debug;
 		};
@@ -540,13 +541,14 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.pusher.platform.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_NAME = PlatformTests;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "PusherPlatform" */ = {
+		33831C4D1A9CEDF800B124F1 /* Build configuration list for PBXProject "Platform" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33831C4E1A9CEDF800B124F1 /* Debug */,
@@ -555,7 +557,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatform" */ = {
+		33831C9D1A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "Platform" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33831C9E1A9CF61600B124F1 /* Debug */,
@@ -564,7 +566,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PusherPlatformTests" */ = {
+		33831CA01A9CF61600B124F1 /* Build configuration list for PBXNativeTarget "PlatformTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33831CA11A9CF61600B124F1 /* Debug */,
