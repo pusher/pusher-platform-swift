@@ -1,6 +1,6 @@
 # PusherPlatform (pusher-platform-swift)
 
-[![Build status](https://www.bitrise.io/app/4d040b65af03f4e7.svg?token=-aqr6zAexbKvvGTuReHCug)](https://www.bitrise.io/app/4d040b65af03f4e7#/builds)
+![Build Status](https://app.bitrise.io/app/4d040b65af03f4e7/status.svg?token=-aqr6zAexbKvvGTuReHCug)
 [![CocoaPods](https://img.shields.io/cocoapods/v/PusherPlatform.svg)](https://cocoapods.org/pods/PusherPlatform)
 [![Carthage](https://img.shields.io/badge/carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Twitter](https://img.shields.io/badge/twitter-@Pusher-blue.svg?style=flat)](http://twitter.com/Pusher)
@@ -74,14 +74,7 @@ To integrate PusherPlatform into your Xcode project using Carthage, specify it i
 github "pusher/pusher-platform-swift"
 ```
 
-### Directly using a framework
-
-```
-TODO
-```
-
-
-### Getting started
+## Getting started
 
 First we need to have an instance of an `Instance`. To create an `Instance` we need to pass in a `locator`, `serviceName`, and `serviceVersion`. You can get your instance locator from the dashboard.
 
@@ -118,6 +111,6 @@ PusherPlatform is released under the MIT license. See [LICENSE](https://github.c
 
 PusherPlatform uses code from the following repositories:
 
-* [AlamoFire](https://github.com/Alamofire/Alamofire)
+* [Alamofire](https://github.com/Alamofire/Alamofire)
 
 The individual licenses for these libraries are included in the relevant source files.
