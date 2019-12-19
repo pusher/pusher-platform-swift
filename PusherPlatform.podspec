@@ -4,12 +4,13 @@ Pod::Spec.new do |s|
   s.summary          = 'Pusher Platform SDK in Swift'
   s.homepage         = 'https://github.com/pusher/pusher-platform-swift'
   s.license          = 'MIT'
-  s.author           = { "Hamilton Chapman" => "hamchapman@gmail.com" }
+  s.author           = { "Pusher Ltd." => "mobile-engineering@pusher.com" }
   s.source           = { git: "https://github.com/pusher/pusher-platform-swift.git", tag: s.version.to_s }
   s.social_media_url = 'https://twitter.com/pusher'
 
   s.requires_arc = true
   s.source_files = 'Sources/*.swift'
+  s.source_files = 'Platform/**/*.swift'
 
   s.ios.deployment_target = '10.0'
   s.osx.deployment_target = '10.12'
