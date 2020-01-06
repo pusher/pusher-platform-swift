@@ -570,6 +570,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/Platform/Supporting Files/Info.plist";
+				MARKETING_VERSION = 0.7.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pusher.platform;
 				PRODUCT_NAME = PusherPlatform;
 			};
@@ -583,6 +584,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "$(SRCROOT)/Platform/Supporting Files/Info.plist";
+				MARKETING_VERSION = 0.7.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.pusher.platform;
 				PRODUCT_NAME = PusherPlatform;
 			};
