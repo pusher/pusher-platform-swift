@@ -74,6 +74,29 @@ To integrate PusherPlatform into your Xcode project using Carthage, specify it i
 github "pusher/pusher-platform-swift"
 ```
 
+### Swift Package Manager
+
+[Swift Package Manager](https://swift.org/package-manager/)  is a tool for managing the distribution of Swift code. It’s integrated with the Swift build system to automate the process of downloading, compiling, and linking dependencies.
+
+
+####  Manual Xcode integration
+
+To integrate PusherPlatform into your Xcode project using Swift Package Manager, in your Xcode choose `File` > `Swift Packages` > `Add Package Dependency...`  and provide the following URL:
+
+```
+https://github.com/pusher/pusher-platform-swift
+```
+
+####  Swift Package Manager dependency
+
+To add PusherPlatform as a dependency of your own package use the follwing code:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/pusher/pusher-platform-swift.git", from: "0.7.3")
+]
+```
+
 ## Getting started
 
 First we need to have an instance of an `Instance`. To create an `Instance` we need to pass in a `locator`, `serviceName`, and `serviceVersion`. You can get your instance locator from the dashboard.
