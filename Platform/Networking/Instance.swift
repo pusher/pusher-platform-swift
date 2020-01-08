@@ -4,7 +4,7 @@ import Foundation
     public let id: String
     public var serviceName: String
     public var serviceVersion: String
-    public var tokenProvider: PPTokenProvider?
+    public var tokenProvider: TokenProvider?
     public var client: PPBaseClient
     public var logger: PPLogger {
         willSet {
@@ -17,7 +17,7 @@ import Foundation
         serviceName: String,
         serviceVersion: String,
         sdkInfo: PPSDKInfo,
-        tokenProvider: PPTokenProvider? = nil,
+        tokenProvider: TokenProvider? = nil,
         logger: PPLogger = PPDefaultLogger()
     ) {
         self.init(
@@ -36,7 +36,7 @@ import Foundation
         serviceName: String,
         serviceVersion: String,
         client: PPBaseClient,
-        tokenProvider: PPTokenProvider? = nil,
+        tokenProvider: TokenProvider? = nil,
         logger: PPLogger = PPDefaultLogger()
     ) {
         self.init(
@@ -56,7 +56,7 @@ import Foundation
         serviceVersion: String,
         client: PPBaseClient?,
         sdkInfo: PPSDKInfo?,
-        tokenProvider: PPTokenProvider? = nil,
+        tokenProvider: TokenProvider? = nil,
         logger: PPLogger = PPDefaultLogger()
     ) {
         assert(client != nil || sdkInfo != nil, "You must provide at least one of client and sdkInfo")

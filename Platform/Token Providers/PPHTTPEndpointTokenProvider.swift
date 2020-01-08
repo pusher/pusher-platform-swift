@@ -1,6 +1,6 @@
 import Foundation
 
-public class PPHTTPEndpointTokenProvider: PPTokenProvider {
+public class PPHTTPEndpointTokenProvider: TokenProvider {
     public var url: String
 
     // TODO: Seems like there is a better name for this
