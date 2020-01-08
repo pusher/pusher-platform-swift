@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2230F66323C5E704008B1580 /* AuthenticationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66223C5E704008B1580 /* AuthenticationResult.swift */; };
+		2230F66523C5E9D9008B1580 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66423C5E9D9008B1580 /* Token.swift */; };
 		22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */; };
 		22BC164F23ABE2F0003480C0 /* MessageParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */; };
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
@@ -56,6 +57,7 @@
 
 /* Begin PBXFileReference section */
 		2230F66223C5E704008B1580 /* AuthenticationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationResult.swift; sourceTree = "<group>"; };
+		2230F66423C5E9D9008B1580 /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchSemaphore.swift; sourceTree = "<group>"; };
 		22BC164C23ABE2DF003480C0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParserTests.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				2230F66223C5E704008B1580 /* AuthenticationResult.swift */,
+				2230F66423C5E9D9008B1580 /* Token.swift */,
 				33935EA71DA5399A00C5C064 /* TokenProvider.swift */,
 			);
 			path = Types;
@@ -397,6 +400,7 @@
 				33347F4C1FFE7F7F00E9D140 /* PPDownloadFileDestination.swift in Sources */,
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33DD99701FE195DF00A15211 /* PPMultipartFormData.swift in Sources */,
+				2230F66523C5E9D9008B1580 /* Token.swift in Sources */,
 				3382024A1FFCF02B00DC9664 /* PPBaseURLSessionDelegate.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */,
 				2230F66323C5E704008B1580 /* AuthenticationResult.swift in Sources */,

@@ -25,13 +25,13 @@ public class PPHTTPEndpointTokenProvider: TokenProvider {
         self.retryStrategy = retryStrategy
     }
 
-    public func fetchToken(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+    public func fetchToken(completionHandler: @escaping (AuthenticationResult) -> Void) {
 
         // TODO: [unowned self] ?
 
-        let retryAwareCompletionHandler = { (tokenProviderResult: PPTokenProviderResult) in
+        let retryAwareCompletionHandler = { (tokenProviderResult: AuthenticationResult) in
             switch tokenProviderResult {
-            case .error(let err):
+            case .failure(let err):
                 let shouldRetryResult = self.retryStrategy.shouldRetry(given: err)
 
                 switch shouldRetryResult {
@@ -42,12 +42,12 @@ public class PPHTTPEndpointTokenProvider: TokenProvider {
                         self.fetchToken(completionHandler: completionHandler)
                     })
                 case .doNotRetry(let reasonErr):
-                    completionHandler(PPTokenProviderResult.error(error: reasonErr))
+                    completionHandler(.failure(error: reasonErr))
                 }
                 return
-            case .success(let token):
+            case .authenticated(let token):
                 self.retryStrategy.requestSucceeded()
-                completionHandler(PPTokenProviderResult.success(token: token))
+                completionHandler(.authenticated(token: token))
             }
         }
 
@@ -57,21 +57,21 @@ public class PPHTTPEndpointTokenProvider: TokenProvider {
                 // TODO: Is returning here correct?
                 return
             }
-            completionHandler(PPTokenProviderResult.success(token: token))
+            completionHandler(.authenticated(token: token))
         } else {
             getTokenPair(completionHandler: retryAwareCompletionHandler)
         }
     }
 
-    fileprivate func getTokenPair(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+    fileprivate func getTokenPair(completionHandler: @escaping (AuthenticationResult) -> Void) {
         makeAuthRequest(completionHandler: completionHandler)
     }
 
-    fileprivate func makeAuthRequest(completionHandler: @escaping (PPTokenProviderResult) -> Void) {
+    fileprivate func makeAuthRequest(completionHandler: @escaping (AuthenticationResult) -> Void) {
         let authRequestResult = prepareAuthRequest()
 
         guard let request = authRequestResult.request, authRequestResult.error == nil else {
-            completionHandler(PPTokenProviderResult.error(error: authRequestResult.error!))
+            completionHandler(.failure(error: authRequestResult.error!))
             return
         }
 
@@ -84,10 +84,10 @@ public class PPHTTPEndpointTokenProvider: TokenProvider {
 
                 self.logger?.log("Successful request to get token: \(tokenProviderResponse.accessToken)", logLevel: .verbose)
 
-                completionHandler(PPTokenProviderResult.success(token: tokenProviderResponse.accessToken))
+                completionHandler(.authenticated(token: tokenProviderResponse.accessToken))
             } catch let err {
                 self.logger?.log(err.localizedDescription, logLevel: .verbose)
-                completionHandler(PPTokenProviderResult.error(error: err))
+                completionHandler(.failure(error: err))
             }
         }).resume()
     }

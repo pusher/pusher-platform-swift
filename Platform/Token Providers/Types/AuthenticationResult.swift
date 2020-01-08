@@ -1,8 +1,8 @@
 import Foundation
 
-public enum PPTokenProviderResult {
+public enum AuthenticationResult {
     
-    case success(token: String)
-    case error(error: Error)
+    case authenticated(token: Token)
+    case failure(error: Error)
     
 }
