@@ -9,7 +9,13 @@
 /* Begin PBXBuildFile section */
 		2230F66323C5E704008B1580 /* AuthenticationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66223C5E704008B1580 /* AuthenticationResult.swift */; };
 		2230F66523C5E9D9008B1580 /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66423C5E9D9008B1580 /* Token.swift */; };
+		2230F66723C5EA88008B1580 /* DefaultTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66623C5EA88008B1580 /* DefaultTokenProvider.swift */; };
+		2230F66A23C61740008B1580 /* OAuthToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66923C61740008B1580 /* OAuthToken.swift */; };
+		2230F66F23C61AF7008B1580 /* AuthenticationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66E23C61AF7008B1580 /* AuthenticationError.swift */; };
 		22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */; };
+		229A79A123C73C350051F565 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A023C73C350051F565 /* Header.swift */; };
+		229A79A523C768B60051F565 /* URLEncodedBodyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A423C768B60051F565 /* URLEncodedBodyItem.swift */; };
+		229A79A923C76D9F0051F565 /* URLEncodedBodySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */; };
 		22BC164F23ABE2F0003480C0 /* MessageParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */; };
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
 		3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */; };
@@ -37,12 +43,10 @@
 		338290721DF5CEC6008CDC8F /* Instance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 338290711DF5CEC6008CDC8F /* Instance.swift */; };
 		3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */; };
 		33935EA81DA5399A00C5C064 /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EA71DA5399A00C5C064 /* TokenProvider.swift */; };
-		33935EAC1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAB1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift */; };
 		33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */; };
 		33DD99701FE195DF00A15211 /* PPMultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DD996F1FE195DE00A15211 /* PPMultipartFormData.swift */; };
 		33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */; };
 		33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* PPRequest.swift */; };
-		A1C545371F753E3700F15509 /* PPHTTPBodyPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C545361F753E3700F15509 /* PPHTTPBodyPair.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +62,13 @@
 /* Begin PBXFileReference section */
 		2230F66223C5E704008B1580 /* AuthenticationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationResult.swift; sourceTree = "<group>"; };
 		2230F66423C5E9D9008B1580 /* Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
+		2230F66623C5EA88008B1580 /* DefaultTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTokenProvider.swift; sourceTree = "<group>"; };
+		2230F66923C61740008B1580 /* OAuthToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthToken.swift; sourceTree = "<group>"; };
+		2230F66E23C61AF7008B1580 /* AuthenticationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationError.swift; sourceTree = "<group>"; };
 		22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchSemaphore.swift; sourceTree = "<group>"; };
+		229A79A023C73C350051F565 /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
+		229A79A423C768B60051F565 /* URLEncodedBodyItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedBodyItem.swift; sourceTree = "<group>"; };
+		229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedBodySerializer.swift; sourceTree = "<group>"; };
 		22BC164C23ABE2DF003480C0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParserTests.swift; sourceTree = "<group>"; };
 		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
@@ -89,12 +99,10 @@
 		33831C941A9CF61600B124F1 /* Unit Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Unit Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPSubscriptionDelegate.swift; sourceTree = "<group>"; };
 		33935EA71DA5399A00C5C064 /* TokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TokenProvider.swift; sourceTree = "<group>"; };
-		33935EAB1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPHTTPEndpointTokenProvider.swift; sourceTree = "<group>"; };
 		33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPBaseClient.swift; sourceTree = "<group>"; };
 		33DD996F1FE195DE00A15211 /* PPMultipartFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PPMultipartFormData.swift; sourceTree = "<group>"; };
 		33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultRetryStrategy.swift; sourceTree = "<group>"; };
 		33F37F771E0C20CC0048457F /* PPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequest.swift; sourceTree = "<group>"; };
-		A1C545361F753E3700F15509 /* PPHTTPBodyPair.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPHTTPBodyPair.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,14 +124,64 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		2230F66123C5E5D3008B1580 /* Types */ = {
+		2230F66823C61736008B1580 /* Token */ = {
+			isa = PBXGroup;
+			children = (
+				2230F66923C61740008B1580 /* OAuthToken.swift */,
+				2230F66423C5E9D9008B1580 /* Token.swift */,
+			);
+			path = Token;
+			sourceTree = "<group>";
+		};
+		2230F66B23C619AB008B1580 /* Token Provider */ = {
+			isa = PBXGroup;
+			children = (
+				2230F66623C5EA88008B1580 /* DefaultTokenProvider.swift */,
+				33935EA71DA5399A00C5C064 /* TokenProvider.swift */,
+			);
+			path = "Token Provider";
+			sourceTree = "<group>";
+		};
+		2230F66C23C61AA6008B1580 /* Result */ = {
 			isa = PBXGroup;
 			children = (
 				2230F66223C5E704008B1580 /* AuthenticationResult.swift */,
-				2230F66423C5E9D9008B1580 /* Token.swift */,
-				33935EA71DA5399A00C5C064 /* TokenProvider.swift */,
 			);
-			path = Types;
+			path = Result;
+			sourceTree = "<group>";
+		};
+		2230F66D23C61ABC008B1580 /* Error Handling */ = {
+			isa = PBXGroup;
+			children = (
+				2230F66E23C61AF7008B1580 /* AuthenticationError.swift */,
+			);
+			path = "Error Handling";
+			sourceTree = "<group>";
+		};
+		229A799F23C73C110051F565 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				229A79A323C740690051F565 /* Body */,
+				229A79A223C740650051F565 /* Headers */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		229A79A223C740650051F565 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				229A79A023C73C350051F565 /* Header.swift */,
+			);
+			path = Headers;
+			sourceTree = "<group>";
+		};
+		229A79A323C740690051F565 /* Body */ = {
+			isa = PBXGroup;
+			children = (
+				229A79A423C768B60051F565 /* URLEncodedBodyItem.swift */,
+				229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */,
+			);
+			path = Body;
 			sourceTree = "<group>";
 		};
 		22BC164523ABE113003480C0 /* Tests */ = {
@@ -145,6 +203,7 @@
 		22BC164723ABE13A003480C0 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				229A799F23C73C110051F565 /* Data */,
 				338290711DF5CEC6008CDC8F /* Instance.swift */,
 				33935EAF1DA53BCF00C5C064 /* PPBaseClient.swift */,
 				338202491FFCF02B00DC9664 /* PPBaseURLSessionDelegate.swift */,
@@ -154,7 +213,6 @@
 				3382024D1FFCFF2E00DC9664 /* PPDownloadURLSessionDelegate.swift */,
 				33816B071EB379F800E5A169 /* PPGeneralRequestDelegate.swift */,
 				336F2A381FFBF1510098687B /* PPGeneralRequestURLSessionDelegate.swift */,
-				A1C545361F753E3700F15509 /* PPHTTPBodyPair.swift */,
 				332E05E71DDCA919007A55FB /* PPMessage.swift */,
 				332E05E51DDCA3DB007A55FB /* PPMessageParser.swift */,
 				33DD996F1FE195DE00A15211 /* PPMultipartFormData.swift */,
@@ -162,8 +220,8 @@
 				33816B031EB36E7F00E5A169 /* PPRequestOptions.swift */,
 				33816B051EB375AA00E5A169 /* PPRequestTaskDelegate.swift */,
 				330E59061DEDD38900C92897 /* PPResumableSubscription.swift */,
-				33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */,
 				331F9BB61EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift */,
+				33816AFF1EB3446900E5A169 /* PPRetryStrategy.swift */,
 				3388D6001EAF50220072A742 /* PPSubscriptionDelegate.swift */,
 				336F2A3A1FFBF17E0098687B /* PPSubscriptionURLSessionDelegate.swift */,
 				3382024B1FFCFEBB00DC9664 /* PPUploadDelegate.swift */,
@@ -235,13 +293,13 @@
 		33831C8B1A9CF61600B124F1 /* Platform */ = {
 			isa = PBXGroup;
 			children = (
+				33935EB21DA54F9400C5C064 /* Authentication */,
 				22BC164823ABE13F003480C0 /* Concurrency */,
 				22BC164B23ABE1A0003480C0 /* Logging */,
 				22BC164723ABE13A003480C0 /* Networking */,
 				22BC164A23ABE18B003480C0 /* Repeater */,
 				22BC164923ABE179003480C0 /* SDK Info */,
 				33831C8C1A9CF61600B124F1 /* Supporting Files */,
-				33935EB21DA54F9400C5C064 /* Token Providers */,
 			);
 			path = Platform;
 			sourceTree = "<group>";
@@ -255,13 +313,15 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		33935EB21DA54F9400C5C064 /* Token Providers */ = {
+		33935EB21DA54F9400C5C064 /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
-				2230F66123C5E5D3008B1580 /* Types */,
-				33935EAB1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift */,
+				2230F66D23C61ABC008B1580 /* Error Handling */,
+				2230F66C23C61AA6008B1580 /* Result */,
+				2230F66823C61736008B1580 /* Token */,
+				2230F66B23C619AB008B1580 /* Token Provider */,
 			);
-			path = "Token Providers";
+			path = Authentication;
 			sourceTree = "<group>";
 		};
 		33BB995C1D21225B00B25C2A /* Unit Tests */ = {
@@ -402,6 +462,7 @@
 				33DD99701FE195DF00A15211 /* PPMultipartFormData.swift in Sources */,
 				2230F66523C5E9D9008B1580 /* Token.swift in Sources */,
 				3382024A1FFCF02B00DC9664 /* PPBaseURLSessionDelegate.swift in Sources */,
+				2230F66A23C61740008B1580 /* OAuthToken.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */,
 				2230F66323C5E704008B1580 /* AuthenticationResult.swift in Sources */,
 				331F9BB71EB8D3F200C3F678 /* PPRetryableGeneralRequest.swift in Sources */,
@@ -412,14 +473,17 @@
 				33816B041EB36E7F00E5A169 /* PPRequestOptions.swift in Sources */,
 				33025C07212B346800C12249 /* PPRepeater.swift in Sources */,
 				22528E8722F994CE00F25C1C /* DispatchSemaphore.swift in Sources */,
+				229A79A123C73C350051F565 /* Header.swift in Sources */,
 				332E05E61DDCA3DB007A55FB /* PPMessageParser.swift in Sources */,
+				2230F66723C5EA88008B1580 /* DefaultTokenProvider.swift in Sources */,
 				3337CF652035E9FD000892B6 /* PPSDKInfo.swift in Sources */,
+				229A79A923C76D9F0051F565 /* URLEncodedBodySerializer.swift in Sources */,
 				336F2A3B1FFBF17E0098687B /* PPSubscriptionURLSessionDelegate.swift in Sources */,
+				229A79A523C768B60051F565 /* URLEncodedBodyItem.swift in Sources */,
 				334ED1F01FE96CE20041A9CA /* PPDownloadDelegate.swift in Sources */,
-				A1C545371F753E3700F15509 /* PPHTTPBodyPair.swift in Sources */,
 				332E05E81DDCA919007A55FB /* PPMessage.swift in Sources */,
 				338202501FFCFF3B00DC9664 /* PPUploadURLSessionDelegate.swift in Sources */,
-				33935EAC1DA539BD00C5C064 /* PPHTTPEndpointTokenProvider.swift in Sources */,
+				2230F66F23C61AF7008B1580 /* AuthenticationError.swift in Sources */,
 				33816B081EB379F800E5A169 /* PPGeneralRequestDelegate.swift in Sources */,
 				33816B061EB375AA00E5A169 /* PPRequestTaskDelegate.swift in Sources */,
 				3382024C1FFCFEBB00DC9664 /* PPUploadDelegate.swift in Sources */,
