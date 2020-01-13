@@ -190,7 +190,16 @@ public class DefaultTokenProvider: TokenProvider {
         var requestBody = [grantType]
         
         if let body = body {
-            requestBody.append(contentsOf: body)
+            let containsGrantType = body.contains { item -> Bool in
+                return item.name == URLEncodedBodyItem.Name.grantType.rawValue
+            }
+            
+            if containsGrantType {
+                requestBody = body
+            }
+            else {
+                requestBody.append(contentsOf: body)
+            }
         }
         
         return requestBody

@@ -7,13 +7,6 @@ struct OAuthToken: Token {
     let token: String
     let expiryDate: Date
     
-    // MARK: - Initializers
-    
-    init(token: String, expiryDate: Date) {
-        self.token = token
-        self.expiryDate = expiryDate
-    }
-    
 }
 
 // MARK: - Decodable
