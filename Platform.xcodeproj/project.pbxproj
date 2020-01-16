@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2205078223D0876E002E31A2 /* DispatchQueue+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2205078123D0876E002E31A2 /* DispatchQueue+Extensions.swift */; };
 		2207208B23CDEAFD00FB4A3A /* DefaultTokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207208A23CDEAFD00FB4A3A /* DefaultTokenProviderTests.swift */; };
 		2207208E23CE116600FB4A3A /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207208D23CE116600FB4A3A /* Environment.swift */; };
 		2207209023CE136400FB4A3A /* CI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207208F23CE136400FB4A3A /* CI.swift */; };
@@ -33,6 +34,7 @@
 		2267E6FA23CCB6ED001973DA /* JSONDecoder+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E6F923CCB6ED001973DA /* JSONDecoder+Extenstions.swift */; };
 		2267E6FC23CCB86C001973DA /* XCTest+Assertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E6FB23CCB86C001973DA /* XCTest+Assertions.swift */; };
 		2267E70423CCC3D8001973DA /* DefaultTokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E70323CCC3D8001973DA /* DefaultTokenProviderTests.swift */; };
+		2299919E23CF55B900B9D4CE /* RetryableTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2299919D23CF55B900B9D4CE /* RetryableTokenProvider.swift */; };
 		229A79A123C73C350051F565 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A023C73C350051F565 /* Header.swift */; };
 		229A79A523C768B60051F565 /* URLEncodedBodyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A423C768B60051F565 /* URLEncodedBodyItem.swift */; };
 		229A79A923C76D9F0051F565 /* URLEncodedBodySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */; };
@@ -91,6 +93,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2205078123D0876E002E31A2 /* DispatchQueue+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Extensions.swift"; sourceTree = "<group>"; };
 		2207208A23CDEAFD00FB4A3A /* DefaultTokenProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTokenProviderTests.swift; sourceTree = "<group>"; };
 		2207208D23CE116600FB4A3A /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		2207208F23CE136400FB4A3A /* CI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CI.swift; sourceTree = "<group>"; };
@@ -119,6 +122,7 @@
 		2267E70323CCC3D8001973DA /* DefaultTokenProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTokenProviderTests.swift; sourceTree = "<group>"; };
 		2277525A23CDE4C50046F15F /* Functional Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Functional Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2277525E23CDE4C50046F15F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2299919D23CF55B900B9D4CE /* RetryableTokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryableTokenProvider.swift; sourceTree = "<group>"; };
 		229A79A023C73C350051F565 /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
 		229A79A423C768B60051F565 /* URLEncodedBodyItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedBodyItem.swift; sourceTree = "<group>"; };
 		229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedBodySerializer.swift; sourceTree = "<group>"; };
@@ -189,6 +193,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2205078323D08832002E31A2 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				2205078123D0876E002E31A2 /* DispatchQueue+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		2207208823CDEADF00FB4A3A /* Authentication */ = {
 			isa = PBXGroup;
 			children = (
@@ -245,6 +257,7 @@
 			isa = PBXGroup;
 			children = (
 				2230F66623C5EA88008B1580 /* DefaultTokenProvider.swift */,
+				2299919D23CF55B900B9D4CE /* RetryableTokenProvider.swift */,
 				33935EA71DA5399A00C5C064 /* TokenProvider.swift */,
 			);
 			path = "Token Provider";
@@ -439,6 +452,7 @@
 		22BC164823ABE13F003480C0 /* Concurrency */ = {
 			isa = PBXGroup;
 			children = (
+				2205078323D08832002E31A2 /* Extensions */,
 				22528E8622F994CE00F25C1C /* DispatchSemaphore.swift */,
 			);
 			path = Concurrency;
@@ -765,6 +779,7 @@
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33DD99701FE195DF00A15211 /* PPMultipartFormData.swift in Sources */,
 				2230F66523C5E9D9008B1580 /* Token.swift in Sources */,
+				2299919E23CF55B900B9D4CE /* RetryableTokenProvider.swift in Sources */,
 				3382024A1FFCF02B00DC9664 /* PPBaseURLSessionDelegate.swift in Sources */,
 				2230F66A23C61740008B1580 /* OAuthToken.swift in Sources */,
 				33935EB01DA53BCF00C5C064 /* PPBaseClient.swift in Sources */,
@@ -785,6 +800,7 @@
 				336F2A3B1FFBF17E0098687B /* PPSubscriptionURLSessionDelegate.swift in Sources */,
 				229A79A523C768B60051F565 /* URLEncodedBodyItem.swift in Sources */,
 				334ED1F01FE96CE20041A9CA /* PPDownloadDelegate.swift in Sources */,
+				2205078223D0876E002E31A2 /* DispatchQueue+Extensions.swift in Sources */,
 				332E05E81DDCA919007A55FB /* PPMessage.swift in Sources */,
 				338202501FFCFF3B00DC9664 /* PPUploadURLSessionDelegate.swift in Sources */,
 				2230F66F23C61AF7008B1580 /* AuthenticationError.swift in Sources */,
