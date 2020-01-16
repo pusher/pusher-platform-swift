@@ -17,7 +17,7 @@ class DefaultTokenProviderTests: XCTestCase {
         let tokenProvider = DefaultTokenProvider(url: url, headers: headers, queryItems: queryItems, body: bodyItems, logger: PPDefaultLogger())
         
         XCTAssertEqual(tokenProvider.url, url)
-        XCTAssertNotNil(tokenProvider.logger)
+        XCTAssertTrue(tokenProvider.logger is PPDefaultLogger)
         XCTAssertEqual(tokenProvider.headers, headers)
         XCTAssertEqual(tokenProvider.queryItems, queryItems)
         

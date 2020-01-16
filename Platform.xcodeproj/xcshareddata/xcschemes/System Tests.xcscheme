@@ -55,6 +55,9 @@
                <Test
                   Identifier = "DefaultTokenProviderTests/testShouldSetDefaultContentTypeHeader()">
                </Test>
+               <Test
+                  Identifier = "RetryableTokenProviderTests">
+               </Test>
             </SkippedTests>
          </TestableReference>
       </Testables>
