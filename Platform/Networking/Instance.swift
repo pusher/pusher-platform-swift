@@ -2,15 +2,11 @@ import Foundation
 
 @objc public class Instance: NSObject {
     public let id: String
-    public var serviceName: String
-    public var serviceVersion: String
-    public var tokenProvider: TokenProvider?
-    public var client: PPBaseClient
-    public var logger: PPLogger {
-        willSet {
-            self.client.logger = newValue
-        }
-    }
+    public let serviceName: String
+    public let serviceVersion: String
+    public let tokenProvider: TokenProvider?
+    public let client: PPBaseClient
+    public let logger: PPLogger
 
     public convenience init(
         locator: String,
@@ -69,7 +65,13 @@ import Foundation
         self.id = splitInstance[2]
         self.serviceName = serviceName
         self.serviceVersion = serviceVersion
-        self.tokenProvider = tokenProvider
+        
+        if let tokenProvider = tokenProvider {
+            self.tokenProvider = RetryableTokenProvider(tokenProvider: tokenProvider, logger: logger)
+        }
+        else {
+            self.tokenProvider = nil
+        }
 
         self.logger = logger
 

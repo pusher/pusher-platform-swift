@@ -17,7 +17,7 @@ internal extension DispatchQueue {
         components.append(name)
         
         let label = components.joined(separator: ".")
-        self.init(label: label)
+        self.init(label: label, qos: .default)
     }
     
 }
