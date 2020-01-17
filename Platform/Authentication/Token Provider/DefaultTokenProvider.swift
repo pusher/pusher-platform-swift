@@ -105,7 +105,7 @@ public class DefaultTokenProvider: TokenProvider {
         self.updateRequestParametersIfNeeded()
         
         do {
-            let request = try self.prepareRequest()
+            let request = try self.request()
             
             self.fetchToken(with: request, completionHandler: completionHandler)
         } catch {
@@ -129,7 +129,7 @@ public class DefaultTokenProvider: TokenProvider {
         }
     }
     
-    private func prepareRequest() throws -> URLRequest {
+    private func request() throws -> URLRequest {
         let requestURL = try self.requestURL(with: self.url, queryItems: self.queryItems)
         
         var request = URLRequest(url: requestURL)
@@ -153,7 +153,7 @@ public class DefaultTokenProvider: TokenProvider {
     }
     
     private func requestURL(with baseURL: URL, queryItems: [URLQueryItem]?) throws -> URL {
-        guard var components = URLComponents(url: self.url, resolvingAgainstBaseURL: false) else {
+        guard var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
             self.logger?.log("\(String(describing: self)) failed to build request URL.", logLevel: .error)
             throw AuthenticationError.invalidURL
         }
