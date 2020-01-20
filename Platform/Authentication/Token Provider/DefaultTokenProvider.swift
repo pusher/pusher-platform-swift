@@ -215,8 +215,14 @@ public class DefaultTokenProvider: TokenProvider {
                 self.logger?.log("\(String(describing: self)) failed to retrieve token with error: \(error.localizedDescription)", logLevel: .error)
                 completionHandler(.failure(error: error))
             }
-            else if let data = data, let token = try? JSONDecoder().decode(OAuthToken.self, from: data) {
-                completionHandler(.authenticated(token: token))
+            else if let data = data {
+                do {
+                    let token = try JSONDecoder().decode(OAuthToken.self, from: data)
+                    completionHandler(.authenticated(token: token))
+                } catch {
+                    self.logger?.log("\(String(describing: self)) failed to parse retrieved token with error: \(error.localizedDescription).", logLevel: .error)
+                    completionHandler(.failure(error: AuthenticationError.failedToParseToken))
+                }
             }
             else {
                 self.logger?.log("\(String(describing: self)) failed to parse retrieved token.", logLevel: .error)
