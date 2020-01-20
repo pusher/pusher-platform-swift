@@ -158,7 +158,7 @@ public class DefaultTokenProvider: TokenProvider {
             throw AuthenticationError.invalidURL
         }
         
-        if let queryItems = self.queryItems {
+        if let queryItems = queryItems {
             if components.queryItems != nil {
                 components.queryItems?.append(contentsOf: queryItems)
             }
