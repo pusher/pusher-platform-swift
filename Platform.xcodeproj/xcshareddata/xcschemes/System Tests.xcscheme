@@ -10,55 +10,18 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      codeCoverageEnabled = "YES">
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2277525923CDE4C50046F15F"
-               BuildableName = "Functional Tests.xctest"
-               BlueprintName = "Functional Tests"
+               BuildableName = "System Tests.xctest"
+               BlueprintName = "System Tests"
                ReferencedContainer = "container:Platform.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldAllowContentTypeHeaderOverride()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldAllowGrantTypeBodyItemOverride()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldInjectCustomBodyItem()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldInjectCustomHeader()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldInjectCustomQueryItem()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldReportAnErrorWhenTokenRetrievalFailed()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldSetCustomBodyItem()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldSetCustomHeader()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldSetCustomQueryItem()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldSetDefaultContentTypeBodyItem()">
-               </Test>
-               <Test
-                  Identifier = "DefaultTokenProviderTests/testShouldSetDefaultContentTypeHeader()">
-               </Test>
-               <Test
-                  Identifier = "RetryableTokenProviderTests">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

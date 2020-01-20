@@ -10,10 +10,7 @@ struct Environment {
     
     private static func variable(named name: String, ciValue: String) -> String {
         guard let value = ProcessInfo.processInfo.environment[name], value != ProcessInfo.unspecifiedValue else {
-            #if !STUBBED
             assert(!ciValue.hasPrefix("$(") && !ciValue.hasSuffix(")"), "Please specify the value of the variable in either the enviroment variables section of your current run scheme or inject the value using Swift Variable Injector from Bitrise.")
-            #endif
-            
             return ciValue
         }
         
