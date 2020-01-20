@@ -8,7 +8,7 @@ class OAuthTokenTests: XCTestCase {
     func testParseValidToken() {
         guard let url = Bundle.current.url(forResource: "token", withExtension: "json"),
             let jsonData = try? Data(contentsOf: url) else {
-                return
+                fatalError("Failed to read token fixture.")
         }
         
         XCTAssertNoThrow(try OAuthToken(from: jsonData.jsonDecoder())) { token in
