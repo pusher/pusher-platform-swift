@@ -27,10 +27,10 @@ class DefaultTokenProviderTests: XCTestCase {
         
         XCTAssertEqual(tokenProvider.url, url)
         XCTAssertTrue(tokenProvider.logger is PPDefaultLogger)
-        XCTAssertEqual(tokenProvider.headers, headers)
-        XCTAssertEqual(tokenProvider.queryItems, queryItems)
+        XCTAssertEqual(tokenProvider.headersInjector(), headers)
+        XCTAssertEqual(tokenProvider.queryItemsInjector(), queryItems)
         
-        guard let body = tokenProvider.body else {
+        guard let body = tokenProvider.bodyInjector() else {
             XCTFail("Empty body of token provider's request.")
             return
         }

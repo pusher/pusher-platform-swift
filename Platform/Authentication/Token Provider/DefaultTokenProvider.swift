@@ -25,41 +25,23 @@ public class DefaultTokenProvider: TokenProvider {
     /// The URL that will be used by the token provider to retrieve a token.
     public let url: URL
     
-    /// An optional dictionary of headers to include in the request. Here you can supply the session
-    /// or other credientials which your endpoint might require to authenticate the request.
-    ///
-    /// If not specified otherwise, the token provider will always set Content-Type header
-    /// to application/x-www-form-urlencoded.
-    public private(set) var headers: [String : String]?
-    
-    /// An optional list of query items to include in the request URL. Here you can supply any query items
-    /// which your endpoint might require to process the request.
-    public private(set) var queryItems: [URLQueryItem]?
-    
-    /// An optional list of URL encoded body items to include in the request. Here you can supply any
-    /// body items which your endpoint might require to process the request.
-    ///
-    /// If not specified otherwise, the token provider will always add grant_type=client_credentials item
-    /// to the body of the request.
-    public private(set) var body: [URLEncodedBodyItem]?
-    
     /// An optional closure which will be invoked when a request is about to be made, so that you can
     /// supply headers which your backend might require to process the request.
     ///
     /// If not specified otherwise, the token provider will always set Content-Type header
     /// to application/x-www-form-urlencoded.
-    public var headersInjector: HeadersInjector?
+    public var headersInjector: HeadersInjector
     
     /// An optional closure which will be invoked when a request is about to be made, so that you can
     /// supply query items which your backend might require to process the request.
-    public var queryItemsInjector: QueryItemsInjector?
+    public var queryItemsInjector: QueryItemsInjector
     
     /// An optional closure which will be invoked when a request is about to be made, so that you can
     /// supply URL encoded body items which your backend might require to process the request.
     ///
     /// If not specified otherwise, the token provider will always add grant_type=client_credentials item
     /// to the body of the request.
-    public var bodyInjector: BodyInjector?
+    public var bodyInjector: BodyInjector
     
     /// An optional logger used by the token provider.
     public let logger: PPLogger?
@@ -85,12 +67,9 @@ public class DefaultTokenProvider: TokenProvider {
     ///     - logger: An optional logger used by the token provider.
     public init(url: URL, headers: [String : String]? = nil, queryItems: [URLQueryItem]? = nil, body: [URLEncodedBodyItem]? = nil, logger: PPLogger? = nil) {
         self.url = url
-        self.headers = headers
-        self.queryItems = queryItems
-        self.body = body
-        self.headersInjector = nil
-        self.queryItemsInjector = nil
-        self.bodyInjector = nil
+        self.headersInjector = { headers }
+        self.queryItemsInjector = { queryItems }
+        self.bodyInjector = { body }
         self.logger = logger
     }
     
@@ -102,8 +81,6 @@ public class DefaultTokenProvider: TokenProvider {
     ///     - completionHandler: The completion handler that provides
     ///     `AuthenticationResult` to the SDK.
     public func fetchToken(completionHandler: @escaping (AuthenticationResult) -> Void) {
-        self.updateRequestParametersIfNeeded()
-        
         do {
             let request = try self.request()
             
@@ -115,32 +92,20 @@ public class DefaultTokenProvider: TokenProvider {
     
     // MARK: - Private methods
     
-    private func updateRequestParametersIfNeeded() {
-        if let headersInjector = self.headersInjector {
-            self.headers = headersInjector()
-        }
-        
-        if let queryItemsInjector = self.queryItemsInjector {
-            self.queryItems = queryItemsInjector()
-        }
-        
-        if let bodyInjector = self.bodyInjector {
-            self.body = bodyInjector()
-        }
-    }
-    
     private func request() throws -> URLRequest {
-        let requestURL = try self.requestURL(with: self.url, queryItems: self.queryItems)
+        let queryItems = self.queryItemsInjector()
+        
+        let requestURL = try self.requestURL(with: self.url, queryItems: queryItems)
         
         var request = URLRequest(url: requestURL)
         request.httpMethod = HTTPMethod.POST.rawValue
         
-        let headers = self.requestHeaders(for: self.headers)
+        let headers = self.requestHeaders(for: self.headersInjector())
         for (field, value) in headers {
             request.setValue(value, forHTTPHeaderField: field)
         }
         
-        let body = self.requestBody(for: self.body)
+        let body = self.requestBody(for: self.bodyInjector())
         
         guard let httpBody = URLEncodedBodySerializer.serialize(body).data(using: .utf8) else {
             self.logger?.log("\(String(describing: self)) failed to build request body.", logLevel: .error)
