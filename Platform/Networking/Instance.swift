@@ -2,22 +2,18 @@ import Foundation
 
 @objc public class Instance: NSObject {
     public let id: String
-    public var serviceName: String
-    public var serviceVersion: String
-    public var tokenProvider: PPTokenProvider?
-    public var client: PPBaseClient
-    public var logger: PPLogger {
-        willSet {
-            self.client.logger = newValue
-        }
-    }
+    public let serviceName: String
+    public let serviceVersion: String
+    public let tokenProvider: TokenProvider?
+    public let client: PPBaseClient
+    public let logger: PPLogger
 
     public convenience init(
         locator: String,
         serviceName: String,
         serviceVersion: String,
         sdkInfo: PPSDKInfo,
-        tokenProvider: PPTokenProvider? = nil,
+        tokenProvider: TokenProvider? = nil,
         logger: PPLogger = PPDefaultLogger()
     ) {
         self.init(
@@ -36,7 +32,7 @@ import Foundation
         serviceName: String,
         serviceVersion: String,
         client: PPBaseClient,
-        tokenProvider: PPTokenProvider? = nil,
+        tokenProvider: TokenProvider? = nil,
         logger: PPLogger = PPDefaultLogger()
     ) {
         self.init(
@@ -56,7 +52,7 @@ import Foundation
         serviceVersion: String,
         client: PPBaseClient?,
         sdkInfo: PPSDKInfo?,
-        tokenProvider: PPTokenProvider? = nil,
+        tokenProvider: TokenProvider? = nil,
         logger: PPLogger = PPDefaultLogger()
     ) {
         assert(client != nil || sdkInfo != nil, "You must provide at least one of client and sdkInfo")
@@ -69,7 +65,13 @@ import Foundation
         self.id = splitInstance[2]
         self.serviceName = serviceName
         self.serviceVersion = serviceVersion
-        self.tokenProvider = tokenProvider
+        
+        if let tokenProvider = tokenProvider {
+            self.tokenProvider = RetryableTokenProvider(tokenProvider: tokenProvider, logger: logger)
+        }
+        else {
+            self.tokenProvider = nil
+        }
 
         self.logger = logger
 
@@ -339,8 +341,8 @@ import Foundation
         if requestOptions.shouldFetchToken, let tokenProvider = self.tokenProvider {
             tokenProvider.fetchToken { result in
                 switch result {
-                case .error(let error): onError?(error)
-                case .success(let jwtFromTokenProvider):
+                case .failure(let error): onError?(error)
+                case .authenticated(let jwtFromTokenProvider):
                     let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
                     requestMaker(mutableRequestOptions)
