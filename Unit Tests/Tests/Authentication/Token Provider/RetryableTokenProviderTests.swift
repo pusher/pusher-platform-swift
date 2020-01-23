@@ -6,11 +6,11 @@ class RetryableTokenProviderTests: XCTestCase {
     // MARK: - Tests
     
     func testShouldInitializeTokenProviderWithCorrectValues() {
-        let tokenProvider = RetryableTokenProvider(tokenProvider: TestTokenProvider(), retryStrategy: TestRetryStrategy(), logger: PPDefaultLogger())
+        let tokenProvider = RetryableTokenProvider(tokenProvider: TestTokenProvider(), retryStrategy: TestRetryStrategy(), logger: DefaultLogger())
         
         XCTAssertTrue(tokenProvider.tokenProvider is TestTokenProvider)
         XCTAssertTrue(tokenProvider.retryStrategy is TestRetryStrategy)
-        XCTAssertTrue(tokenProvider.logger is PPDefaultLogger)
+        XCTAssertTrue(tokenProvider.logger is DefaultLogger)
     }
     
     func testShouldInitializeTokenProviderWithDefaultRetryStrategyWhenNoOtherRetryStrategyProvided() {

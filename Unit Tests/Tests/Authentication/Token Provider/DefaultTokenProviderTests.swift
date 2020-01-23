@@ -23,10 +23,10 @@ class DefaultTokenProviderTests: XCTestCase {
         let queryItems = [URLQueryItem(name: "testQueryItemName", value: "testQueryItemValue")]
         let bodyItems = [URLEncodedBodyItem(name: "testBodyItemName", value: "testBodyItemValue")]
         
-        let tokenProvider = DefaultTokenProvider(url: url, headers: headers, queryItems: queryItems, body: bodyItems, logger: PPDefaultLogger())
+        let tokenProvider = DefaultTokenProvider(url: url, headers: headers, queryItems: queryItems, body: bodyItems, logger: DefaultLogger())
         
         XCTAssertEqual(tokenProvider.url, url)
-        XCTAssertTrue(tokenProvider.logger is PPDefaultLogger)
+        XCTAssertTrue(tokenProvider.logger is DefaultLogger)
         XCTAssertEqual(tokenProvider.headersInjector(), headers)
         XCTAssertEqual(tokenProvider.queryItemsInjector(), queryItems)
         

@@ -14,7 +14,7 @@ import Foundation
         serviceVersion: String,
         sdkInfo: PPSDKInfo,
         tokenProvider: TokenProvider? = nil,
-        logger: PPLogger = PPDefaultLogger()
+        logger: PPLogger = DefaultLogger()
     ) {
         self.init(
             locator: locator,
@@ -33,7 +33,7 @@ import Foundation
         serviceVersion: String,
         client: PPBaseClient,
         tokenProvider: TokenProvider? = nil,
-        logger: PPLogger = PPDefaultLogger()
+        logger: PPLogger = DefaultLogger()
     ) {
         self.init(
             locator: locator,
@@ -53,7 +53,7 @@ import Foundation
         client: PPBaseClient?,
         sdkInfo: PPSDKInfo?,
         tokenProvider: TokenProvider? = nil,
-        logger: PPLogger = PPDefaultLogger()
+        logger: PPLogger = DefaultLogger()
     ) {
         assert(client != nil || sdkInfo != nil, "You must provide at least one of client and sdkInfo")
         assert (!locator.isEmpty, "Expected locator property in Instance!")
