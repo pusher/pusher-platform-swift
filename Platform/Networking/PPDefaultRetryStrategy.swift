@@ -7,7 +7,7 @@ public class PPDefaultRetryStrategy: PPRetryStrategy {
 
     public internal(set) var numberOfAttempts: Int = 0
 
-    public var logger: PPLogger? = nil
+    public var logger: Logger? = nil
 
     public init(maxNumberOfAttempts: Int = 6, maxTimeIntervalBetweenAttempts: TimeInterval? = nil) {
         self.maxNumberOfAttempts = maxNumberOfAttempts

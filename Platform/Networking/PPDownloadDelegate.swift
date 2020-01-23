@@ -11,7 +11,7 @@ public class PPDownloadDelegate: NSObject, PPRequestTaskDelegate {
     public internal(set) var badResponse: HTTPURLResponse? = nil
     public internal(set) var badResponseError: Error? = nil
 
-    public var logger: PPLogger? = nil
+    public var logger: Logger? = nil
 
     public var destination: PPDownloadFileDestination? = nil
     public var destinationURL: URL? = nil

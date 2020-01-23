@@ -7,14 +7,14 @@ class RetryableTokenProvider: TokenProvider {
     let tokenProvider: TokenProvider
     let retryStrategy: PPRetryStrategy
     
-    let logger: PPLogger?
+    let logger: Logger?
     
     private var token: Token?
     private var queue: DispatchQueue
     
     // MARK: - Initializers
     
-    init(tokenProvider: TokenProvider, retryStrategy: PPRetryStrategy = PPDefaultRetryStrategy(), logger: PPLogger? = nil) {
+    init(tokenProvider: TokenProvider, retryStrategy: PPRetryStrategy = PPDefaultRetryStrategy(), logger: Logger? = nil) {
         self.tokenProvider = tokenProvider
         self.retryStrategy = retryStrategy
         self.logger = logger

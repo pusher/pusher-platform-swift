@@ -26,7 +26,7 @@ public class DefaultLogger {
 
 // MARK: - Logger
 
-extension DefaultLogger: PPLogger {
+extension DefaultLogger: Logger {
     
     /// Method used to log a message with a specified log level.
     ///

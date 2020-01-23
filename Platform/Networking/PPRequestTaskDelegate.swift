@@ -2,7 +2,7 @@ import Foundation
 
 public protocol PPRequestTaskDelegate {
     var task: URLSessionTask? { get set }
-    var logger: PPLogger? { get set }
+    var logger: Logger? { get set }
 
     init()
 

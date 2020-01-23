@@ -9,7 +9,7 @@ public class PPBaseURLSessionDelegate<RequestTaskDelegate: PPRequestTaskDelegate
         label: "com.pusherplatform.swift.session-requests.\(UUID().uuidString)"
     )
 
-    public var logger: PPLogger? = nil {
+    public var logger: Logger? = nil {
         willSet {
             self.requests.forEach { arg in
                 let (_, req) = arg

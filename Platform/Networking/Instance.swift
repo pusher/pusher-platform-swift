@@ -6,7 +6,7 @@ import Foundation
     public let serviceVersion: String
     public let tokenProvider: TokenProvider?
     public let client: PPBaseClient
-    public let logger: PPLogger
+    public let logger: Logger
 
     public convenience init(
         locator: String,
@@ -14,7 +14,7 @@ import Foundation
         serviceVersion: String,
         sdkInfo: PPSDKInfo,
         tokenProvider: TokenProvider? = nil,
-        logger: PPLogger = DefaultLogger()
+        logger: Logger = DefaultLogger()
     ) {
         self.init(
             locator: locator,
@@ -33,7 +33,7 @@ import Foundation
         serviceVersion: String,
         client: PPBaseClient,
         tokenProvider: TokenProvider? = nil,
-        logger: PPLogger = DefaultLogger()
+        logger: Logger = DefaultLogger()
     ) {
         self.init(
             locator: locator,
@@ -53,7 +53,7 @@ import Foundation
         client: PPBaseClient?,
         sdkInfo: PPSDKInfo?,
         tokenProvider: TokenProvider? = nil,
-        logger: PPLogger = DefaultLogger()
+        logger: Logger = DefaultLogger()
     ) {
         assert(client != nil || sdkInfo != nil, "You must provide at least one of client and sdkInfo")
         assert (!locator.isEmpty, "Expected locator property in Instance!")

@@ -44,7 +44,7 @@ public class DefaultTokenProvider: TokenProvider {
     public var bodyInjector: BodyInjector
     
     /// An optional logger used by the token provider.
-    public let logger: PPLogger?
+    public let logger: Logger?
     
     // MARK: - Initializers
     
@@ -65,7 +65,7 @@ public class DefaultTokenProvider: TokenProvider {
     ///     specified otherwise, the token provider will always add grant_type=client_credentials item
     ///     to the body of the request.
     ///     - logger: An optional logger used by the token provider.
-    public init(url: URL, headers: [String : String]? = nil, queryItems: [URLQueryItem]? = nil, body: [URLEncodedBodyItem]? = nil, logger: PPLogger? = nil) {
+    public init(url: URL, headers: [String : String]? = nil, queryItems: [URLQueryItem]? = nil, body: [URLEncodedBodyItem]? = nil, logger: Logger? = nil) {
         self.url = url
         self.headersInjector = { headers }
         self.queryItemsInjector = { queryItems }

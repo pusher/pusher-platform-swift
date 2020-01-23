@@ -12,7 +12,7 @@ public class PPGeneralRequestDelegate: NSObject, PPRequestTaskDelegate {
     public internal(set) var badResponse: HTTPURLResponse? = nil
     public internal(set) var badResponseError: Error? = nil
 
-    public var logger: PPLogger? = nil
+    public var logger: Logger? = nil
 
     // Only one of onSuccess or onError will ever be called
     public var onSuccess: ((Data) -> Void)?

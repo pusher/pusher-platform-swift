@@ -22,7 +22,7 @@ public class PPSubscriptionDelegate: NSObject, PPRequestTaskDelegate {
     var heartbeatTimeout: Double = 60.0
     var heartbeatTimeoutTimer: PPRepeater? = nil
 
-    public var logger: PPLogger? = nil
+    public var logger: Logger? = nil
 
     lazy var messageParser: PPMessageParser = {
         let messageParser = PPMessageParser(logger: self.logger)

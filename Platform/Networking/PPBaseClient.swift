@@ -18,7 +18,7 @@ let REALLY_LONG_TIME: Double = 252_460_800
     public var uploadURLSession: URLSession
     public var uploadSessionDelegate: PPUploadURLSessionDelegate
 
-    public var logger: PPLogger? = nil {
+    public var logger: Logger? = nil {
         willSet {
             self.subscriptionSessionDelegate.logger = newValue
             self.generalRequestSessionDelegate.logger = newValue

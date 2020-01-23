@@ -1,9 +1,9 @@
 import Foundation
 
 internal class PPMessageParser {
-    internal var logger: PPLogger?
+    internal var logger: Logger?
 
-    init(logger: PPLogger?) {
+    init(logger: Logger?) {
         self.logger = logger
     }
 

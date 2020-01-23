@@ -12,7 +12,7 @@ public class PPUploadDelegate: NSObject, PPRequestTaskDelegate {
     public internal(set) var badResponse: HTTPURLResponse? = nil
     public internal(set) var badResponseError: Error? = nil
 
-    public var logger: PPLogger? = nil
+    public var logger: Logger? = nil
 
     public var onSuccess: ((Data) -> Void)?
     public var onError: ((Error) -> Void)?
