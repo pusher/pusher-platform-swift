@@ -2,6 +2,6 @@ import Foundation
 
 public protocol PPLogger {
     
-    func log(_ message: @autoclosure @escaping () -> String, logLevel: PPLogLevel)
+    func log(_ message: @autoclosure @escaping () -> String, logLevel: LogLevel)
     
 }
