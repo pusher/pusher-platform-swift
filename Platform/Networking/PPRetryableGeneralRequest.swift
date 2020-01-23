@@ -14,7 +14,7 @@ import Foundation
     public var onSuccess: ((Data) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate else {
-                self.instance.logger.log(
+                self.instance.logger?.log(
                     "No delegate for general request: \(self.generalRequest.debugDescription))",
                     logLevel: .error
                 )
@@ -48,7 +48,7 @@ import Foundation
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let generalRequestDelegate = self.generalRequest?.delegate else {
-                self.instance.logger.log(
+                self.instance.logger?.log(
                     "No delegate for general request: \(self.generalRequest.debugDescription))",
                     logLevel: .error
                 )
@@ -101,7 +101,7 @@ import Foundation
 //        }
 
         guard let retryStrategy = self.retryStrategy else {
-            self.instance.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self.instance.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
@@ -131,17 +131,17 @@ import Foundation
 
     internal func retryRequest() {
         guard let generalRequestDelegate = self.generalRequest?.delegate else {
-            self.instance.logger.log(
+            self.instance.logger?.log(
                 "No delegate for general request: \(self.generalRequest.debugDescription))",
                 logLevel: .error
             )
             return
         }
 
-        self.instance.logger.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
+        self.instance.logger?.log("Cancelling subscriptionDelegate's existing task", logLevel: .verbose)
         generalRequestDelegate.task?.cancel()
 
-        self.instance.logger.log("Creating new underlying request for retrying", logLevel: .debug)
+        self.instance.logger?.log("Creating new underlying request for retrying", logLevel: .debug)
 
         let newRequest = self.instance.request(
             using: self.requestOptions,

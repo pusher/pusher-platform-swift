@@ -39,6 +39,7 @@ extension DefaultLogger: Logger {
         }
         
         self.queue.async {
+            // TODO: Use OSLog
             print("[\(logLevel.stringValue)] \(message())")
         }
     }

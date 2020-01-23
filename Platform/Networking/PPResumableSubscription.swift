@@ -14,7 +14,7 @@ import Foundation
     public var onOpen: (() -> Void)? {
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
-                self.instance.logger.log(
+                self.instance.logger?.log(
                     "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
@@ -36,7 +36,7 @@ import Foundation
     public var onOpening: (() -> Void)? {
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
-                self.instance.logger.log(
+                self.instance.logger?.log(
                     "No delegate for subscription: \(self.subscription.debugDescription))",
                     logLevel: .error
                 )
@@ -61,7 +61,7 @@ import Foundation
     public var onEvent: ((String, [String: String], Any) -> Void)? {
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
-                self.instance.logger.log(
+                self.instance.logger?.log(
                     "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
@@ -83,7 +83,7 @@ import Foundation
     public var onEnd: ((Int?, [String: String]?, Any?) -> Void)? {
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
-                self.instance.logger.log(
+                self.instance.logger?.log(
                     "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
@@ -111,7 +111,7 @@ import Foundation
     public var onError: ((Error) -> Void)? {
         willSet {
             guard let subscriptionDelegate = self.subscription?.delegate else {
-                self.instance.logger.log(
+                self.instance.logger?.log(
                     "No delegate for subscription: \(self.subscription.debugDescription)",
                     logLevel: .error
                 )
@@ -150,7 +150,7 @@ import Foundation
 
     public func end() {
         guard let subscriptionDelegate = self.subscription?.delegate else {
-            self.instance.logger.log(
+            self.instance.logger?.log(
                 "No delegate for subscription: \(self.subscription.debugDescription)",
                 logLevel: .error
             )
@@ -212,7 +212,7 @@ import Foundation
 
         if let err = error as? PPSubscriptionError, case let .eosWithRetryAfter(eosWithRetryError) = err {
             let retryWaitTimeInterval = eosWithRetryError.timeInterval
-            self.instance.logger.log(
+            self.instance.logger?.log(
                 "Attempting retry in \(retryWaitTimeInterval)s because of retry after message received with EOS message",
                 logLevel: .debug
             )
@@ -225,7 +225,7 @@ import Foundation
         }
 
         guard let retryStrategy = self.retryStrategy else {
-            self.instance.logger.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
+            self.instance.logger?.log("Not attempting retry because no retry strategy is set", logLevel: .debug)
             self._onError?(PPRetryableError.noRetryStrategyProvided)
             return
         }
@@ -266,7 +266,7 @@ import Foundation
 
     func setupNewSubscription() {
         guard let subscription = self.subscription else {
-            self.instance.logger.log(
+            self.instance.logger?.log(
                 "Subscription is nil for resumable subscription: \(self.debugDescription)",
                 logLevel: .error
             )
@@ -278,10 +278,10 @@ import Foundation
         self.cleanUpOldSubscription(subscriptionDelegate: subscriptionDelegate)
 
         if let eventId = self.lastEventIdReceived {
-            self.instance.logger.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
+            self.instance.logger?.log("Creating new underlying subscription with Last-Event-ID \(eventId)", logLevel: .debug)
             self.requestOptions.addHeaders(["Last-Event-ID": eventId])
         } else {
-            self.instance.logger.log("Creating new underlying subscription", logLevel: .debug)
+            self.instance.logger?.log("Creating new underlying subscription", logLevel: .debug)
         }
 
         let newSubscription = self.instance.subscribe(
@@ -297,18 +297,18 @@ import Foundation
     }
 
     func cancelExistingSubscriptionTask(subscriptionDelegate: PPSubscriptionDelegate) {
-        self.instance.logger.log("Cancelling subscriptionDelegate's existing task, if it exists", logLevel: .verbose)
+        self.instance.logger?.log("Cancelling subscriptionDelegate's existing task, if it exists", logLevel: .verbose)
         subscriptionDelegate.cancelTask()
     }
 
     func cleanUpOldSubscription(subscriptionDelegate: PPSubscriptionDelegate) {
         guard let reqCleanupClosure = subscriptionDelegate.requestCleanup else {
-            self.instance.logger.log("No request cleanup closure set on subscription delegate", logLevel: .verbose)
+            self.instance.logger?.log("No request cleanup closure set on subscription delegate", logLevel: .verbose)
             return
         }
 
         guard let taskId = subscriptionDelegate.task?.taskIdentifier else {
-            self.instance.logger.log(
+            self.instance.logger?.log(
                 "Could not retrieve task identifier associated with subscription delegate",
                 logLevel: .verbose
             )
