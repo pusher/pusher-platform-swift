@@ -13,7 +13,7 @@
 		2207209023CE136400FB4A3A /* CI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207208F23CE136400FB4A3A /* CI.swift */; };
 		2207209323CE1F5A00FB4A3A /* ProcessInfo+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209223CE1F5A00FB4A3A /* ProcessInfo+Extensions.swift */; };
 		2207209623CE247400FB4A3A /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209523CE247400FB4A3A /* URL+Extensions.swift */; };
-		2207209823CE25F700FB4A3A /* InstanceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209723CE25F700FB4A3A /* InstanceLocator.swift */; };
+		220B446D23DAFEE600FF1C64 /* InstanceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209723CE25F700FB4A3A /* InstanceLocator.swift */; };
 		221A226723D5B10700C21F6A /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C26F6923CF26A600D2C8C2 /* OHHTTPStubs.framework */; };
 		221A226923D5B5BA00C21F6A /* OHHTTPStubs+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C26F7A23CF39B700D2C8C2 /* OHHTTPStubs+Extenstions.swift */; };
 		221A226A23D5B6AF00C21F6A /* token.json in Resources */ = {isa = PBXBuildFile; fileRef = 22C26F7723CF35A500D2C8C2 /* token.json */; };
@@ -37,6 +37,7 @@
 		2267E6FA23CCB6ED001973DA /* JSONDecoder+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E6F923CCB6ED001973DA /* JSONDecoder+Extenstions.swift */; };
 		2267E6FC23CCB86C001973DA /* XCTest+Assertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E6FB23CCB86C001973DA /* XCTest+Assertions.swift */; };
 		2267E70423CCC3D8001973DA /* DefaultTokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E70323CCC3D8001973DA /* DefaultTokenProviderTests.swift */; };
+		226DD51F23DB03EE0024A27D /* InstanceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226DD51E23DB03EE0024A27D /* InstanceLocator.swift */; };
 		228EE19923D09E6B00C4807B /* DispatchQueueExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228EE19823D09E6B00C4807B /* DispatchQueueExtensionsTests.swift */; };
 		228EE19B23D0A0B500C4807B /* RetryableTokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228EE19A23D0A0B500C4807B /* RetryableTokenProviderTests.swift */; };
 		2299919E23CF55B900B9D4CE /* RetryableTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2299919D23CF55B900B9D4CE /* RetryableTokenProvider.swift */; };
@@ -121,6 +122,7 @@
 		2267E6F923CCB6ED001973DA /* JSONDecoder+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+Extenstions.swift"; sourceTree = "<group>"; };
 		2267E6FB23CCB86C001973DA /* XCTest+Assertions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTest+Assertions.swift"; sourceTree = "<group>"; };
 		2267E70323CCC3D8001973DA /* DefaultTokenProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTokenProviderTests.swift; sourceTree = "<group>"; };
+		226DD51E23DB03EE0024A27D /* InstanceLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceLocator.swift; sourceTree = "<group>"; };
 		2277525A23CDE4C50046F15F /* System Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "System Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2277525E23CDE4C50046F15F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228EE19823D09E6B00C4807B /* DispatchQueueExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueExtensionsTests.swift; sourceTree = "<group>"; };
@@ -241,10 +243,17 @@
 		2207209423CE246B00FB4A3A /* Networking */ = {
 			isa = PBXGroup;
 			children = (
-				2207209723CE25F700FB4A3A /* InstanceLocator.swift */,
 				2207209523CE247400FB4A3A /* URL+Extensions.swift */,
 			);
 			path = Networking;
+			sourceTree = "<group>";
+		};
+		220B446C23DAFED700FF1C64 /* Instance Locator */ = {
+			isa = PBXGroup;
+			children = (
+				2207209723CE25F700FB4A3A /* InstanceLocator.swift */,
+			);
+			path = "Instance Locator";
 			sourceTree = "<group>";
 		};
 		2230F66823C61736008B1580 /* Token */ = {
@@ -287,6 +296,7 @@
 			children = (
 				2267E6DD23CC7B57001973DA /* Body */,
 				2267E6DE23CC7B5C001973DA /* Headers */,
+				226DD51D23DB03E10024A27D /* Instance Locator */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -351,6 +361,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		226DD51D23DB03E10024A27D /* Instance Locator */ = {
+			isa = PBXGroup;
+			children = (
+				226DD51E23DB03EE0024A27D /* InstanceLocator.swift */,
+			);
+			path = "Instance Locator";
+			sourceTree = "<group>";
+		};
 		2277525B23CDE4C50046F15F /* System Tests */ = {
 			isa = PBXGroup;
 			children = (
@@ -391,6 +409,7 @@
 			children = (
 				229A79A323C740690051F565 /* Body */,
 				229A79A223C740650051F565 /* Headers */,
+				220B446C23DAFED700FF1C64 /* Instance Locator */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -766,7 +785,6 @@
 				2207209623CE247400FB4A3A /* URL+Extensions.swift in Sources */,
 				2207208E23CE116600FB4A3A /* Environment.swift in Sources */,
 				2207209023CE136400FB4A3A /* CI.swift in Sources */,
-				2207209823CE25F700FB4A3A /* InstanceLocator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -782,6 +800,7 @@
 				3388D6011EAF50220072A742 /* PPSubscriptionDelegate.swift in Sources */,
 				33DD99701FE195DF00A15211 /* PPMultipartFormData.swift in Sources */,
 				2230F66523C5E9D9008B1580 /* Token.swift in Sources */,
+				220B446D23DAFEE600FF1C64 /* InstanceLocator.swift in Sources */,
 				2299919E23CF55B900B9D4CE /* RetryableTokenProvider.swift in Sources */,
 				3382024A1FFCF02B00DC9664 /* PPBaseURLSessionDelegate.swift in Sources */,
 				2230F66A23C61740008B1580 /* OAuthToken.swift in Sources */,
@@ -820,6 +839,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2267E6F823CCB6CB001973DA /* DecoderWrapper.swift in Sources */,
+				226DD51F23DB03EE0024A27D /* InstanceLocator.swift in Sources */,
 				2267E6EF23CCA72A001973DA /* TokenTests.swift in Sources */,
 				22BC164F23ABE2F0003480C0 /* MessageParserTests.swift in Sources */,
 				2267E6E523CCA1D6001973DA /* HeaderFieldTests.swift in Sources */,
