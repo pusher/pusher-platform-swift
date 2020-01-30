@@ -37,7 +37,7 @@
 		2267E6FA23CCB6ED001973DA /* JSONDecoder+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E6F923CCB6ED001973DA /* JSONDecoder+Extenstions.swift */; };
 		2267E6FC23CCB86C001973DA /* XCTest+Assertions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E6FB23CCB86C001973DA /* XCTest+Assertions.swift */; };
 		2267E70423CCC3D8001973DA /* DefaultTokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2267E70323CCC3D8001973DA /* DefaultTokenProviderTests.swift */; };
-		226DD51F23DB03EE0024A27D /* InstanceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226DD51E23DB03EE0024A27D /* InstanceLocator.swift */; };
+		226DD51F23DB03EE0024A27D /* InstanceLocatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226DD51E23DB03EE0024A27D /* InstanceLocatorTests.swift */; };
 		228EE19923D09E6B00C4807B /* DispatchQueueExtensionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228EE19823D09E6B00C4807B /* DispatchQueueExtensionsTests.swift */; };
 		228EE19B23D0A0B500C4807B /* RetryableTokenProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228EE19A23D0A0B500C4807B /* RetryableTokenProviderTests.swift */; };
 		2299919E23CF55B900B9D4CE /* RetryableTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2299919D23CF55B900B9D4CE /* RetryableTokenProvider.swift */; };
@@ -75,6 +75,8 @@
 		33DD99701FE195DF00A15211 /* PPMultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33DD996F1FE195DE00A15211 /* PPMultipartFormData.swift */; };
 		33ECD9DB1EB881B50091BF66 /* PPDefaultRetryStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */; };
 		33F37F781E0C20CC0048457F /* PPRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F37F771E0C20CC0048457F /* PPRequest.swift */; };
+		738A3ED623E30F0F00B6A614 /* InstanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738A3ED523E30F0F00B6A614 /* InstanceTests.swift */; };
+		738A3EDA23E3135800B6A614 /* PPLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 738A3ED923E3135800B6A614 /* PPLogger.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,7 +124,7 @@
 		2267E6F923CCB6ED001973DA /* JSONDecoder+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONDecoder+Extenstions.swift"; sourceTree = "<group>"; };
 		2267E6FB23CCB86C001973DA /* XCTest+Assertions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTest+Assertions.swift"; sourceTree = "<group>"; };
 		2267E70323CCC3D8001973DA /* DefaultTokenProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTokenProviderTests.swift; sourceTree = "<group>"; };
-		226DD51E23DB03EE0024A27D /* InstanceLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceLocator.swift; sourceTree = "<group>"; };
+		226DD51E23DB03EE0024A27D /* InstanceLocatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceLocatorTests.swift; sourceTree = "<group>"; };
 		2277525A23CDE4C50046F15F /* System Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "System Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2277525E23CDE4C50046F15F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		228EE19823D09E6B00C4807B /* DispatchQueueExtensionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueExtensionsTests.swift; sourceTree = "<group>"; };
@@ -169,6 +171,8 @@
 		33DD996F1FE195DE00A15211 /* PPMultipartFormData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PPMultipartFormData.swift; sourceTree = "<group>"; };
 		33ECD9DA1EB881B50091BF66 /* PPDefaultRetryStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPDefaultRetryStrategy.swift; sourceTree = "<group>"; };
 		33F37F771E0C20CC0048457F /* PPRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRequest.swift; sourceTree = "<group>"; };
+		738A3ED523E30F0F00B6A614 /* InstanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InstanceTests.swift; sourceTree = "<group>"; };
+		738A3ED923E3135800B6A614 /* PPLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PPLogger.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -364,7 +368,7 @@
 		226DD51D23DB03E10024A27D /* Instance Locator */ = {
 			isa = PBXGroup;
 			children = (
-				226DD51E23DB03EE0024A27D /* InstanceLocator.swift */,
+				226DD51E23DB03EE0024A27D /* InstanceLocatorTests.swift */,
 			);
 			path = "Instance Locator";
 			sourceTree = "<group>";
@@ -519,6 +523,7 @@
 			isa = PBXGroup;
 			children = (
 				2267E6DC23CC7B51001973DA /* Data */,
+				738A3ED523E30F0F00B6A614 /* InstanceTests.swift */,
 				22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */,
 				3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */,
 			);
@@ -607,11 +612,20 @@
 		33BB995C1D21225B00B25C2A /* Unit Tests */ = {
 			isa = PBXGroup;
 			children = (
+				738A3ED823E3134100B6A614 /* Doubles */,
 				22BC164623ABE11F003480C0 /* Supporting Files */,
 				22BC164523ABE113003480C0 /* Tests */,
 				2267E6F223CCB499001973DA /* Utilities */,
 			);
 			path = "Unit Tests";
+			sourceTree = "<group>";
+		};
+		738A3ED823E3134100B6A614 /* Doubles */ = {
+			isa = PBXGroup;
+			children = (
+				738A3ED923E3135800B6A614 /* PPLogger.swift */,
+			);
+			path = Doubles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -839,17 +853,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				2267E6F823CCB6CB001973DA /* DecoderWrapper.swift in Sources */,
-				226DD51F23DB03EE0024A27D /* InstanceLocator.swift in Sources */,
+				226DD51F23DB03EE0024A27D /* InstanceLocatorTests.swift in Sources */,
 				2267E6EF23CCA72A001973DA /* TokenTests.swift in Sources */,
 				22BC164F23ABE2F0003480C0 /* MessageParserTests.swift in Sources */,
 				2267E6E523CCA1D6001973DA /* HeaderFieldTests.swift in Sources */,
 				2267E6E723CCA340001973DA /* URLEncodedBodyItemNameTests.swift in Sources */,
+				738A3ED623E30F0F00B6A614 /* InstanceTests.swift in Sources */,
 				228EE19B23D0A0B500C4807B /* RetryableTokenProviderTests.swift in Sources */,
 				2267E6E923CCA353001973DA /* URLEncodedBodyItemValueTests.swift in Sources */,
 				2267E6F123CCA81C001973DA /* OAuthTokenTests.swift in Sources */,
 				2267E6F623CCB68E001973DA /* Data+Extenstions.swift in Sources */,
 				2267E6FC23CCB86C001973DA /* XCTest+Assertions.swift in Sources */,
 				2267E6EB23CCA416001973DA /* URLEncodedBodyItemTests.swift in Sources */,
+				738A3EDA23E3135800B6A614 /* PPLogger.swift in Sources */,
 				221A226C23D5C03300C21F6A /* Bundle+Extensions.swift in Sources */,
 				221A226923D5B5BA00C21F6A /* OHHTTPStubs+Extenstions.swift in Sources */,
 				2267E6FA23CCB6ED001973DA /* JSONDecoder+Extenstions.swift in Sources */,

@@ -2,16 +2,15 @@ import XCTest
 @testable import PusherPlatform
 
 class SDKInfoHeaderTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-    }
+    
+    let validInstanceLocator = InstanceLocator(string: "v1:test:test")!
 
     func testProductNameGetsSetAsHTTPAdditionalHeader() {
         let productName = "chatkit"
         let sdkVersion = "1.2.3"
 
         let instance = Instance(
-            locator: "v1:test:test",
+            instanceLocator: validInstanceLocator,
             serviceName: "chatkit",
             serviceVersion: "v1",
             sdkInfo: PPSDKInfo(productName: productName, sdkVersion: sdkVersion)
@@ -27,7 +26,7 @@ class SDKInfoHeaderTests: XCTestCase {
         let sdkVersion = "1.2.3"
 
         let instance = Instance(
-            locator: "v1:test:test",
+            instanceLocator: validInstanceLocator,
             serviceName: "chatkit",
             serviceVersion: "v1",
             sdkInfo: PPSDKInfo(productName: productName, sdkVersion: sdkVersion)
@@ -44,7 +43,7 @@ class SDKInfoHeaderTests: XCTestCase {
         let sdkVersion = "1.2.3"
 
         let instance = Instance(
-            locator: "v1:test:test",
+            instanceLocator: validInstanceLocator,
             serviceName: "chatkit",
             serviceVersion: "v1",
             sdkInfo: PPSDKInfo(productName: productName, sdkVersion: sdkVersion)
@@ -60,7 +59,7 @@ class SDKInfoHeaderTests: XCTestCase {
         let sdkVersion = "1.2.3"
 
         let instance = Instance(
-            locator: "v1:test:test",
+            instanceLocator: validInstanceLocator,
             serviceName: "chatkit",
             serviceVersion: "v1",
             sdkInfo: PPSDKInfo(productName: productName, sdkVersion: sdkVersion)
@@ -76,7 +75,7 @@ class SDKInfoHeaderTests: XCTestCase {
         let sdkVersion = "1.2.3"
 
         let instance = Instance(
-            locator: "v1:test:test",
+            instanceLocator: validInstanceLocator,
             serviceName: "chatkit",
             serviceVersion: "v1",
             sdkInfo: PPSDKInfo(productName: productName, sdkVersion: sdkVersion)

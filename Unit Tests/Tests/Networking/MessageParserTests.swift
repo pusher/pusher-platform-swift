@@ -2,9 +2,6 @@ import XCTest
 @testable import PusherPlatform
 
 class MessageParserTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-    }
 
     func testParsingAKeepAliveMessage() {
         let messageParser = PPMessageParser(logger: nil)

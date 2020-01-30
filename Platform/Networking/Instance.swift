@@ -9,7 +9,7 @@ import Foundation
     public let logger: PPLogger
 
     public convenience init(
-        locator: String,
+        instanceLocator: InstanceLocator,
         serviceName: String,
         serviceVersion: String,
         sdkInfo: PPSDKInfo,
@@ -17,7 +17,7 @@ import Foundation
         logger: PPLogger = PPDefaultLogger()
     ) {
         self.init(
-            locator: locator,
+            instanceLocator: instanceLocator,
             serviceName: serviceName,
             serviceVersion: serviceVersion,
             client: nil,
@@ -28,7 +28,7 @@ import Foundation
     }
 
     public convenience init(
-        locator: String,
+        instanceLocator: InstanceLocator,
         serviceName: String,
         serviceVersion: String,
         client: PPBaseClient,
@@ -36,7 +36,7 @@ import Foundation
         logger: PPLogger = PPDefaultLogger()
     ) {
         self.init(
-            locator: locator,
+            instanceLocator: instanceLocator,
             serviceName: serviceName,
             serviceVersion: serviceVersion,
             client: client,
@@ -47,7 +47,7 @@ import Foundation
     }
 
     fileprivate init(
-        locator: String,
+        instanceLocator: InstanceLocator,
         serviceName: String,
         serviceVersion: String,
         client: PPBaseClient?,
@@ -56,13 +56,10 @@ import Foundation
         logger: PPLogger = PPDefaultLogger()
     ) {
         assert(client != nil || sdkInfo != nil, "You must provide at least one of client and sdkInfo")
-        assert (!locator.isEmpty, "Expected locator property in Instance!")
-        let splitInstance = locator.components(separatedBy: ":")
-        assert(splitInstance.count == 3, "Expecting locator to be of the form 'v1:us1:1a234-123a-1234-12a3-1234123aa12' but got this instead: '\(locator)'. Check the dashboard to ensure you have a properly formatted locator.")
         assert(!serviceName.isEmpty, "Expected serviceName property in Instance options!")
         assert(!serviceVersion.isEmpty, "Expected serviceVersion property in Instance otpions!")
 
-        self.id = splitInstance[2]
+        self.id = instanceLocator.identifier
         self.serviceName = serviceName
         self.serviceVersion = serviceVersion
         
@@ -76,9 +73,7 @@ import Foundation
         self.logger = logger
 
         if client == nil {
-            let cluster = splitInstance[1]
-            let host = "\(cluster).pusherplatform.io"
-
+            let host = "\(instanceLocator.region).pusherplatform.io"
             self.client = PPBaseClient(host: host, sdkInfo: sdkInfo!)
         } else {
             self.client = client!
