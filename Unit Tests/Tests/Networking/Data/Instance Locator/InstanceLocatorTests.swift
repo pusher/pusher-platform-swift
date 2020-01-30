@@ -25,5 +25,16 @@ class InstanceLocatorTests: XCTestCase {
         
         XCTAssertNil(instanceLocator)
     }
+    
+    func testShouldNotInstantiateInstanceLocatorWithEmptyComponents() {
+        XCTAssertNil(InstanceLocator(string: "invalid:invalid:"))
+        XCTAssertNil(InstanceLocator(string: "invalid::invalid"))
+        XCTAssertNil(InstanceLocator(string: ":invalid:invalid"))
+        XCTAssertNil(InstanceLocator(string: "invalid::"))
+        XCTAssertNil(InstanceLocator(string: ":invalid:"))
+        XCTAssertNil(InstanceLocator(string: "::invalid"))
+        XCTAssertNil(InstanceLocator(string: "::"))
+
+    }
         
 }
