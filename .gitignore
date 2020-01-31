@@ -64,3 +64,4 @@ fastlane/screenshots
 .swift-version
 
 *.DS_Store
+InstanceLocator
