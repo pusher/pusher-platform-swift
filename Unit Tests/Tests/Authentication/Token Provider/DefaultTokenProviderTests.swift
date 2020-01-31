@@ -58,7 +58,7 @@ class DefaultTokenProviderTests: XCTestCase {
         tokenProvider.fetchToken { result in
             switch result {
             case let .authenticated(token):
-                XCTAssertTrue(token.token.count > 0)
+                XCTAssertTrue(token.value.count > 0)
                 XCTAssertFalse(token.isExpired)
                 
             default:

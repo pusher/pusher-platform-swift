@@ -6,7 +6,7 @@ public protocol Token {
     // MARK: - Properties
     
     /// String representation of the token.
-    var token: String { get }
+    var value: String { get }
     
     /// Expiration date of the token.
     var expiryDate: Date { get }
