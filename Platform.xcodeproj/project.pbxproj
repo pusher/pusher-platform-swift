@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -28,7 +28,6 @@
 		2207209323CE1F5A00FB4A3A /* ProcessInfo+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209223CE1F5A00FB4A3A /* ProcessInfo+Extensions.swift */; };
 		2207209623CE247400FB4A3A /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209523CE247400FB4A3A /* URL+Extensions.swift */; };
 		220B446D23DAFEE600FF1C64 /* InstanceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209723CE25F700FB4A3A /* InstanceLocator.swift */; };
-		221A226723D5B10700C21F6A /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C26F6923CF26A600D2C8C2 /* OHHTTPStubs.framework */; };
 		221A226923D5B5BA00C21F6A /* OHHTTPStubs+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C26F7A23CF39B700D2C8C2 /* OHHTTPStubs+Extenstions.swift */; };
 		221A226A23D5B6AF00C21F6A /* token.json in Resources */ = {isa = PBXBuildFile; fileRef = 22C26F7723CF35A500D2C8C2 /* token.json */; };
 		221A226C23D5C03300C21F6A /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221A226B23D5C03300C21F6A /* Bundle+Extensions.swift */; };
@@ -158,8 +157,6 @@
 		229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedBodySerializer.swift; sourceTree = "<group>"; };
 		22BC164C23ABE2DF003480C0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParserTests.swift; sourceTree = "<group>"; };
-		22C26F6923CF26A600D2C8C2 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
-		22C26F6D23CF282900D2C8C2 /* Carthage.xcfilelist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcfilelist; path = Carthage.xcfilelist; sourceTree = "<group>"; };
 		22C26F7723CF35A500D2C8C2 /* token.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = token.json; sourceTree = "<group>"; };
 		22C26F7A23CF39B700D2C8C2 /* OHHTTPStubs+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OHHTTPStubs+Extenstions.swift"; sourceTree = "<group>"; };
 		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
@@ -213,7 +210,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */,
-				221A226723D5B10700C21F6A /* OHHTTPStubs.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,7 +471,6 @@
 		22BC164623ABE11F003480C0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				22C26F6C23CF281B00D2C8C2 /* File Lists */,
 				22C26F7623CF354100D2C8C2 /* Fixtures */,
 				22BC164C23ABE2DF003480C0 /* Info.plist */,
 			);
@@ -557,22 +552,6 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
-		22C26F6823CF26A600D2C8C2 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				22C26F6923CF26A600D2C8C2 /* OHHTTPStubs.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		22C26F6C23CF281B00D2C8C2 /* File Lists */ = {
-			isa = PBXGroup;
-			children = (
-				22C26F6D23CF282900D2C8C2 /* Carthage.xcfilelist */,
-			);
-			path = "File Lists";
-			sourceTree = "<group>";
-		};
 		22C26F7623CF354100D2C8C2 /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
@@ -587,7 +566,6 @@
 				33831C8B1A9CF61600B124F1 /* Platform */,
 				33BB995C1D21225B00B25C2A /* Unit Tests */,
 				2277525B23CDE4C50046F15F /* System Tests */,
-				22C26F6823CF26A600D2C8C2 /* Frameworks */,
 				33831C8A1A9CF61600B124F1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -713,7 +691,6 @@
 				33831C901A9CF61600B124F1 /* Sources */,
 				33831C911A9CF61600B124F1 /* Frameworks */,
 				33831C921A9CF61600B124F1 /* Resources */,
-				221A226823D5B1F000C21F6A /* Copy Carthage Frameworks */,
 			);
 			buildRules = (
 			);
@@ -801,25 +778,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		221A226823D5B1F000C21F6A /* Copy Carthage Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"$(SRCROOT)/Unit Tests/Supporting Files/File Lists/Carthage.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "Copy Carthage Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
 		738A3F0323E42DA900B6A614 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -969,12 +927,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CARTHAGE_PLATFORM = iOS;
-				"CARTHAGE_PLATFORM[sdk=appletvos*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=appletvsimulator*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=macosx*]" = Mac;
-				"CARTHAGE_PLATFORM[sdk=watchos*]" = watchOS;
-				"CARTHAGE_PLATFORM[sdk=watchsimulator*]" = watchOS;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1008,10 +960,6 @@
 				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/$(CARTHAGE_PLATFORM)",
-				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1025,16 +973,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -1055,12 +995,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CARTHAGE_PLATFORM = iOS;
-				"CARTHAGE_PLATFORM[sdk=appletvos*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=appletvsimulator*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=macosx*]" = Mac;
-				"CARTHAGE_PLATFORM[sdk=watchos*]" = watchOS;
-				"CARTHAGE_PLATFORM[sdk=watchsimulator*]" = watchOS;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1094,10 +1028,6 @@
 				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/$(CARTHAGE_PLATFORM)",
-				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1106,16 +1036,8 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
-					"$(inherited)",
-					"@executable_path/../Frameworks",
-					"@loader_path/../Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
