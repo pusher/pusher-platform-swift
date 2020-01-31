@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -28,8 +28,7 @@
 		2207209323CE1F5A00FB4A3A /* ProcessInfo+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209223CE1F5A00FB4A3A /* ProcessInfo+Extensions.swift */; };
 		2207209623CE247400FB4A3A /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209523CE247400FB4A3A /* URL+Extensions.swift */; };
 		220B446D23DAFEE600FF1C64 /* InstanceLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2207209723CE25F700FB4A3A /* InstanceLocator.swift */; };
-		221A226723D5B10700C21F6A /* OHHTTPStubs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 22C26F6923CF26A600D2C8C2 /* OHHTTPStubs.framework */; };
-		221A226923D5B5BA00C21F6A /* OHHTTPStubs+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C26F7A23CF39B700D2C8C2 /* OHHTTPStubs+Extenstions.swift */; };
+		221A226923D5B5BA00C21F6A /* HTTPStubs+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C26F7A23CF39B700D2C8C2 /* HTTPStubs+Extenstions.swift */; };
 		221A226A23D5B6AF00C21F6A /* token.json in Resources */ = {isa = PBXBuildFile; fileRef = 22C26F7723CF35A500D2C8C2 /* token.json */; };
 		221A226C23D5C03300C21F6A /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221A226B23D5C03300C21F6A /* Bundle+Extensions.swift */; };
 		2230F66323C5E704008B1580 /* AuthenticationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2230F66223C5E704008B1580 /* AuthenticationResult.swift */; };
@@ -58,6 +57,8 @@
 		229A79A123C73C350051F565 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A023C73C350051F565 /* Header.swift */; };
 		229A79A523C768B60051F565 /* URLEncodedBodyItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A423C768B60051F565 /* URLEncodedBodyItem.swift */; };
 		229A79A923C76D9F0051F565 /* URLEncodedBodySerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */; };
+		22B91E2923E48107008D55C2 /* OHHTTPStubs in Frameworks */ = {isa = PBXBuildFile; productRef = 22B91E2823E48107008D55C2 /* OHHTTPStubs */; };
+		22B91E2B23E48107008D55C2 /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 22B91E2A23E48107008D55C2 /* OHHTTPStubsSwift */; };
 		22BC164F23ABE2F0003480C0 /* MessageParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */; };
 		3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 33831C891A9CF61600B124F1 /* PusherPlatform.framework */; };
 		3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */; };
@@ -158,10 +159,8 @@
 		229A79A823C76D9F0051F565 /* URLEncodedBodySerializer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLEncodedBodySerializer.swift; sourceTree = "<group>"; };
 		22BC164C23ABE2DF003480C0 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		22BC164E23ABE2EF003480C0 /* MessageParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageParserTests.swift; sourceTree = "<group>"; };
-		22C26F6923CF26A600D2C8C2 /* OHHTTPStubs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OHHTTPStubs.framework; path = Carthage/Build/iOS/OHHTTPStubs.framework; sourceTree = "<group>"; };
-		22C26F6D23CF282900D2C8C2 /* Carthage.xcfilelist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcfilelist; path = Carthage.xcfilelist; sourceTree = "<group>"; };
 		22C26F7723CF35A500D2C8C2 /* token.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = token.json; sourceTree = "<group>"; };
-		22C26F7A23CF39B700D2C8C2 /* OHHTTPStubs+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OHHTTPStubs+Extenstions.swift"; sourceTree = "<group>"; };
+		22C26F7A23CF39B700D2C8C2 /* HTTPStubs+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPStubs+Extenstions.swift"; sourceTree = "<group>"; };
 		3301FDDC2047028D00AE591A /* SDKInfoHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKInfoHeaderTests.swift; sourceTree = "<group>"; };
 		33025C06212B346800C12249 /* PPRepeater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPRepeater.swift; sourceTree = "<group>"; };
 		330DD21B1E0C433A00EC251F /* PPLogger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PPLogger.swift; sourceTree = "<group>"; };
@@ -213,7 +212,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3301FDD92045984900AE591A /* PusherPlatform.framework in Frameworks */,
-				221A226723D5B10700C21F6A /* OHHTTPStubs.framework in Frameworks */,
+				22B91E2B23E48107008D55C2 /* OHHTTPStubsSwift in Frameworks */,
+				22B91E2923E48107008D55C2 /* OHHTTPStubs in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,8 +384,8 @@
 				221A226B23D5C03300C21F6A /* Bundle+Extensions.swift */,
 				2267E6F523CCB68E001973DA /* Data+Extenstions.swift */,
 				2267E6F723CCB6CB001973DA /* DecoderWrapper.swift */,
+				22C26F7A23CF39B700D2C8C2 /* HTTPStubs+Extenstions.swift */,
 				2267E6F923CCB6ED001973DA /* JSONDecoder+Extenstions.swift */,
-				22C26F7A23CF39B700D2C8C2 /* OHHTTPStubs+Extenstions.swift */,
 				2267E6FB23CCB86C001973DA /* XCTest+Assertions.swift */,
 			);
 			path = Utilities;
@@ -475,7 +475,6 @@
 		22BC164623ABE11F003480C0 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				22C26F6C23CF281B00D2C8C2 /* File Lists */,
 				22C26F7623CF354100D2C8C2 /* Fixtures */,
 				22BC164C23ABE2DF003480C0 /* Info.plist */,
 			);
@@ -557,22 +556,6 @@
 			path = Networking;
 			sourceTree = "<group>";
 		};
-		22C26F6823CF26A600D2C8C2 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				22C26F6923CF26A600D2C8C2 /* OHHTTPStubs.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		22C26F6C23CF281B00D2C8C2 /* File Lists */ = {
-			isa = PBXGroup;
-			children = (
-				22C26F6D23CF282900D2C8C2 /* Carthage.xcfilelist */,
-			);
-			path = "File Lists";
-			sourceTree = "<group>";
-		};
 		22C26F7623CF354100D2C8C2 /* Fixtures */ = {
 			isa = PBXGroup;
 			children = (
@@ -587,7 +570,6 @@
 				33831C8B1A9CF61600B124F1 /* Platform */,
 				33BB995C1D21225B00B25C2A /* Unit Tests */,
 				2277525B23CDE4C50046F15F /* System Tests */,
-				22C26F6823CF26A600D2C8C2 /* Frameworks */,
 				33831C8A1A9CF61600B124F1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -713,7 +695,6 @@
 				33831C901A9CF61600B124F1 /* Sources */,
 				33831C911A9CF61600B124F1 /* Frameworks */,
 				33831C921A9CF61600B124F1 /* Resources */,
-				221A226823D5B1F000C21F6A /* Copy Carthage Frameworks */,
 			);
 			buildRules = (
 			);
@@ -721,6 +702,10 @@
 				33831C971A9CF61600B124F1 /* PBXTargetDependency */,
 			);
 			name = "Unit Tests";
+			packageProductDependencies = (
+				22B91E2823E48107008D55C2 /* OHHTTPStubs */,
+				22B91E2A23E48107008D55C2 /* OHHTTPStubsSwift */,
+			);
 			productName = PusherSwiftTests;
 			productReference = 33831C941A9CF61600B124F1 /* Unit Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -762,6 +747,9 @@
 				en,
 			);
 			mainGroup = 33831C491A9CEDF800B124F1;
+			packageReferences = (
+				22B91E2723E48107008D55C2 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
+			);
 			productRefGroup = 33831C8A1A9CF61600B124F1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -801,25 +789,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		221A226823D5B1F000C21F6A /* Copy Carthage Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"$(SRCROOT)/Unit Tests/Supporting Files/File Lists/Carthage.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "Copy Carthage Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
 		738A3F0323E42DA900B6A614 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -918,7 +887,7 @@
 				2267E6EB23CCA416001973DA /* URLEncodedBodyItemTests.swift in Sources */,
 				738A3EDA23E3135800B6A614 /* PPLogger.swift in Sources */,
 				221A226C23D5C03300C21F6A /* Bundle+Extensions.swift in Sources */,
-				221A226923D5B5BA00C21F6A /* OHHTTPStubs+Extenstions.swift in Sources */,
+				221A226923D5B5BA00C21F6A /* HTTPStubs+Extenstions.swift in Sources */,
 				2267E6FA23CCB6ED001973DA /* JSONDecoder+Extenstions.swift in Sources */,
 				3301FDDE2047035500AE591A /* SDKInfoHeaderTests.swift in Sources */,
 				2267E6ED23CCA54E001973DA /* URLEncodedBodySerializerTests.swift in Sources */,
@@ -969,12 +938,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CARTHAGE_PLATFORM = iOS;
-				"CARTHAGE_PLATFORM[sdk=appletvos*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=appletvsimulator*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=macosx*]" = Mac;
-				"CARTHAGE_PLATFORM[sdk=watchos*]" = watchOS;
-				"CARTHAGE_PLATFORM[sdk=watchsimulator*]" = watchOS;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1008,10 +971,6 @@
 				DEFINES_MODULE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/$(CARTHAGE_PLATFORM)",
-				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1055,12 +1014,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CARTHAGE_PLATFORM = iOS;
-				"CARTHAGE_PLATFORM[sdk=appletvos*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=appletvsimulator*]" = tvOS;
-				"CARTHAGE_PLATFORM[sdk=macosx*]" = Mac;
-				"CARTHAGE_PLATFORM[sdk=watchos*]" = watchOS;
-				"CARTHAGE_PLATFORM[sdk=watchsimulator*]" = watchOS;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1094,10 +1047,6 @@
 				DEFINES_MODULE = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/$(CARTHAGE_PLATFORM)",
-				);
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
@@ -1236,6 +1185,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		22B91E2723E48107008D55C2 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AliSoftware/OHHTTPStubs.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		22B91E2823E48107008D55C2 /* OHHTTPStubs */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22B91E2723E48107008D55C2 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */;
+			productName = OHHTTPStubs;
+		};
+		22B91E2A23E48107008D55C2 /* OHHTTPStubsSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 22B91E2723E48107008D55C2 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */;
+			productName = OHHTTPStubsSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 33831C4A1A9CEDF800B124F1 /* Project object */;
 }

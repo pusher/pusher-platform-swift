@@ -1,7 +1,8 @@
 import Foundation
 import OHHTTPStubs
+import OHHTTPStubsSwift
 
-func jsonFixture(named name: String) -> OHHTTPStubsResponse {
+func jsonFixture(named name: String) -> HTTPStubsResponse {
     guard let filePath = Bundle.current.path(forResource: name, ofType: "json") else {
         fatalError("Failed to locate JSON fixture.")
     }

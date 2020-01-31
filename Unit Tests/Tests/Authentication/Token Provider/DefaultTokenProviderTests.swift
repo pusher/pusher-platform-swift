@@ -1,5 +1,6 @@
 import XCTest
 import OHHTTPStubs
+import OHHTTPStubsSwift
 @testable import PusherPlatform
 
 class DefaultTokenProviderTests: XCTestCase {
@@ -7,7 +8,7 @@ class DefaultTokenProviderTests: XCTestCase {
     // MARK: - Tests lifecycle
     
     override func tearDown() {
-        OHHTTPStubs.removeAllStubs()
+        HTTPStubs.removeAllStubs()
         
         super.tearDown()
     }
@@ -47,7 +48,7 @@ class DefaultTokenProviderTests: XCTestCase {
         
         let userQueryItem = URLQueryItem(name: "user_id", value: "bob")
         
-        OHHTTPStubs.stubRequests(passingTest: isPath(url.path)) { _ -> OHHTTPStubsResponse in
+        stub(condition: isPath(url.path)) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -76,9 +77,9 @@ class DefaultTokenProviderTests: XCTestCase {
             fatalError("Failed to instantiate URL.")
         }
         
-        OHHTTPStubs.stubRequests(passingTest: isAbsoluteURLString(url.absoluteString)) { _ -> OHHTTPStubsResponse in
+        stub(condition: isAbsoluteURLString(url.absoluteString)) { _ in
             let error = NSError(domain: NSURLErrorDomain, code: NSURLErrorZeroByteResource)
-            return OHHTTPStubsResponse(error: error)
+            return HTTPStubsResponse(error: error)
         }
         
         let tokenProvider = DefaultTokenProvider(url: url)
@@ -105,14 +106,14 @@ class DefaultTokenProviderTests: XCTestCase {
             fatalError("Failed to instantiate URL.")
         }
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             guard let headers = request.allHTTPHeaderFields,
                 let contentType = headers[Header.Field.contentType.rawValue] else {
                     return false
             }
             
             return request.url == url && contentType == Header.Value.applicationFormURLEncoded.rawValue
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -140,7 +141,7 @@ class DefaultTokenProviderTests: XCTestCase {
             fatalError("Failed to instantiate URL.")
         }
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             let bodyItem = URLEncodedBodyItem(name: URLEncodedBodyItem.Name.grantType, value: URLEncodedBodyItem.Value.clientCredentials)
             
             guard let body = request.ohhttpStubs_httpBody,
@@ -149,7 +150,7 @@ class DefaultTokenProviderTests: XCTestCase {
             }
             
             return request.url == url && body == serializedBodyItems
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -180,14 +181,14 @@ class DefaultTokenProviderTests: XCTestCase {
         let headerField = "x-custom-header"
         let headerValue = "testValue"
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             guard let headers = request.allHTTPHeaderFields,
                 let customHeader = headers[headerField] else {
                     return false
             }
             
             return request.url == url && customHeader == headerValue
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -217,14 +218,14 @@ class DefaultTokenProviderTests: XCTestCase {
         
         let headerValue = "text/csv"
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             guard let headers = request.allHTTPHeaderFields,
                 let contentType = headers[Header.Field.contentType.rawValue] else {
                     return false
             }
             
             return request.url == url && contentType == headerValue
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -254,7 +255,7 @@ class DefaultTokenProviderTests: XCTestCase {
         
         let queryItem = URLQueryItem(name: "customItem", value: "customValue")
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             components?.queryItems = [queryItem]
             
@@ -262,7 +263,7 @@ class DefaultTokenProviderTests: XCTestCase {
                 return false
             }
             return request.url == stubURL
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -292,7 +293,7 @@ class DefaultTokenProviderTests: XCTestCase {
         
         let customBodyItem = URLEncodedBodyItem(name: "customItem", value: "customValue")
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             let grantTypeBodyItem = URLEncodedBodyItem(name: URLEncodedBodyItem.Name.grantType, value: URLEncodedBodyItem.Value.clientCredentials)
             
             guard let body = request.ohhttpStubs_httpBody,
@@ -301,7 +302,7 @@ class DefaultTokenProviderTests: XCTestCase {
             }
             
             return request.url == url && body == serializedBodyItems
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -331,14 +332,14 @@ class DefaultTokenProviderTests: XCTestCase {
         
         let bodyItem = URLEncodedBodyItem(name: URLEncodedBodyItem.Name.grantType.rawValue, value: "customValue")
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             guard let body = request.ohhttpStubs_httpBody,
                 let serializedBodyItems = URLEncodedBodySerializer.serialize([bodyItem]).data(using: .utf8) else {
                     return false
             }
             
             return request.url == url && body == serializedBodyItems
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -370,14 +371,14 @@ class DefaultTokenProviderTests: XCTestCase {
         let firstHeaderValue = "firsyTestValue"
         let secondHeaderValue = "secondTestValue"
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             guard let headers = request.allHTTPHeaderFields,
                 let customHeader = headers[headerField] else {
                     return false
             }
             
             return request.url == url && customHeader == secondHeaderValue
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -409,7 +410,7 @@ class DefaultTokenProviderTests: XCTestCase {
         let firstQueryItem = URLQueryItem(name: "customItem", value: "firstCustomValue")
         let secondQueryItem = URLQueryItem(name: "customItem", value: "secondCustomValue")
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
             components?.queryItems = [secondQueryItem]
             
@@ -417,7 +418,7 @@ class DefaultTokenProviderTests: XCTestCase {
                 return false
             }
             return request.url == stubURL
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
@@ -449,7 +450,7 @@ class DefaultTokenProviderTests: XCTestCase {
         let firstCustomBodyItem = URLEncodedBodyItem(name: "customItem", value: "firstCustomValue")
         let secondCustomBodyItem = URLEncodedBodyItem(name: "customItem", value: "secondCustomValue")
         
-        OHHTTPStubs.stubRequests(passingTest: { request -> Bool in
+        stub(condition: { request -> Bool in
             let grantTypeBodyItem = URLEncodedBodyItem(name: URLEncodedBodyItem.Name.grantType, value: URLEncodedBodyItem.Value.clientCredentials)
             
             guard let body = request.ohhttpStubs_httpBody,
@@ -458,7 +459,7 @@ class DefaultTokenProviderTests: XCTestCase {
             }
             
             return request.url == url && body == serializedBodyItems
-        }) { _ -> OHHTTPStubsResponse in
+        }) { _ in
             return jsonFixture(named: "token")
         }
         
