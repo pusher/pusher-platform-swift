@@ -9,7 +9,7 @@ class TokenTests: XCTestCase {
         
         // MARK: - Properties
         
-        let token: String
+        let value: String
         let expiryDate: Date
         
     }
@@ -17,13 +17,13 @@ class TokenTests: XCTestCase {
     // MARK: - Tests
     
     func testCorrectlyValidateNonExpiredToken() {
-        let token = TestToken(token: "token", expiryDate: Date.distantFuture)
+        let token = TestToken(value: "token", expiryDate: Date.distantFuture)
         
         XCTAssertFalse(token.isExpired)
     }
     
     func testCorrectlyValidateExpiredToken() {
-        let token = TestToken(token: "token", expiryDate: Date.distantPast)
+        let token = TestToken(value: "token", expiryDate: Date.distantPast)
         
         XCTAssertTrue(token.isExpired)
     }

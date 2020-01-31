@@ -20,7 +20,7 @@ class RetryableTokenProviderTests: XCTestCase {
     }
     
     func testShouldRetrieveTokenFromNestedTokenProvider() {
-        let testToken = TestToken(token: "testToken", expiryDate: .distantFuture)
+        let testToken = TestToken(value: "testToken", expiryDate: .distantFuture)
         let nestedTokenProvider = TestTokenProvider(testToken: testToken)
         
         let retryableTokenProvider = RetryableTokenProvider(tokenProvider: nestedTokenProvider)
@@ -43,7 +43,7 @@ class RetryableTokenProviderTests: XCTestCase {
     }
     
     func testShouldReturnCachedNonExpiredToken() {
-        let firstTestToken = TestToken(token: "firstTestToken", expiryDate: .distantFuture)
+        let firstTestToken = TestToken(value: "firstTestToken", expiryDate: .distantFuture)
         let nestedTokenProvider = TestTokenProvider(testToken: firstTestToken)
         
         let retryableTokenProvider = RetryableTokenProvider(tokenProvider: nestedTokenProvider)
@@ -56,7 +56,7 @@ class RetryableTokenProviderTests: XCTestCase {
         
         waitForExpectations(timeout: 1.0)
         
-        let secondTestToken = TestToken(token: "secondTestToken", expiryDate: .distantFuture)
+        let secondTestToken = TestToken(value: "secondTestToken", expiryDate: .distantFuture)
         nestedTokenProvider.testToken = secondTestToken
         
         let secondExpectation = self.expectation(description: "Second token retrieval")
@@ -77,7 +77,7 @@ class RetryableTokenProviderTests: XCTestCase {
     }
     
     func testShouldReturnDiscardCachedExpiredTokenAndRetrieveNewTokenFromNestedTokenProvider() {
-        let firstTestToken = TestToken(token: "firstTestToken", expiryDate: .distantPast)
+        let firstTestToken = TestToken(value: "firstTestToken", expiryDate: .distantPast)
         let nestedTokenProvider = TestTokenProvider(testToken: firstTestToken)
         
         let retryableTokenProvider = RetryableTokenProvider(tokenProvider: nestedTokenProvider)
@@ -90,7 +90,7 @@ class RetryableTokenProviderTests: XCTestCase {
         
         waitForExpectations(timeout: 1.0)
         
-        let secondTestToken = TestToken(token: "secondTestToken", expiryDate: .distantFuture)
+        let secondTestToken = TestToken(value: "secondTestToken", expiryDate: .distantFuture)
         nestedTokenProvider.testToken = secondTestToken
         
         let secondExpectation = self.expectation(description: "Second token retrieval")
@@ -111,7 +111,7 @@ class RetryableTokenProviderTests: XCTestCase {
     }
     
     func testShouldRetryFailedTokenFetchRequest() {
-        let testToken = TestToken(token: "testToken", expiryDate: .distantFuture)
+        let testToken = TestToken(value: "testToken", expiryDate: .distantFuture)
         let nestedTokenProvider = TestTokenProvider()
         
         let retryStrategyExpectation = self.expectation(description: "Retry")
@@ -264,7 +264,7 @@ extension RetryableTokenProviderTests {
         
         // MARK: - Properties
         
-        let token: String
+        let value: String
         let expiryDate: Date
         
     }
