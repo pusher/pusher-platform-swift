@@ -337,7 +337,8 @@ import Foundation
             tokenProvider.fetchToken { result in
                 switch result {
                 case .failure(let error): onError?(error)
-                case .authenticated(let jwtFromTokenProvider):
+                case .authenticated(let token):
+                    let jwtFromTokenProvider = token.token
                     let authHeaderValue = "Bearer \(jwtFromTokenProvider)"
                     mutableRequestOptions.addHeaders(["Authorization": authHeaderValue])
                     requestMaker(mutableRequestOptions)
